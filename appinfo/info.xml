@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>outils</id>
+    <name>Outils</name>
+    <summary>Outils adacis</summary>
+    <description><![CDATA[Les outils adacis]]></description>
+    <version>0.2.0</version>
+    <licence>agpl</licence>
+    <author mail="b.aimard@adacis.net">Benjamin AIMARD</author>
+    <namespace>Outils</namespace>
+    <category>security</category>
+    <bugs>https://git.adacis.net</bugs>
+    <dependencies>
+        <nextcloud min-version="13" max-version="18"/>
+    </dependencies>
+    <navigations>
+        <navigation>
+            <name>Outils</name>
+            <route>outils.page.index</route>
+        </navigation>
+    </navigations>
+</info>

@@ -1,3 +1,5 @@
+/******/ (() => { // webpackBootstrap
+var __webpack_exports__ = {};
 window.addEventListener("DOMContentLoaded", function () {
 	console.log("configuration OK");
 });
@@ -25,3 +27,5 @@ window.addEventListener("DOMContentLoaded", function () {
 
 
 // } );
+/******/ })()
+;

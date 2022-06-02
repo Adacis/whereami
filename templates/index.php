@@ -1,6 +1,6 @@
 <?php
-style('outils', ['style']);
-script('outils', ['main']);
+style('whereami', ['style']);
+script('whereami', ['main.app']);
 ?>
 
 <div id="app">

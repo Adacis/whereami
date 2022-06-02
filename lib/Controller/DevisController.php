@@ -1,5 +1,5 @@
 <?php
-namespace OCA\Outils\Controller;
+namespace OCA\Whereami\Controller;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;

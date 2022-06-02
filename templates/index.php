@@ -1,6 +1,6 @@
 <?php
-style('outils', ['style', 'datatables1.10']);
-script('outils', ['script', 'datatables1.10.19']);
+style('outils', ['style']);
+script('outils', ['script']);
 ?>
 
 <div id="app">

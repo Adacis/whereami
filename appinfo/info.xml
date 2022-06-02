@@ -2,11 +2,11 @@
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>whereami</id>
     <name>WhereamI</name>
-    <summary><![CDATA[Gestion du planning ADACIS]]></summary>
-    <description><![CDATA[Gestion du planning ADACIS]]></description>
+    <summary><![CDATA[Is a simple application to locate everybody in your company.]]></summary>
+    <description><![CDATA[Is a simple application to locate everybody in your company.]]></description>
     <version>0.0.1</version>
     <licence>agpl</licence>
-    <author mail="b.aimard@adacis.net" homepage="https://files.adacis.net">Benjamin AIMARD</author>
+    <author mail="b.aimard@adacis.net" homepage="https://www.adacis.net">ADACIS</author>
     <namespace>WhereamI</namespace>
     <category>office</category>
 	<category>organization</category>

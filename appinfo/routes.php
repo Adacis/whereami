@@ -10,7 +10,5 @@
 return [
     'routes' => [
 	   ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-	   ['name' => 'devis#index', 'url' => '/devisindex', 'verb' => 'GET'],
-	   /*['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],*/
     ]
 ];

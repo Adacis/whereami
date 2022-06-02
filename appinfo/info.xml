@@ -1,23 +1,23 @@
 <?xml version="1.0"?>
-<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-    <id>outils</id>
-    <name>Outils</name>
-    <summary>Outils adacis</summary>
-    <description><![CDATA[Les outils adacis]]></description>
-    <version>0.2.0</version>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>whereami</id>
+    <name>WhereamI</name>
+    <summary><![CDATA[Gestion du planning ADACIS]]></summary>
+    <description><![CDATA[Gestion du planning ADACIS]]></description>
+    <version>0.0.1</version>
     <licence>agpl</licence>
-    <author mail="b.aimard@adacis.net">Benjamin AIMARD</author>
-    <namespace>Outils</namespace>
-    <category>security</category>
-    <bugs>https://git.adacis.net</bugs>
+    <author mail="b.aimard@adacis.net" homepage="https://files.adacis.net">Benjamin AIMARD</author>
+    <namespace>WhereamI</namespace>
+    <category>office</category>
+	<category>organization</category>
+    <bugs>https://https://gitlab.adacis.net/dashboard/issues</bugs>
     <dependencies>
-        <nextcloud min-version="13" max-version="18"/>
+        <nextcloud min-version="20" max-version="24"/>
     </dependencies>
     <navigations>
         <navigation>
-            <name>Outils</name>
-            <route>outils.page.index</route>
+            <name>WhereamI</name>
+            <route>whereami.page.index</route>
         </navigation>
     </navigations>
 </info>

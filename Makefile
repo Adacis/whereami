@@ -15,7 +15,7 @@ npm-init:
 	npm i
 
 write:
-	sudo chown -R www-data:$$(whoami) ../gestion ; sudo chmod -R 775 ../gestion
+	sudo chown -R www-data:$$(whoami) ../whereami ; sudo chmod -R 775 ../whereami
 
 npm-update:
 	npm update

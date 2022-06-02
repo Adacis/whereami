@@ -11,7 +11,7 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 // use OCP\Notification\IManager;
 
 class Application extends App implements IBootstrap {
-    public const APP_ID = 'gestion';
+    public const APP_ID = 'whereami';
 
     public function __construct() {
         parent::__construct(self::APP_ID);
@@ -22,7 +22,6 @@ class Application extends App implements IBootstrap {
     }
 
     public function boot(IBootContext $context): void {
-        //require_once '/var/www/html/apps/gestion/vendor/autoload.php';
     }
 
 }

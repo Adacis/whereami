@@ -3,21 +3,23 @@ namespace OCA\Whereami\Controller;
 
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-
-use OCA\Outils\Db\OutilsMapper;
+use OCP\Calendar\IManager;
 
 
 class PageController extends Controller {
 	private $userId;
-	private $om;
 	private $GetNomComplet;
+	/** @var IManager */
+    private $calendarManager;
 
-	public function __construct($AppName, IRequest $request, $UserId, OutilsMapper $om){
+	public function __construct($AppName,
+								$UserId,
+								IRequest $request, 
+								IManager $calendarManager){
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
-		$this->om = $om;
+		$this->calendarManager = $calendarManager;
 
 		//Fonction anonyme pour récupérer le nom d'un utilisateur (LDAP, ETC.);
 		$this->GetNomComplet = function($val)
@@ -41,12 +43,45 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		return new TemplateResponse('outils', 'index', array(	'listetaches' => $this->om->listetaches(), 
-																'NomComplet' => $this->GetNomComplet, //Fonction anonyme
-																'listeNbTache' => $this->om->listeNbTache(),
-																'userInfo' => $this->om->userInfo(array($this->userId)),
-																'userId' => $this->userId,
-																));  // templates/index.php
+		// return new TemplateResponse('outils', 'index', array(	'listetaches' => $this->om->listetaches(), 
+		// 														'NomComplet' => $this->GetNomComplet, //Fonction anonyme
+		// 														'listeNbTache' => $this->om->listeNbTache(),
+		// 														'userInfo' => $this->om->userInfo(array($this->userId)),
+		// 														'userId' => $this->userId,
+		// 														));  // templates/index.php
+		return new TemplateResponse('whereami', 'index', array( 'events' => $this->searchCalendar()));
 	}
 
+
+	//https://docs.nextcloud.com/server/latest/developer_manual/digging_deeper/groupware/calendar.html#access-calendars-and-events
+	
+	public function searchCalendar() {
+		// return $this->calendarManager->getCalendars();
+		// return $this->calendarManager->search("[loc]");
+	}
+
+	public function searchInUserCalendar(
+		string $uid,
+		string $calendarUri,
+		DateTimeImmutable $from,
+		DateTimeImmutable $to) {
+		$principal = 'principals/users/' . $uid;
+
+		// Prepare the query
+		$query = $this->calendarManager->newQuery($principal);
+		$query->addSearchCalendar($uri);
+		$query->setTimerangeStart($from);
+		$query->setTimerangeEnd($to);
+
+		// Execute the query
+		$objects = $this->calendarManager->searchForPrincipal($query);
+		return $objects;
+	}
+
+	/**
+	 * get all users uid
+	 */
+	public function getUids(): array{
+
+	}
 }

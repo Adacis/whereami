@@ -1,6 +1,6 @@
 <?php
 style('outils', ['style']);
-script('outils', ['script']);
+script('outils', ['main']);
 ?>
 
 <div id="app">

@@ -1,27 +1,37 @@
 <?php
 namespace OCA\Whereami\Controller;
 
+use OCA\Whereami\Db\Bdd;
+use OCA\Whereami\MyClass\MyEvent;
+
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Controller;
 use OCP\Calendar\IManager;
-
+use Sabre\VObject;
+use OCA\Polls\Model\CalendarEvent;
+use DateTimeImmutable;
+use DateTime;
 
 class PageController extends Controller {
 	private $userId;
 	private $GetNomComplet;
-	/** @var IManager */
     private $calendarManager;
+	private $myDb;
 
 	public function __construct($AppName,
 								$UserId,
 								IRequest $request, 
-								IManager $calendarManager){
+								IManager $calendarManager,
+								Bdd $myDb
+								){
 		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
-		$this->calendarManager = $calendarManager;
 
-		//Fonction anonyme pour récupérer le nom d'un utilisateur (LDAP, ETC.);
+		$this->userId = $UserId;
+		$this->myDb = $myDb;
+		$this->calendarManager = $calendarManager;
+		$this->calendars = $this->calendarManager->getCalendars();
+
 		$this->GetNomComplet = function($val)
 		{
 			$myObj = json_decode($val);
@@ -33,55 +43,30 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
-	 *          required and no CSRF check. If you don't know what CSRF is, read
-	 *          it up in the docs or you might create a security hole. This is
-	 *          basically the only required method to add this exemption, don't
-	 *          add it to any other method if you don't exactly know what it does
-	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		// return new TemplateResponse('outils', 'index', array(	'listetaches' => $this->om->listetaches(), 
-		// 														'NomComplet' => $this->GetNomComplet, //Fonction anonyme
-		// 														'listeNbTache' => $this->om->listeNbTache(),
-		// 														'userInfo' => $this->om->userInfo(array($this->userId)),
-		// 														'userId' => $this->userId,
-		// 														));  // templates/index.php
-		return new TemplateResponse('whereami', 'index', array( 'events' => $this->searchCalendar()));
+		$res = $this->getEvents(new DateTime('2022-06-01'), new DateTime('2022-06-30'));
+		return new TemplateResponse('whereami', 'index', array(
+																'uids' => $this->myDb->listUID(),
+																'Events' => $res
+															)
+									);
 	}
 
-
-	//https://docs.nextcloud.com/server/latest/developer_manual/digging_deeper/groupware/calendar.html#access-calendars-and-events
-	
-	public function searchCalendar() {
-		// return $this->calendarManager->getCalendars();
-		// return $this->calendarManager->search("[loc]");
+	public function getEvents(DateTime $from, DateTime $to):array {
+		$searchResults = $this->calendarManager->search("[loc]", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
+		$events = [];
+		foreach($searchResults as $c){
+			array_push($events, new MyEvent($c, $this->myDb));
+		}
+		return $events;
 	}
 
-	public function searchInUserCalendar(
-		string $uid,
-		string $calendarUri,
-		DateTimeImmutable $from,
-		DateTimeImmutable $to) {
-		$principal = 'principals/users/' . $uid;
-
-		// Prepare the query
-		$query = $this->calendarManager->newQuery($principal);
-		$query->addSearchCalendar($uri);
-		$query->setTimerangeStart($from);
-		$query->setTimerangeEnd($to);
-
-		// Execute the query
-		$objects = $this->calendarManager->searchForPrincipal($query);
-		return $objects;
-	}
-
-	/**
-	 * get all users uid
-	 */
-	public function getUids(): array{
-
-	}
+	public function processCalendarData(string $uid) {
+        $principal = 'principals/users/' . $uid;
+		$calendars = $this->calendarManager->getCalendarsForPrincipal($principal);
+		return $calendars;
+    }
 }

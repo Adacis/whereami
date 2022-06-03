@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Jun  2 17:14:04 2022
+# Make data base, printed on Fri Jun  3 14:49:02 2022
 
 # Variables
 
@@ -49,7 +49,9 @@ VTE_VERSION = 6003
 # environment
 VSCODE_NLS_CONFIG = {"locale":"fr","availableLanguages":{"*":"fr"},"_languagePackId":"25fe6a3290ec415596628d4afc87a88c.fr","_translationsConfigFile":"/home/baimard/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr/tcf.json","_cacheRoot":"/home/baimard/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr","_resolvedLanguagePackCoreLocation":"/home/baimard/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5","_corruptedFile":"/home/baimard/.config/Code/clp/25fe6a3290ec415596628d4afc87a88c.fr/corrupted.info","_languagePackSupport":true}
 # environment
-JOURNAL_STREAM = 8:44108
+_ = /usr/bin/code
+# environment
+JOURNAL_STREAM = 8:42776
 # environment
 XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
 # makefile (from 'Makefile', line 1)
@@ -67,15 +69,13 @@ DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-_ = /usr/bin/code
-# environment
-MANAGERPID = 1977
+MANAGERPID = 2051
 # makefile (from 'Makefile', line 6)
 appstore_package_name = $(appstore_build_directory)/$(app_name)
 # environment
 LESSOPEN = | /usr/bin/lesspipe %s
 # environment
-VSCODE_CWD = /home/baimard/Documents/script
+VSCODE_CWD = /home/baimard
 # default
 MAKE_HOST := x86_64-pc-linux-gnu
 # environment
@@ -85,7 +85,7 @@ source_package_name = $(source_build_directory)/$(app_name)
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-SESSION_MANAGER = local/benjamin:@/tmp/.ICE-unix/2239,unix/benjamin:/tmp/.ICE-unix/2239
+SESSION_MANAGER = local/benjamin:@/tmp/.ICE-unix/2330,unix/benjamin:/tmp/.ICE-unix/2330
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
@@ -95,7 +95,7 @@ VSCODE_LOG_STACK = false
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-INVOCATION_ID = fa2af96a8b934c0f9ceab040e9fcafbe
+INVOCATION_ID = 806899be5b2a4ea9bcfbfd1e7d81ea1c
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -105,7 +105,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 2602
+GIO_LAUNCHED_DESKTOP_FILE_PID = 2699
 # automatic
 %F = $(notdir $%)
 # environment
@@ -117,7 +117,7 @@ PWD = /var/www/nextcloud/apps/whereami
 # default
 .LOADED := 
 # environment
-SSH_AGENT_PID = 2187
+SSH_AGENT_PID = 2277
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
 # environment
@@ -155,11 +155,11 @@ MAKECMDGOALS := all
 # environment
 QT_IM_MODULE = ibus
 # environment
-SHLVL = 1
+SHLVL = 2
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-bc16c3be-6c87-40d7-a504-567a40a42268.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-4297a5f6-9815-4b3a-98fd-a1b9022ddaa5.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -172,8 +172,6 @@ XDG_CURRENT_DESKTOP = Unity
 %D = $(patsubst %/,%,$(dir $%))
 # default
 MAKE_COMMAND := make
-# environment
-OLDPWD = /home/baimard/Documents
 # environment
 TERMINATOR_DBUS_PATH = /net/tenshu/Terminator2
 # default
@@ -235,11 +233,11 @@ TERM = xterm-256color
 # environment
 TERMINATOR_DBUS_NAME = net.tenshu.Terminator21a9d5db22c73a993ff0b42f64b396873
 # environment
-VSCODE_PID = 7613
+VSCODE_PID = 2737
 # environment
-TERMINATOR_UUID = urn:uuid:5ae7b2c7-0fde-4e1e-9f85-2c9ffdc77215
+TERMINATOR_UUID = urn:uuid:54608055-07a1-4a96-8b7b-6522404f7d11
 # variable set hash-table stats:
-# Load=114/1024=11%, Rehash=0, Collisions=19/145=13%
+# Load=113/1024=11%, Rehash=0, Collisions=19/144=13%
 
 # Pattern-specific Variable Values
 
@@ -247,9 +245,9 @@ TERMINATOR_UUID = urn:uuid:5ae7b2c7-0fde-4e1e-9f85-2c9ffdc77215
 
 # Directories
 
-# . (device 64769, inode 661036): 22 files, no impossibilities.
+# . (device 64769, inode 661036): 25 files, no impossibilities.
 
-# 22 files, no impossibilities in 1 directories.
+# 25 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -287,10 +285,10 @@ source:
 
 stylelint-fix:
 #  Implicit rule search has not been done.
+ 
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 44):
- 
 	npm run stylelint:fix
 
 composer:
@@ -594,6 +592,7 @@ appstore:
 	--exclude="../$(app_name)/vendor" \
 	--exclude="../$(app_name)/drivers" \
 	--exclude="../$(app_name)/*.sh" \
+ 
 	../$(app_name)
 
 translate:
@@ -604,7 +603,6 @@ translate:
 	./translationtool.phar convert-po-files
 
 build-js-production:
- 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -619,12 +617,12 @@ build-js-production:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 60 / storage = 582 B / avg = 9 B
-# current buf: size = 8162 B / used = 582 B / count = 60 / avg = 9 B
+# strcache buffers: 1 (0) / strings = 62 / storage = 606 B / avg = 9 B
+# current buf: size = 8162 B / used = 606 B / count = 62 / avg = 9 B
 
-# strcache performance: lookups = 147 / hit rate = 59%
+# strcache performance: lookups = 150 / hit rate = 58%
 # hash-table stats:
-# Load=60/8192=1%, Rehash=0, Collisions=1/147=1%
-# Finished Make data base on Thu Jun  2 17:14:04 2022
+# Load=62/8192=1%, Rehash=0, Collisions=1/150=1%
+# Finished Make data base on Fri Jun  3 14:49:02 2022
 
  

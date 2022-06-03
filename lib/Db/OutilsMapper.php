@@ -1,5 +1,5 @@
 <?php
-namespace OCA\Outils\Db;
+namespace OCA\Whereami\Db;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;

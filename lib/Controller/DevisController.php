@@ -4,8 +4,8 @@ use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-use OCA\Outils\Db\OutilsMapper;
-use OCA\Outils\Db\DevisMapper;
+use OCA\Whereami\Db\OutilsMapper;
+use OCA\Whereami\Db\DevisMapper;
 
 
 class DevisController extends Controller {

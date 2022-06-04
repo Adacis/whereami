@@ -2,6 +2,23 @@
 	margin-left: 20px;
 }
 
-table th, td {
-	border: 1px solid blue;
+#content {
+	width:100%;
 }
+
+#contentTable {
+  background-color: var(--color-main-background);
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 100%;
+}
+
+#app {
+	width:100%;
+}
+
+#myapp {
+	width: 100%;
+}
+
+th, td { white-space: nowrap; }

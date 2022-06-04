@@ -7,12 +7,9 @@ use DateTimeImmutable;
 class MyEvent{
     public String $id;
     public String $summary;
-    private DateTimeImmutable $dtStart;
-    private DateTimeImmutable $dtEnd;
+    public String $dtStart;
+    public String $dtEnd;
 
-    public $calendarName;
-	
-    
     private Bdd $myDb;
 
     public function __construct($e,
@@ -21,8 +18,8 @@ class MyEvent{
         $this->myDb = $myDb;
         $this->id = $e['id'];
         $this->summary  = $e["objects"][0]["SUMMARY"][0];
-        $this->dtStart  = $e["objects"][0]["DTSTART"][0];
-        $this->dtEnd    = $e["objects"][0]["DTEND"][0];
+        $this->dtStart  = $e["objects"][0]["DTSTART"][0]->format("Y-m-d");
+        $this->dtEnd    = $e["objects"][0]["DTEND"][0]->format("Y-m-d");
         $this->nextcloud_users = $this->getNameCalendar($this->id);
         // $this->obj = $e;
     }

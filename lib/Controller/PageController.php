@@ -6,6 +6,8 @@ use OCA\Whereami\MyClass\MyEvent;
 
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\DataResponse;
+
 use OCP\AppFramework\Controller;
 use OCP\Calendar\IManager;
 use Sabre\VObject;
@@ -47,16 +49,22 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$res = $this->getEvents(new DateTime('2022-06-01'), new DateTime('2022-06-15'));
-		return new TemplateResponse('whereami', 'index', array('uids' => $this->myDb->listUID(),
-																'Events' => $res));
+		// $res = $this->getEvents(new DateTime('2022-06-01'), new DateTime('2022-06-15'));
+		// return new TemplateResponse('whereami', 'index', array('uids' => $this->myDb->listUID(),'Events' => $res));
+		return new TemplateResponse('whereami', 'index', array());
 	}
 
 
 	/**
-	 * Getall events in DateTime interval
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param string $dtStart
+	 * @param string $dtEnd
 	 */
-	public function getEvents(DateTime $from, DateTime $to):array {
+	public function getEvents(String $dtStart, String $dtEnd){
+		$from = new DateTime($dtStart);
+		$to = new DateTime($dtEnd);
+
 		$searchResults = $this->calendarManager->search("[loc]", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
 		$events = [];
 		foreach($searchResults as $c){
@@ -66,6 +74,6 @@ class PageController extends Controller {
 			}
 			array_push($events[$e->nextcloud_users], $e);
 		}
-		return $events;
+		return new DataResponse($events, 200, ['Content-Type' => 'application/json']);
 	}
 }

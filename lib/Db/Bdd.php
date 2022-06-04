@@ -26,7 +26,7 @@ class Bdd {
         return $this->execSQLNoJsonReturn($sql, array($id));
     }
 
-     /**
+    /**
      * @sql
      * @array() //prepare statement
      */

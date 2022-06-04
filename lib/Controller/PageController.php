@@ -47,26 +47,25 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$res = $this->getEvents(new DateTime('2022-06-01'), new DateTime('2022-06-30'));
-		return new TemplateResponse('whereami', 'index', array(
-																'uids' => $this->myDb->listUID(),
-																'Events' => $res
-															)
-									);
+		$res = $this->getEvents(new DateTime('2022-06-01'), new DateTime('2022-06-15'));
+		return new TemplateResponse('whereami', 'index', array('uids' => $this->myDb->listUID(),
+																'Events' => $res));
 	}
 
+
+	/**
+	 * Getall events in DateTime interval
+	 */
 	public function getEvents(DateTime $from, DateTime $to):array {
 		$searchResults = $this->calendarManager->search("[loc]", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
 		$events = [];
 		foreach($searchResults as $c){
-			array_push($events, new MyEvent($c, $this->myDb));
+			$e = new MyEvent($c, $this->myDb);
+			if(!array_key_exists($e->nextcloud_users,$events)){
+				$events[$e->nextcloud_users] = [];
+			}
+			array_push($events[$e->nextcloud_users], $e);
 		}
 		return $events;
 	}
-
-	public function processCalendarData(string $uid) {
-        $principal = 'principals/users/' . $uid;
-		$calendars = $this->calendarManager->getCalendarsForPrincipal($principal);
-		return $calendars;
-    }
 }

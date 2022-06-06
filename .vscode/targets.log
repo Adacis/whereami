@@ -1,45 +1,83 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # GNU Make 4.2.1
+ 
 # Built for x86_64-pc-linux-gnu
+ 
 # Copyright (C) 1988-2016 Free Software Foundation, Inc.
+ 
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+ 
 # This is free software: you are free to change and redistribute it.
+ 
 # There is NO WARRANTY, to the extent permitted by law.
+ 
 
-# Make data base, printed on Mon Jun  6 13:12:48 2022
+ 
+# Make data base, printed on Mon Jun  6 14:08:18 2022
+ 
 
 # Variables
+ 
 
+ 
 # 'override' directive
+ 
 GNUMAKEFLAGS := 
+ 
 # automatic
+ 
 <D = $(patsubst %/,%,$(dir $<))
+ 
 # automatic
+ 
 ?F = $(notdir $?)
+ 
 # environment
+ 
 DESKTOP_SESSION = ubuntu
+ 
 # default
+ 
 .SHELLFLAGS := -c
+ 
 # environment
+ 
 XDG_SESSION_CLASS = user
+ 
 # environment
+ 
 XDG_SESSION_TYPE = x11
+ 
 # environment
+ 
 VSCODE_LOG_NATIVE = false
+ 
 # automatic
+ 
 ?D = $(patsubst %/,%,$(dir $?))
  
 # environment
+ 
 IM_CONFIG_PHASE = 1
+ 
 # automatic
+ 
 @D = $(patsubst %/,%,$(dir $@))
+ 
 # environment
+ 
 XAUTHORITY = /run/user/1000/gdm/Xauthority
+ 
 # environment
+ 
 GDMSESSION = ubuntu
+ 
 # environment
+ 
 XMODIFIERS = @im=ibus
+ 
 # makefile
+ 
 CURDIR := /var/www/nextcloud/apps/whereami
 # makefile (from 'Makefile', line 8)
 composer = $(shell which composer 2> /dev/null)
@@ -106,7 +144,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 2753
+GIO_LAUNCHED_DESKTOP_FILE_PID = 9734
 # automatic
 %F = $(notdir $%)
 # environment
@@ -160,7 +198,7 @@ SHLVL = 2
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-6ca0e8c3-dffb-49cb-a219-90ee2de61594.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-b7ab9a87-e0f0-4988-a71b-3d9acedd8be1.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -178,7 +216,6 @@ TERMINATOR_DBUS_PATH = /net/tenshu/Terminator2
 # default
 .VARIABLES := 
 # automatic
- 
 *F = $(notdir $*)
 # environment
 VSCODE_IPC_HOOK = /run/user/1000/vscode-d484ca20-1.67.2-main.sock
@@ -219,7 +256,6 @@ WINDOWPATH = 2
 # makefile (from 'Makefile', line 2)
 build_tools_directory = $(CURDIR)/build/tools
 # makefile (from 'Makefile', line 1)
- 
 app_name = $(notdir $(CURDIR))
 # makefile (from 'Makefile', line 7)
 npm = $(shell which npm 2> /dev/null)
@@ -228,7 +264,6 @@ npm = $(shell which npm 2> /dev/null)
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # default
- 
 .RECIPEPREFIX := 
 # environment
 LANG = C
@@ -237,9 +272,9 @@ TERM = xterm-256color
 # environment
 TERMINATOR_DBUS_NAME = net.tenshu.Terminator21a9d5db22c73a993ff0b42f64b396873
 # environment
-VSCODE_PID = 2785
+VSCODE_PID = 9769
 # environment
-TERMINATOR_UUID = urn:uuid:08940aec-c0ca-4eea-8881-38fe20be7cef
+TERMINATOR_UUID = urn:uuid:bca9e078-c167-42e2-b956-c6c68dab3048
 # variable set hash-table stats:
 # Load=113/1024=11%, Rehash=0, Collisions=19/144=13%
 
@@ -328,7 +363,9 @@ install-composer-deps: composer.phar
 stopContainer:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
+ 
 #  File has not been updated.
+ 
 #  recipe to execute (from 'Makefile', line 194):
 	docker stop -t 0 database
 	docker stop -t 0 nextcloud
@@ -517,7 +554,6 @@ npm-update:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  recipe to execute (from 'Makefile', line 21):
 	npm update
 
@@ -626,6 +662,6 @@ build-js-production:
 # strcache performance: lookups = 150 / hit rate = 58%
 # hash-table stats:
 # Load=62/8192=1%, Rehash=0, Collisions=1/150=1%
-# Finished Make data base on Mon Jun  6 13:12:48 2022
+# Finished Make data base on Mon Jun  6 14:08:18 2022
 
  

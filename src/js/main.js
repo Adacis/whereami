@@ -1,5 +1,10 @@
 import { getData } from "./module/xhr";
-import "datatables.net-dt/css/jquery.dataTables.css";
+
+// import DataTable from "datatables.net-dt/js/dataTables.dataTables";
+import DataTable from "datatables.net-bs/js/dataTables.bootstrap.min.js";
+import "datatables.net-fixedcolumns/js/dataTables.fixedColumns";
+// import "datatables.net-dt/css/jquery.dataTables.css";
+import "datatables.net-bs/css/dataTables.bootstrap.min.css";
 /**
  * 
  */
@@ -11,9 +16,9 @@ import "datatables.net-dt/css/jquery.dataTables.css";
 	autoWidth: false,
     stateSave: true,
     lengthMenu: [[100, 300, 500, -1], [100, 300, 500, "All"]],
-	fixedColumns:   {
-		left: 1
-	},
+	fixedColumns: {
+        left: 1
+    },
     language: {
         "search": t('gestion', 'Search'),
         "emptyTable": t('gestion', 'No data available in table'),
@@ -33,11 +38,18 @@ import "datatables.net-dt/css/jquery.dataTables.css";
     }
 }
 
+window.addEventListener('click', e => {
+    if( e.target.className.includes("refresh")){
+        document.getElementById("myapp").innerHTML = "";
+        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable);
+    }
+});
+
 window.addEventListener("DOMContentLoaded", function () {
 	let toDay = new Date("2022-06-01");
 	document.getElementById("dtStart").valueAsDate = toDay;
-	toDay.setDate(toDay.getDate() + 15);
+	toDay.setDate(toDay.getDate() + 7);
 	document.getElementById("dtEnd").valueAsDate = toDay;
 
-	getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value);
+	getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable);
 });

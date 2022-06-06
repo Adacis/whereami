@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun Jun  5 01:04:23 2022
+# Make data base, printed on Mon Jun  6 13:12:48 2022
 
 # Variables
 
@@ -28,6 +28,7 @@ XDG_SESSION_TYPE = x11
 VSCODE_LOG_NATIVE = false
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
+ 
 # environment
 IM_CONFIG_PHASE = 1
 # automatic
@@ -51,7 +52,7 @@ VSCODE_NLS_CONFIG = {"locale":"fr","availableLanguages":{"*":"fr"},"_languagePac
 # environment
 _ = /usr/bin/code
 # environment
-JOURNAL_STREAM = 8:42661
+JOURNAL_STREAM = 8:43688
 # environment
 XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
 # makefile (from 'Makefile', line 1)
@@ -69,7 +70,7 @@ DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-MANAGERPID = 1997
+MANAGERPID = 2031
 # makefile (from 'Makefile', line 6)
 appstore_package_name = $(appstore_build_directory)/$(app_name)
 # environment
@@ -85,7 +86,7 @@ source_package_name = $(source_build_directory)/$(app_name)
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-SESSION_MANAGER = local/benjamin:@/tmp/.ICE-unix/2257,unix/benjamin:/tmp/.ICE-unix/2257
+SESSION_MANAGER = local/benjamin:@/tmp/.ICE-unix/2289,unix/benjamin:/tmp/.ICE-unix/2289
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
@@ -95,7 +96,7 @@ VSCODE_LOG_STACK = false
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-INVOCATION_ID = ad31118f9847443f80fb4d7a027dbdc6
+INVOCATION_ID = 4404c65bb6704c6eb7e44b2a6a27af1f
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -105,7 +106,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 24235
+GIO_LAUNCHED_DESKTOP_FILE_PID = 2753
 # automatic
 %F = $(notdir $%)
 # environment
@@ -117,7 +118,7 @@ PWD = /var/www/nextcloud/apps/whereami
 # default
 .LOADED := 
 # environment
-SSH_AGENT_PID = 2204
+SSH_AGENT_PID = 2236
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
 # environment
@@ -159,7 +160,7 @@ SHLVL = 2
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-e5b73ba3-201c-4ac8-a59f-591f7e263004.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-6ca0e8c3-dffb-49cb-a219-90ee2de61594.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -177,6 +178,7 @@ TERMINATOR_DBUS_PATH = /net/tenshu/Terminator2
 # default
 .VARIABLES := 
 # automatic
+ 
 *F = $(notdir $*)
 # environment
 VSCODE_IPC_HOOK = /run/user/1000/vscode-d484ca20-1.67.2-main.sock
@@ -217,6 +219,7 @@ WINDOWPATH = 2
 # makefile (from 'Makefile', line 2)
 build_tools_directory = $(CURDIR)/build/tools
 # makefile (from 'Makefile', line 1)
+ 
 app_name = $(notdir $(CURDIR))
 # makefile (from 'Makefile', line 7)
 npm = $(shell which npm 2> /dev/null)
@@ -225,6 +228,7 @@ npm = $(shell which npm 2> /dev/null)
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # default
+ 
 .RECIPEPREFIX := 
 # environment
 LANG = C
@@ -233,9 +237,9 @@ TERM = xterm-256color
 # environment
 TERMINATOR_DBUS_NAME = net.tenshu.Terminator21a9d5db22c73a993ff0b42f64b396873
 # environment
-VSCODE_PID = 24289
+VSCODE_PID = 2785
 # environment
-TERMINATOR_UUID = urn:uuid:b0c8b794-2737-4442-a703-081be4fd2011
+TERMINATOR_UUID = urn:uuid:08940aec-c0ca-4eea-8881-38fe20be7cef
 # variable set hash-table stats:
 # Load=113/1024=11%, Rehash=0, Collisions=19/144=13%
 
@@ -285,7 +289,6 @@ source:
 
 stylelint-fix:
 #  Implicit rule search has not been done.
- 
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 44):
@@ -514,6 +517,7 @@ npm-update:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+ 
 #  recipe to execute (from 'Makefile', line 21):
 	npm update
 
@@ -592,7 +596,6 @@ appstore:
 	--exclude="../$(app_name)/vendor" \
 	--exclude="../$(app_name)/drivers" \
 	--exclude="../$(app_name)/*.sh" \
- 
 	../$(app_name)
 
 translate:
@@ -623,6 +626,6 @@ build-js-production:
 # strcache performance: lookups = 150 / hit rate = 58%
 # hash-table stats:
 # Load=62/8192=1%, Rehash=0, Collisions=1/150=1%
-# Finished Make data base on Sun Jun  5 01:04:23 2022
+# Finished Make data base on Mon Jun  6 13:12:48 2022
 
  

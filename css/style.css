@@ -1,5 +1,5 @@
-#app-navigation .navcss {
-	margin-left: 20px;
+.app-navigation-entry {
+  margin-left:10px;
 }
 
 #content {
@@ -19,6 +19,20 @@
 
 #myapp {
 	width: 100%;
+  font-size: 14px;
 }
 
+
 th, td { white-space: nowrap; }
+
+table.dataTable {
+  width: 100%;
+}
+
+table.dataTable.table-striped > tbody > tr.odd > * {
+  background-color: var(--color-main-background);
+}
+
+table.dataTable.table-striped > tbody > tr.even > * {
+  background-color: var(--color-main-background);
+}

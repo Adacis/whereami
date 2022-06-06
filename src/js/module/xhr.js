@@ -1,13 +1,11 @@
 import { showError, showSuccess } from "@nextcloud/dialogs";
 import { generateUrl } from "@nextcloud/router";
 import { Events } from "../class/Event";
-import DataTable from "datatables.net";
-import "datatables.net-dt";
 import { optionDatatable } from "../main";
 
 export var baseUrl = generateUrl('/apps/whereami');
 
-export function getData(dtStart, dtEnd){
+export function getData(dtStart, dtEnd, DataTable){
     var data = {
         dtStart : dtStart,
         dtEnd: dtEnd
@@ -24,6 +22,7 @@ export function getData(dtStart, dtEnd){
 
             var table = document.createElement('table');
             table.setAttribute('id', 'personne');
+            table.setAttribute('class', 'table table-striped ');
             var thead = document.createElement('thead');
             var tbody = document.createElement('tbody');
 
@@ -52,13 +51,16 @@ export function getData(dtStart, dtEnd){
                         e = new Events(el);
                         if(e.inInterval(from)){
                             var myCase = document.createElement('td');
-                            myCase.innerText = e.getSummary();
+                            myCase.innerText = e.getSummary().replace('[loc]','');
                             line.appendChild(myCase);
                             trouve = true;
                         }
                     });
                     if(!trouve){
-                        line.appendChild(document.createElement('td'));
+                        var myCase = document.createElement('td');
+                        myCase.setAttribute('style', 'background-color: yellow;');
+                        myCase.innerText = "shame";
+                        line.appendChild(myCase);
                     }
                     from.setDate(from.getDate() + 1);
                 }
@@ -77,32 +79,3 @@ export function getData(dtStart, dtEnd){
     };
     oReq.send(JSON.stringify(data));
 }
-
-		// use DateTimeImmutable;
-
-		// $dtStart = new DateTimeImmutable('2022-06-01');
-		// $dtEnd = new DateTimeImmutable('2022-06-15');
-
-
-
-		// echo "</tr>";
-
-		// foreach($_['Events'] as $k => $myE){
-		// 	echo "<tr><td>$k</td>";
-			
-		// 	$dtStart = new DateTimeImmutable('2022-06-01');
-		// 	while($dtStart <= $dtEnd){
-		// 		$trouve = false;
-		// 		foreach($_['Events'][$k] as $e){
-		// 			if($e->inInterval($dtStart)){
-		// 				echo "<td>$e->summary</td>";
-		// 				$trouve = true;
-		// 			}
-		// 		}
-		// 		if(!$trouve)
-		// 			echo "<td></td>";
-		// 		$dtStart = $dtStart->modify('+1 day');
-		// 	}
-
-		// 	echo "</tr>";
-		// }

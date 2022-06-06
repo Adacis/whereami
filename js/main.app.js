@@ -36608,6 +36608,36 @@ class Events {
         return false;
     }
 }
+;// CONCATENATED MODULE: ./src/js/class/listEvents.js
+
+
+class listEvents{
+    
+    constructor(element,le) {
+        this.id = element
+        this.listEvents = le;
+    }
+
+    eventsAtDay(from){
+        var myCase = document.createElement("td");
+        var trouve = false;
+        var res = "";
+
+        this.listEvents.forEach(events => {
+            var e = new Events(events);
+            if(e.inInterval(from)){
+                res +=  e.getSummary().replace('[loc]','')
+                trouve = true;
+            }
+        });
+        if(!trouve){
+            myCase.setAttribute('style', 'background-color: yellow;');
+            res += "shame";
+        }
+        myCase.innerText = res;
+        return myCase;
+    }
+}
 ;// CONCATENATED MODULE: ./src/js/module/xhr.js
 
 
@@ -36616,6 +36646,12 @@ class Events {
 
 var baseUrl = (0,router_dist/* generateUrl */.nu)('/apps/whereami');
 
+/**
+ * 
+ * @param {*} dtStart 
+ * @param {*} dtEnd 
+ * @param {*} DataTable 
+ */
 function getData(dtStart, dtEnd, DataTable){
     var data = {
         dtStart : dtStart,
@@ -36628,67 +36664,96 @@ function getData(dtStart, dtEnd, DataTable){
     oReq.setRequestHeader("requesttoken", oc_requesttoken);
     oReq.onload = function(e){
         if (this.status == 200) {
-            var from = new Date(dtStart);
-            var to = new Date(dtEnd);
-
-            var table = document.createElement('table');
-            table.setAttribute('id', 'personne');
-            table.setAttribute('class', 'table table-striped ');
-            var thead = document.createElement('thead');
-            var tbody = document.createElement('tbody');
-
-            var line = document.createElement('tr');
-            var myCase = document.createElement('th');
-            myCase.innerText = "Date";
-            line.appendChild(myCase);
-
-            while(from<=to){
-                var myCase = document.createElement('th');
-                myCase.innerText = from.toLocaleDateString();
-                line.appendChild(myCase);
-                from.setDate(from.getDate() + 1);
-            }
-
-            var res = JSON.parse(this.response);
-            Object.keys(res).forEach(element => {
-                from = new Date(dtStart);
-                var line = document.createElement('tr');
-                var myCase = document.createElement('td');
-                myCase.innerText = element;
-                line.appendChild(myCase);
-                while(from<=to){
-                    var trouve = false;
-                    res[element].forEach(el => {
-                        e = new Events(el);
-                        if(e.inInterval(from)){
-                            var myCase = document.createElement('td');
-                            myCase.innerText = e.getSummary().replace('[loc]','');
-                            line.appendChild(myCase);
-                            trouve = true;
-                        }
-                    });
-                    if(!trouve){
-                        var myCase = document.createElement('td');
-                        myCase.setAttribute('style', 'background-color: yellow;');
-                        myCase.innerText = "shame";
-                        line.appendChild(myCase);
-                    }
-                    from.setDate(from.getDate() + 1);
-                }
-                tbody.appendChild(line);
-            });
-
-            thead.appendChild(line);
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            document.getElementById("myapp").appendChild(table);
-
+            newTablePersonne(this.response,dtStart,dtEnd);
             new DataTable("#personne", optionDatatable);
+            showSuccess('table loaded');
         }else{
             showError(this.response);
         }
     };
     oReq.send(JSON.stringify(data));
+}
+
+/**
+ * 
+ * @param {*} type 
+ * @param {*} data 
+ * @param {*} style 
+ * @returns 
+ */
+function newCell(type, data, style = ""){
+    var myCase = document.createElement(type);
+    myCase.setAttribute('style', style);
+    myCase.innerText = data;
+    return myCase;
+}
+
+/**
+ * 
+ * @param {*} response 
+ * @param {*} dtStart 
+ * @param {*} dtEnd 
+ */
+function newTablePersonne(response, dtStart,dtEnd){
+    var from = new Date(dtStart);
+    var to = new Date(dtEnd);
+
+    var table = document.createElement('table');
+    var thead = document.createElement('thead');
+    var tbody = document.createElement('tbody');
+    
+    table.setAttribute('id', 'personne');
+    table.setAttribute('class', 'table table-striped ');
+
+    thead.appendChild(getHeader(from,to));
+
+    var res = JSON.parse(response);
+    Object.keys(res).forEach(element => {
+        var from = new Date(dtStart);
+        var userListEvents = new listEvents(element,res[element]);
+        tbody = getContent(tbody,from,to,userListEvents);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    document.getElementById("myapp").appendChild(table);
+    
+}
+
+/**
+ * 
+ * @param {*} from 
+ * @param {*} to 
+ * @returns 
+ */
+function getHeader(from,to){
+    var line = document.createElement('tr');
+    line.appendChild(newCell("th","Date"));
+    while(from<=to){
+        line.appendChild(newCell("th",from.toLocaleDateString()));
+        from.setDate(from.getDate() + 1);
+    }
+
+    return line;
+}
+
+/**
+ * 
+ * @param {*} tbody 
+ * @param {*} from 
+ * @param {*} to
+ * @param {*} userListEvents 
+ * @returns 
+ */
+function getContent(tbody,from,to,userListEvents){
+    var line = document.createElement('tr');
+    line.appendChild(newCell("td",userListEvents.id));
+    while(from<=to){
+        line.appendChild(userListEvents.eventsAtDay(from));
+        from.setDate(from.getDate() + 1);
+    }
+    tbody.appendChild(line);
+    return tbody;
 }
 // EXTERNAL MODULE: ./node_modules/datatables.net-bs/js/dataTables.bootstrap.min.js
 var dataTables_bootstrap_min = __webpack_require__(9700);
@@ -36795,7 +36860,7 @@ window.addEventListener('click', e => {
 window.addEventListener("DOMContentLoaded", function () {
 	let toDay = new Date("2022-06-01");
 	document.getElementById("dtStart").valueAsDate = toDay;
-	toDay.setDate(toDay.getDate() + 7);
+	toDay.setDate(toDay.getDate() + 15);
 	document.getElementById("dtEnd").valueAsDate = toDay;
 
 	getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()));

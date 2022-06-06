@@ -17,7 +17,6 @@ use DateTime;
 
 class PageController extends Controller {
 	private $userId;
-	private $GetNomComplet;
     private $calendarManager;
 	private $myDb;
 
@@ -33,15 +32,6 @@ class PageController extends Controller {
 		$this->myDb = $myDb;
 		$this->calendarManager = $calendarManager;
 		$this->calendars = $this->calendarManager->getCalendars();
-
-		$this->GetNomComplet = function($val)
-		{
-			$myObj = json_decode($val);
-			$parameters = $myObj->{'displayname'}->{'value'};
-			if(empty($parameters))
-				$parameters="Non affecté";
-			return $parameters;
-		};
 	}
 
 	/**
@@ -49,8 +39,6 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		// $res = $this->getEvents(new DateTime('2022-06-01'), new DateTime('2022-06-15'));
-		// return new TemplateResponse('whereami', 'index', array('uids' => $this->myDb->listUID(),'Events' => $res));
 		return new TemplateResponse('whereami', 'index', array());
 	}
 
@@ -67,6 +55,13 @@ class PageController extends Controller {
 
 		$searchResults = $this->calendarManager->search("[loc]", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
 		$events = [];
+
+		//list de tous les utilisateurs
+		// $allUID = $this->myDb->getAllUID();
+		// foreach ($allUID as $UID){
+		// 	$events[json_decode($UID['data'])->{'displayname'}->{'value'}] = [];
+		// }
+
 		foreach($searchResults as $c){
 			$e = new MyEvent($c, $this->myDb);
 			if(!array_key_exists($e->nextcloud_users,$events)){

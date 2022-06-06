@@ -21,6 +21,11 @@ class Bdd {
         return $this->execSQLNoJsonReturn($sql, array($uid));
     }
 
+    public function getAllUID(){
+        $sql = 'SELECT * FROM `*PREFIX*accounts`';
+        return $this->execSQLNoJsonReturn($sql, array());
+    }
+
     public function getCalendars($id){
         $sql = 'SELECT `*PREFIX*calendars`.principaluri FROM `*PREFIX*calendarobjects`, `*PREFIX*calendars` WHERE `*PREFIX*calendarobjects`.id = ? AND `*PREFIX*calendarobjects`.calendarid = `*PREFIX*calendars`.id';
         return $this->execSQLNoJsonReturn($sql, array($id));

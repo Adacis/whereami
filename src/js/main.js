@@ -48,7 +48,7 @@ window.addEventListener('click', e => {
 window.addEventListener("DOMContentLoaded", function () {
 	let toDay = new Date("2022-06-01");
 	document.getElementById("dtStart").valueAsDate = toDay;
-	toDay.setDate(toDay.getDate() + 7);
+	toDay.setDate(toDay.getDate() + 15);
 	document.getElementById("dtEnd").valueAsDate = toDay;
 
 	getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable);

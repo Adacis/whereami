@@ -21,7 +21,6 @@ class MyEvent{
         $this->dtStart  = $e["objects"][0]["DTSTART"][0]->format("Y-m-d");
         $this->dtEnd    = $e["objects"][0]["DTEND"][0]->format("Y-m-d");
         $this->nextcloud_users = $this->getNameCalendar($this->id);
-        // $this->obj = $e;
     }
 
     public function getNameCalendar($calendarsUid){

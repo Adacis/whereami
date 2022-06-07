@@ -9,7 +9,6 @@ export class Events {
 
     inInterval(from){
         var dtStart = new Date(this.dtStart);
-        // console.log(dtStart)
         var dtEnd = new Date(this.dtEnd);
         if(from >= dtStart
             && from < dtEnd){

@@ -1,3 +1,11 @@
+#app-navigation:not(.hidden) + #app-content{
+  margin-left: 230px;
+}
+
+#app-navigation:not(.vue){
+  width: 230px;
+}
+
 .app-navigation-entry {
   margin-left:10px;
 }
@@ -23,14 +31,23 @@
 }
 
 
-th, td { white-space: nowrap; }
+th, td { 
+  padding-left:5px;
+  padding-right:5px;
+  white-space: nowrap; 
+}
 
 table.dataTable {
+  font-size: larger;
   width: 100%;
 }
 
 table.dataTable.table-striped > thead > tr > * {
-  background-color: var(--color-main-background);
+  background-color: var(--color-box-shadow);
+}
+
+table.dataTable.table-striped > tfoot > tr > * {
+  background-color: var(--color-box-shadow);
 }
 
 table.dataTable.table-striped > tbody > tr.odd > * {
@@ -39,4 +56,30 @@ table.dataTable.table-striped > tbody > tr.odd > * {
 
 table.dataTable.table-striped > tbody > tr.even > * {
   background-color: var(--color-main-background);
+}
+
+/* loading */
+.lds-dual-ring {
+  display: inline-block;
+  width: 500px;
+  height: 500px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid var(--color-primary);
+  border-color: var(--color-primary) transparent var(--color-primary) transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

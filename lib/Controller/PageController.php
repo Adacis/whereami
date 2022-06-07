@@ -45,11 +45,11 @@ class PageController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
+	 * @param string $classement
 	 * @param string $dtStart
 	 * @param string $dtEnd
 	 */
-	public function getEvents(String $dtStart, String $dtEnd){
+	public function getEvents(String $classement, String $dtStart, String $dtEnd){
 		$from = new DateTime($dtStart);
 		$to = new DateTime($dtEnd);
 
@@ -64,11 +64,12 @@ class PageController extends Controller {
 
 		foreach($searchResults as $c){
 			$e = new MyEvent($c, $this->myDb);
-			if(!array_key_exists($e->nextcloud_users,$events)){
-				$events[$e->nextcloud_users] = [];
+			if(!array_key_exists($e->{$classement},$events)){
+				$events[$e->{$classement}] = [];
 			}
-			array_push($events[$e->nextcloud_users], $e);
+			array_push($events[$e->{$classement}], $e);
 		}
 		return new DataResponse($events, 200, ['Content-Type' => 'application/json']);
 	}
+
 }

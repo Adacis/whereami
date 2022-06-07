@@ -34,14 +34,23 @@ import "datatables.net-bs/css/dataTables.bootstrap.min.css";
             "last": t('gestion', 'Last'),
             "next": t('gestion', 'Next'),
             "previous": t('gestion', 'Previous'),
+        },
+        "fixedHeader": {
+            "header": true,
+            "footer": true
         }
     }
 }
 
 window.addEventListener('click', e => {
-    if( e.target.className.includes("refresh")){
+    if( e.target.className.includes("showbyemployees")){
         document.getElementById("myapp").innerHTML = "";
-        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable);
+        document.getElementById("myapp").appendChild(getLoader());
+        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable,'nextcloud_users');
+    }else if(e.target.className.includes("showbylocation")){
+        document.getElementById("myapp").innerHTML = "";
+        document.getElementById("myapp").appendChild(getLoader());
+        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable,'summary');
     }
 });
 
@@ -50,6 +59,20 @@ window.addEventListener("DOMContentLoaded", function () {
 	document.getElementById("dtStart").valueAsDate = toDay;
 	toDay.setDate(toDay.getDate() + 15);
 	document.getElementById("dtEnd").valueAsDate = toDay;
-
-	getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable);
+    
+    document.getElementById("myapp").appendChild(getLoader());
+	
+    getData(document.getElementById("dtStart").value, 
+            document.getElementById("dtEnd").value, 
+            DataTable,
+             'nextcloud_users'
+            );    
 });
+
+function getLoader(){
+    var center = document.createElement('center');
+    var divLoader = document.createElement('div');
+    divLoader.setAttribute('class', 'lds-dual-ring');
+    center.appendChild(divLoader);
+    return center;
+}

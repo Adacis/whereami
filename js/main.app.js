@@ -36599,7 +36599,6 @@ class Events {
 
     inInterval(from){
         var dtStart = new Date(this.dtStart);
-        // console.log(dtStart)
         var dtEnd = new Date(this.dtEnd);
         if(from >= dtStart
             && from < dtEnd){
@@ -36637,9 +36636,28 @@ class listEvents{
         myCase.innerText = res;
         return myCase;
     }
+
+    eventsAtDayCount(from){
+        var myCase = document.createElement("td");
+        var trouve = false;
+        var res = 0;
+
+        this.listEvents.forEach(events => {
+            var e = new Events(events);
+            if(e.inInterval(from)){
+                res +=  1;
+                myCase.setAttribute('style', 'text-align: center;');
+                trouve = true;
+            }
+        });
+        if(!trouve){
+            myCase.setAttribute('style', 'text-align: center; color: white; background-color: green;');
+        }
+        myCase.innerText = res;
+        return myCase;
+    }
 }
 ;// CONCATENATED MODULE: ./src/js/module/xhr.js
-
 
 
 
@@ -36652,8 +36670,9 @@ var baseUrl = (0,router_dist/* generateUrl */.nu)('/apps/whereami');
  * @param {*} dtEnd 
  * @param {*} DataTable 
  */
-function getData(dtStart, dtEnd, DataTable){
+ function getData(dtStart, dtEnd, DataTable, classement){
     var data = {
+        classement: classement,
         dtStart : dtStart,
         dtEnd: dtEnd
     };
@@ -36662,10 +36681,10 @@ function getData(dtStart, dtEnd, DataTable){
     oReq.open('POST', baseUrl + '/getEvents', true);
     oReq.setRequestHeader("Content-Type", "application/json");
     oReq.setRequestHeader("requesttoken", oc_requesttoken);
-    oReq.onload = function(e){
+    oReq.onload = function(e){  
         if (this.status == 200) {
-            newTablePersonne(this.response,dtStart,dtEnd);
-            new DataTable("#personne", optionDatatable);
+            newTablePersonne(this.response,dtStart,dtEnd, classement);
+            new DataTable("#"+classement, optionDatatable);
             showSuccess('table loaded');
         }else{
             showError(this.response);
@@ -36673,6 +36692,71 @@ function getData(dtStart, dtEnd, DataTable){
     };
     oReq.send(JSON.stringify(data));
 }
+
+/**
+ * 
+ * @param {*} response 
+ * @param {*} dtStart 
+ * @param {*} dtEnd 
+ * @param {*} tablename 
+ */
+ function newTablePersonne(response,dtStart,dtEnd,tablename){
+    var table = document.createElement('table');
+    var thead = document.createElement('thead');
+    var tbody = document.createElement('tbody');
+    var tfoot = document.createElement('tfoot');
+    
+    table.setAttribute('id', tablename);
+    table.setAttribute('class', 'table table-striped');
+
+    // var retHead = getHeader(from,to);
+    var from = new Date(dtStart);
+    var to = new Date(dtEnd);
+    thead.appendChild(getHeader(from,to));
+    
+    var from = new Date(dtStart);
+    var to = new Date(dtEnd);
+    tfoot.appendChild(getHeader(from,to));
+
+    var res = JSON.parse(response);
+    Object.keys(res).forEach(element => {
+        var from = new Date(dtStart);
+        var userListEvents = new listEvents(element,res[element]);
+        if(tablename=='summary'){
+            tbody = getContent(tbody,from,to,userListEvents,true);
+        }else{
+            tbody = getContent(tbody,from,to,userListEvents,false);
+        }
+        
+    });
+
+    if(tablename=='summary'){
+        tbody.appendChild(getTotal(tbody));
+    }
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    table.appendChild(tfoot);
+    document.getElementById("myapp").innerHTML = "";
+    document.getElementById("myapp").appendChild(table);
+}
+
+
+function getTotal(tbody){
+    var line = document.createElement('tr');
+    line.appendChild(newCell('td',"Total"));
+
+    var totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
+    for(var i=1; i<totalColumn; i++){
+        var totalByDay = 0;
+        tbody.getElementsByTagName('tr').forEach(element => {
+            totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText);
+        });
+        line.appendChild(newCell('td',totalByDay, 'text-align:center;'));
+    }
+    return line;
+}
+
 
 /**
  * 
@@ -36686,38 +36770,6 @@ function newCell(type, data, style = ""){
     myCase.setAttribute('style', style);
     myCase.innerText = data;
     return myCase;
-}
-
-/**
- * 
- * @param {*} response 
- * @param {*} dtStart 
- * @param {*} dtEnd 
- */
-function newTablePersonne(response, dtStart,dtEnd){
-    var from = new Date(dtStart);
-    var to = new Date(dtEnd);
-
-    var table = document.createElement('table');
-    var thead = document.createElement('thead');
-    var tbody = document.createElement('tbody');
-    
-    table.setAttribute('id', 'personne');
-    table.setAttribute('class', 'table table-striped ');
-
-    thead.appendChild(getHeader(from,to));
-
-    var res = JSON.parse(response);
-    Object.keys(res).forEach(element => {
-        var from = new Date(dtStart);
-        var userListEvents = new listEvents(element,res[element]);
-        tbody = getContent(tbody,from,to,userListEvents);
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById("myapp").appendChild(table);
-    
 }
 
 /**
@@ -36743,13 +36795,19 @@ function getHeader(from,to){
  * @param {*} from 
  * @param {*} to
  * @param {*} userListEvents 
+ * @param {*} count 
  * @returns 
  */
-function getContent(tbody,from,to,userListEvents){
+function getContent(tbody,from,to,userListEvents,count=false){
     var line = document.createElement('tr');
     line.appendChild(newCell("td",userListEvents.id));
     while(from<=to){
-        line.appendChild(userListEvents.eventsAtDay(from));
+        if(!count){
+            line.appendChild(userListEvents.eventsAtDay(from));
+        }else{
+            line.appendChild(userListEvents.eventsAtDayCount(from));
+        }
+        
         from.setDate(from.getDate() + 1);
     }
     tbody.appendChild(line);
@@ -36846,14 +36904,23 @@ var update = injectStylesIntoStyleTag_default()(css_dataTables_bootstrap_min/* d
             "last": t('gestion', 'Last'),
             "next": t('gestion', 'Next'),
             "previous": t('gestion', 'Previous'),
+        },
+        "fixedHeader": {
+            "header": true,
+            "footer": true
         }
     }
 }
 
 window.addEventListener('click', e => {
-    if( e.target.className.includes("refresh")){
+    if( e.target.className.includes("showbyemployees")){
         document.getElementById("myapp").innerHTML = "";
-        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()));
+        document.getElementById("myapp").appendChild(getLoader());
+        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()),'nextcloud_users');
+    }else if(e.target.className.includes("showbylocation")){
+        document.getElementById("myapp").innerHTML = "";
+        document.getElementById("myapp").appendChild(getLoader());
+        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()),'summary');
     }
 });
 
@@ -36862,9 +36929,23 @@ window.addEventListener("DOMContentLoaded", function () {
 	document.getElementById("dtStart").valueAsDate = toDay;
 	toDay.setDate(toDay.getDate() + 15);
 	document.getElementById("dtEnd").valueAsDate = toDay;
-
-	getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()));
+    
+    document.getElementById("myapp").appendChild(getLoader());
+	
+    getData(document.getElementById("dtStart").value, 
+            document.getElementById("dtEnd").value, 
+            (dataTables_bootstrap_min_default()),
+             'nextcloud_users'
+            );    
 });
+
+function getLoader(){
+    var center = document.createElement('center');
+    var divLoader = document.createElement('div');
+    divLoader.setAttribute('class', 'lds-dual-ring');
+    center.appendChild(divLoader);
+    return center;
+}
 })();
 
 /******/ })()

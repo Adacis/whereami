@@ -84,6 +84,6 @@ jobs:
         with:
           app_name: whereami
           appstore_token: ${{ secrets.APPSTORE_TOKEN }}
-          download_url: https://github.com/baimard/whereami/releases/download/${{ steps.get_version.outputs.VERSION }}/whereami.tar.gz
+          download_url: https://github.com/Adacis/whereami/releases/download/${{ steps.get_version.outputs.VERSION }}/whereami.tar.gz
           app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
           nightly: false

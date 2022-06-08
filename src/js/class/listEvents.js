@@ -15,7 +15,7 @@ export class listEvents{
         this.listEvents.forEach(events => {
             var e = new Events(events);
             if(e.inInterval(from)){
-                res +=  e.getSummary().replace('[loc]','')
+                res +=  e.getSummary().replace('[loc]','') + "<br/>";
                 trouve = true;
             }
         });
@@ -23,7 +23,7 @@ export class listEvents{
             myCase.setAttribute('style', 'background-color: yellow;');
             res += "shame";
         }
-        myCase.innerText = res;
+        myCase.innerHTML = res;
         return myCase;
     }
 

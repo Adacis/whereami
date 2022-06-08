@@ -5,6 +5,6 @@
 		></button>
 	</div>
 	<div id="app-settings-content">
-		<h1> Magic for ever :)</h1>
+		<button style="width: 200px;" class="helper">Help</button>
 	</div>
 </div>

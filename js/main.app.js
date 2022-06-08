@@ -36625,7 +36625,7 @@ class listEvents{
         this.listEvents.forEach(events => {
             var e = new Events(events);
             if(e.inInterval(from)){
-                res +=  e.getSummary().replace('[loc]','')
+                res +=  e.getSummary().replace('[loc]','') + "<br/>";
                 trouve = true;
             }
         });
@@ -36633,7 +36633,7 @@ class listEvents{
             myCase.setAttribute('style', 'background-color: yellow;');
             res += "shame";
         }
-        myCase.innerText = res;
+        myCase.innerHTML = res;
         return myCase;
     }
 
@@ -36921,11 +36921,15 @@ window.addEventListener('click', e => {
         document.getElementById("myapp").innerHTML = "";
         document.getElementById("myapp").appendChild(getLoader());
         getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()),'summary');
+    }else if(e.target.className.includes("helper")){
+        document.getElementById('helper').style.display = "block";
+    }else if(e.target.className.includes("modalClose")){
+        e.target.parentElement.parentElement.style.display = "none";
     }
 });
 
 window.addEventListener("DOMContentLoaded", function () {
-	let toDay = new Date("2022-06-01");
+	let toDay = new Date();
 	document.getElementById("dtStart").valueAsDate = toDay;
 	toDay.setDate(toDay.getDate() + 15);
 	document.getElementById("dtEnd").valueAsDate = toDay;

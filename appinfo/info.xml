@@ -6,11 +6,11 @@
     <description><![CDATA[Is a simple application to locate everybody in your company.]]></description>
     <version>0.0.1</version>
     <licence>agpl</licence>
-    <author mail="b.aimard@adacis.net" homepage="https://www.adacis.net">ADACIS</author>
+    <author mail="contact@adacis.net" homepage="https://www.adacis.net">ADACIS</author>
     <namespace>Whereami</namespace>
     <category>office</category>
 	<category>organization</category>
-    <bugs>https://https://gitlab.adacis.net/dashboard/issues</bugs>
+    <bugs>https://github.com/Adacis/whereami/issues</bugs>
     <dependencies>
         <nextcloud min-version="22" max-version="25"/>
     </dependencies>

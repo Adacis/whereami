@@ -92,7 +92,9 @@ function getTotal(tbody){
         tbody.getElementsByTagName('tr').forEach(element => {
             totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText);
         });
-        line.appendChild(newCell('td',totalByDay, 'text-align:center;'));
+        line.appendChild(newCell(   'td',
+                                    isNaN(totalByDay) ? "" : totalByDay, 
+                                    'text-align:center;'));
     }
     return line;
 }

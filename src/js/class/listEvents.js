@@ -19,8 +19,8 @@ export class listEvents{
             var e = new Events(events);
             if(e.inInterval(from)){
                 var filter = e.getSummary().replace('[loc]','');
-                res +=  filter.includes(",") ? filter.split(',')[0] + "<br/>" : filter + "<br/>" ;
-                title += filter.includes(",") ? filter.split(',')[1] + "-" : "";
+                res +=  filter.includes("-") ? filter.split('-')[0] + "<br/>" : filter + "<br/>" ;
+                title += filter.includes("-") ? filter.split('-')[1] + "," : "";
                 trouve = true;
             }
         });
@@ -50,10 +50,17 @@ export class listEvents{
                 trouve = true;
             }
         });
-        if(!trouve){
-            myCase.setAttribute('style', 'text-align: center; color: white; background-color: green;');
-        }
+
         myCase.innerText = res;
+
+        if(!trouve && (days[from.getDay()] === "sunday" || days[from.getDay()] === "saturday")){
+            myCase.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);');
+            myCase.innerText = "";
+        }else if(!trouve){
+            myCase.setAttribute('style', 'text-align: center; color: white; background-color: green;');
+            myCase.innerText = "0";
+        }
+        
         return myCase;
     }
 }

@@ -66,6 +66,7 @@ class PageController extends Controller {
 			$e = new MyEvent($c, $this->myDb);
 			$cls = strtolower($e->{$classement});
 			$cls = trim(str_replace("[loc]", "", $cls));
+			$cls = explode("-",$cls)[0];
 
 			if(!array_key_exists($cls,$events)){
 				$events[$cls] = [];

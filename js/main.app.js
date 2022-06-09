@@ -36630,7 +36630,7 @@ class listEvents{
             if(e.inInterval(from)){
                 var filter = e.getSummary().replace('[loc]','');
                 res +=  filter.includes(",") ? filter.split(',')[0] + "<br/>" : filter + "<br/>" ;
-                title += filter.includes(",") ? filter.split(',')[1] + "," : "";
+                title += filter.includes(",") ? filter.split(',')[1] + "-" : "";
                 trouve = true;
             }
         });

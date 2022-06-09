@@ -64,10 +64,13 @@ class PageController extends Controller {
 
 		foreach($searchResults as $c){
 			$e = new MyEvent($c, $this->myDb);
-			if(!array_key_exists($e->{$classement},$events)){
-				$events[$e->{$classement}] = [];
+			$cls = strtolower($e->{$classement});
+			$cls = trim(str_replace("[loc]", "", $cls));
+
+			if(!array_key_exists($cls,$events)){
+				$events[$cls] = [];
 			}
-			array_push($events[$e->{$classement}], $e);
+			array_push($events[$cls], $e);
 		}
 		return new DataResponse($events, 200, ['Content-Type' => 'application/json']);
 	}

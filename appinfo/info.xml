@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>whereami</id>
-    <name>Whereami</name>
+    <name>Where am I ?</name>
     <summary><![CDATA[Is a simple application to locate everybody in your company.]]></summary>
     <description><![CDATA[Is a simple application to locate everybody in your company.]]></description>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <licence>agpl</licence>
     <author mail="contact@adacis.net" homepage="https://www.adacis.net">ADACIS</author>
     <namespace>Whereami</namespace>
@@ -16,7 +16,7 @@
     </dependencies>
     <navigations>
         <navigation>
-            <name>Whereami</name>
+            <name>wai</name>
             <route>whereami.page.index</route>
         </navigation>
     </navigations>

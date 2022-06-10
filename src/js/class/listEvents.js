@@ -19,7 +19,7 @@ export class listEvents{
         this.listEvents.forEach(events => {
             var e = new Events(events);
             if(e.inInterval(from)){
-                var filter = e.getSummary().replace('[loc]','');
+                var filter = e.getSummary().replace('@','');
                 res +=  filter.includes(",") ? filter.split(',')[0] + "<br/>" : filter + "<br/>" ;
                 title += filter.includes(",") ? filter.split(',')[1] + "\n" : "";
                 trouve = true;

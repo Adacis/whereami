@@ -56,17 +56,19 @@ class PageController extends Controller {
 		$searchResults = $this->calendarManager->search("[loc]", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
 		$events = [];
 
-		//list de tous les utilisateurs
-		// $allUID = $this->myDb->getAllUID();
-		// foreach ($allUID as $UID){
-		// 	$events[json_decode($UID['data'])->{'displayname'}->{'value'}] = [];
-		// }
+		// list de tous les utilisateurs
+		$allUID = $this->myDb->getAllUID();
+		foreach ($allUID as $UID){
+			$events[json_decode($UID['data'])->{'displayname'}->{'value'}] = [];
+		}
 
 		foreach($searchResults as $c){
 			$e = new MyEvent($c, $this->myDb);
+
 			$cls = strtolower($e->{$classement});
 			$cls = trim(str_replace("[loc]", "", $cls));
-			$cls = explode("-",$cls)[0];
+			$cls = explode(",",$cls)[0];
+			$cls = trim($cls);
 
 			if(!array_key_exists($cls,$events)){
 				$events[$cls] = [];

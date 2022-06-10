@@ -36629,8 +36629,8 @@ class listEvents{
             var e = new Events(events);
             if(e.inInterval(from)){
                 var filter = e.getSummary().replace('[loc]','');
-                res +=  filter.includes("-") ? filter.split('-')[0] + "<br/>" : filter + "<br/>" ;
-                title += filter.includes("-") ? filter.split('-')[1] + "," : "";
+                res +=  filter.includes(",") ? filter.split(',')[0] + "<br/>" : filter + "<br/>" ;
+                title += filter.includes(",") ? filter.split(',')[1] + "\n" : "";
                 trouve = true;
             }
         });
@@ -36651,16 +36651,17 @@ class listEvents{
         var myCase = document.createElement("td");
         var trouve = false;
         var res = 0;
-
+        var title = "";
         this.listEvents.forEach(events => {
             var e = new Events(events);
             if(e.inInterval(from)){
                 res +=  1;
-                myCase.setAttribute('style', 'text-align: center;');
+                title += e.nextcloud_users+'\n';
                 trouve = true;
             }
         });
-
+        myCase.setAttribute('style', 'text-align: center;');
+        myCase.setAttribute('title', title);
         myCase.innerText = res;
 
         if(!trouve && (days[from.getDay()] === "sunday" || days[from.getDay()] === "saturday")){
@@ -36761,7 +36762,7 @@ var baseUrl = (0,router_dist/* generateUrl */.nu)('/apps/whereami');
 
 function getTotal(tbody){
     var line = document.createElement('tr');
-    line.appendChild(newCell('td',"Total"));
+    line.appendChild(newCell('td',"ZZZ - Total"));
 
     var totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
     for(var i=1; i<totalColumn; i++){

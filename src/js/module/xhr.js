@@ -84,7 +84,7 @@ export var baseUrl = generateUrl('/apps/whereami');
 
 function getTotal(tbody){
     var line = document.createElement('tr');
-    line.appendChild(newCell('td',"Total"));
+    line.appendChild(newCell('td',"ZZZ - Total"));
 
     var totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
     for(var i=1; i<totalColumn; i++){

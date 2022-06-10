@@ -56,7 +56,6 @@ export var baseUrl = generateUrl('/apps/whereami');
     
     var from = new Date(dtStart);
     var to = new Date(dtEnd);
-    tfoot.appendChild(getHeader(from,to));
 
     var res = JSON.parse(response);
     Object.keys(res).forEach(element => {
@@ -71,8 +70,10 @@ export var baseUrl = generateUrl('/apps/whereami');
     });
 
     if(tablename=='summary'){
-        tbody.appendChild(getTotal(tbody));
+        tfoot.appendChild(getTotal(tbody));
     }
+
+    tfoot.appendChild(getHeader(from,to));
 
     table.appendChild(thead);
     table.appendChild(tbody);
@@ -84,7 +85,7 @@ export var baseUrl = generateUrl('/apps/whereami');
 
 function getTotal(tbody){
     var line = document.createElement('tr');
-    line.appendChild(newCell('td',"ZZZ - Total"));
+    line.appendChild(newCell('td',"Total"));
 
     var totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
     for(var i=1; i<totalColumn; i++){

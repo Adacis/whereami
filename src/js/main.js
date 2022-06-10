@@ -12,10 +12,8 @@ import "datatables.net-bs/css/dataTables.bootstrap.min.css";
 	scrollY:        true,
 	scrollX:        true,
 	scrollCollapse: true,
-	paging:         false,
 	autoWidth: false,
     stateSave: true,
-    lengthMenu: [[100, 300, 500, -1], [100, 300, 500, "All"]],
 	fixedColumns: {
         left: 1
     },

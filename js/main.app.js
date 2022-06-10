@@ -36611,6 +36611,7 @@ class Events {
 
 
 var days = ['sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'saturday'];
+var days_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
 class listEvents{
     
@@ -36793,7 +36794,7 @@ function newCell(type, data, style = ""){
 }
 
 /**
- * 
+ * Header of table
  * @param {*} from 
  * @param {*} to 
  * @returns 
@@ -36802,7 +36803,7 @@ function getHeader(from,to){
     var line = document.createElement('tr');
     line.appendChild(newCell("th","Date"));
     while(from<=to){
-        line.appendChild(newCell("th",from.toLocaleDateString()));
+        line.appendChild(newCell("th",days_FR[from.getDay()] + "\n" + from.toLocaleDateString()));
         from.setDate(from.getDate() + 1);
     }
 
@@ -36902,10 +36903,8 @@ var update = injectStylesIntoStyleTag_default()(css_dataTables_bootstrap_min/* d
 	scrollY:        true,
 	scrollX:        true,
 	scrollCollapse: true,
-	paging:         false,
 	autoWidth: false,
     stateSave: true,
-    lengthMenu: [[100, 300, 500, -1], [100, 300, 500, "All"]],
 	fixedColumns: {
         left: 1
     },

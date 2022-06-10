@@ -1,6 +1,6 @@
 import { showError, showSuccess } from "@nextcloud/dialogs";
 import { generateUrl } from "@nextcloud/router";
-import { listEvents } from "../class/listEvents";
+import { days_FR, listEvents } from "../class/listEvents";
 import { optionDatatable } from "../main";
 export var baseUrl = generateUrl('/apps/whereami');
 
@@ -115,7 +115,7 @@ function newCell(type, data, style = ""){
 }
 
 /**
- * 
+ * Header of table
  * @param {*} from 
  * @param {*} to 
  * @returns 
@@ -124,7 +124,7 @@ function getHeader(from,to){
     var line = document.createElement('tr');
     line.appendChild(newCell("th","Date"));
     while(from<=to){
-        line.appendChild(newCell("th",from.toLocaleDateString()));
+        line.appendChild(newCell("th",days_FR[from.getDay()] + "\n" + from.toLocaleDateString()));
         from.setDate(from.getDate() + 1);
     }
 

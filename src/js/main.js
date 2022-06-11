@@ -14,6 +14,7 @@ import "datatables.net-bs/css/dataTables.bootstrap.min.css";
 	scrollCollapse: true,
 	autoWidth: false,
     stateSave: true,
+    paging: false,
 	fixedColumns: {
         left: 1
     },

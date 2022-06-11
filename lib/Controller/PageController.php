@@ -57,12 +57,12 @@ class PageController extends Controller {
 		$events = [];
 
 		// list de tous les utilisateurs
-		if($e->{$classement} === "nextcloud_users"){
-			$allUID = $this->myDb->getAllUID();
-			foreach ($allUID as $UID){
-				$events[json_decode($UID['data'])->{'displayname'}->{'value'}] = [];
-			}
-		}
+		// if($e->{$classement} === "nextcloud_users"){
+		// 	$allUID = $this->myDb->getAllUID();
+		// 	foreach ($allUID as $UID){
+		// 		$events[json_decode($UID['data'])->{'displayname'}->{'value'}] = [];
+		// 	}
+		// }
 		
 		$charReplace = "@";
 

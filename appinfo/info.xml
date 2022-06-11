@@ -4,7 +4,7 @@
     <name>Where am I ?</name>
     <summary><![CDATA[Is a simple application to locate everybody in your company.]]></summary>
     <description><![CDATA[Is a simple application to locate everybody in your company.]]></description>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
     <licence>agpl</licence>
     <author mail="contact@adacis.net" homepage="https://www.adacis.net">ADACIS</author>
     <namespace>Whereami</namespace>

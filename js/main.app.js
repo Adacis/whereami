@@ -36906,6 +36906,7 @@ var update = injectStylesIntoStyleTag_default()(css_dataTables_bootstrap_min/* d
 	scrollCollapse: true,
 	autoWidth: false,
     stateSave: true,
+    paging: false,
 	fixedColumns: {
         left: 1
     },

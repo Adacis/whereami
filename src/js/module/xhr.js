@@ -3,7 +3,7 @@ import {generateUrl} from "@nextcloud/router";
 import {days_FR, listEvents} from "../class/listEvents";
 import {optionDatatable} from "../main";
 
-export var baseUrl = generateUrl('/apps/whereami');
+export let baseUrl = generateUrl('/apps/whereami');
 
 /**
  *
@@ -12,13 +12,13 @@ export var baseUrl = generateUrl('/apps/whereami');
  * @param {*} DataTable
  */
 export function getData(dtStart, dtEnd, DataTable, classement) {
-    var data = {
+    let data = {
         classement: classement,
         dtStart: dtStart,
         dtEnd: dtEnd
     };
 
-    var oReq = new XMLHttpRequest();
+    let oReq = new XMLHttpRequest();
     oReq.open('POST', baseUrl + '/getEvents', true);
     oReq.setRequestHeader("Content-Type", "application/json");
     oReq.setRequestHeader("requesttoken", oc_requesttoken);
@@ -42,26 +42,26 @@ export function getData(dtStart, dtEnd, DataTable, classement) {
  * @param {*} tablename
  */
 function newTablePersonne(response, dtStart, dtEnd, tablename) {
-    var table = document.createElement('table');
-    var thead = document.createElement('thead');
-    var tbody = document.createElement('tbody');
-    var tfoot = document.createElement('tfoot');
+    let table = document.createElement('table');
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+    let tfoot = document.createElement('tfoot');
 
     table.setAttribute('id', tablename);
     table.setAttribute('class', 'table table-striped');
 
-    // var retHead = getHeader(from,to);
-    var from = new Date(dtStart);
-    var to = new Date(dtEnd);
+    // let retHead = getHeader(from,to);
+    let from = new Date(dtStart);
+    let to = new Date(dtEnd);
     thead.appendChild(getHeader(from, to));
 
-    var from = new Date(dtStart);
-    var to = new Date(dtEnd);
+    from = new Date(dtStart);
+    to = new Date(dtEnd);
 
-    var res = JSON.parse(response);
+    let res = JSON.parse(response);
     Object.keys(res).forEach(element => {
-        var from = new Date(dtStart);
-        var userListEvents = new listEvents(element, res[element]);
+        let from = new Date(dtStart);
+        let userListEvents = new listEvents(element, res[element]);
         if (tablename == 'summary') {
             tbody = getContent(tbody, from, to, userListEvents, true);
         } else {
@@ -85,12 +85,12 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
 
 
 function getTotal(tbody) {
-    var line = document.createElement('tr');
+    let line = document.createElement('tr');
     line.appendChild(newCell('td', "Total"));
 
-    var totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
-    for (var i = 1; i < totalColumn; i++) {
-        var totalByDay = 0;
+    let totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
+    for (let i = 1; i < totalColumn; i++) {
+        let totalByDay = 0;
         tbody.getElementsByTagName('tr').forEach(element => {
             totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText);
         });
@@ -110,7 +110,7 @@ function getTotal(tbody) {
  * @returns
  */
 function newCell(type, data, style = "") {
-    var myCase = document.createElement(type);
+    let myCase = document.createElement(type);
     myCase.setAttribute('style', style);
     myCase.innerText = data;
     return myCase;
@@ -123,7 +123,7 @@ function newCell(type, data, style = "") {
  * @returns
  */
 function getHeader(from, to) {
-    var line = document.createElement('tr');
+    let line = document.createElement('tr');
     line.appendChild(newCell("th", "Date"));
     while (from <= to) {
         line.appendChild(newCell("th", days_FR[from.getDay()] + "\n" + from.toLocaleDateString()));
@@ -143,7 +143,7 @@ function getHeader(from, to) {
  * @returns
  */
 function getContent(tbody, from, to, userListEvents, count = false) {
-    var line = document.createElement('tr');
+    let line = document.createElement('tr');
     line.appendChild(newCell("td", userListEvents.id));
     while (from <= to) {
         if (!count) {

@@ -9,7 +9,7 @@ import "datatables.net-bs/css/dataTables.bootstrap.min.css";
 /**
  *
  */
-export var optionDatatable = {
+export let optionDatatable = {
     scrollY: true,
     scrollX: true,
     scrollCollapse: true,
@@ -78,8 +78,8 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 function getLoader() {
-    var center = document.createElement('center');
-    var divLoader = document.createElement('div');
+    let center = document.createElement('center');
+    let divLoader = document.createElement('div');
     divLoader.setAttribute('class', 'lds-dual-ring');
     center.appendChild(divLoader);
     return center;

@@ -8,12 +8,8 @@ export class Events {
     }
 
     inInterval(from) {
-        var dtStart = new Date(this.dtStart);
-        var dtEnd = new Date(this.dtEnd);
-        if (from >= dtStart
-            && from < dtEnd) {
-            return true;
-        }
-        return false;
+        let dtStart = new Date(this.dtStart);
+        let dtEnd = new Date(this.dtEnd);
+        return from >= dtStart && from < dtEnd;
     }
 }

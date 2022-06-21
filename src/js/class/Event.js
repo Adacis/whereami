@@ -1,19 +1,31 @@
+/**
+ *
+ */
 export class Events {
-    constructor(obj) {
-        obj && Object.assign(this, obj);
-    }
+  constructor (obj) {
+    obj && Object.assign(this, obj)
+  }
 
-    getSummary(){
-        return this.summary;
-    }
+  /**
+     *
+     * @returns
+     */
+  getSummary () {
+    return this.summary
+  }
 
-    inInterval(from){
-        var dtStart = new Date(this.dtStart);
-        var dtEnd = new Date(this.dtEnd);
-        if(from >= dtStart
-            && from < dtEnd){
-                return true;
-            }
-        return false;
+  /**
+     *
+     * @param {*} from
+     * @returns
+     */
+  inInterval (from) {
+    const dtStart = new Date(this.dtStart)
+    const dtEnd = new Date(this.dtEnd)
+    if (from >= dtStart &&
+            from < dtEnd) {
+      return true
     }
+    return false
+  }
 }

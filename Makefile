@@ -31,10 +31,10 @@ watch-js:
 
 # Linting
 lint:
-	./node_modules/.bin/eslint ./src/js/*.js --fix
+	./node_modules/.bin/eslint ./src/js/*
 
 lint-fix:
-	npm run lint:fix
+	./node_modules/.bin/eslint ./src/js/* --fix
 
 # Style linting
 stylelint:
@@ -83,7 +83,7 @@ composer:
 # Installs npm dependencies
 .PHONY: npm
 npm:
-	ifeq (,$(wildcard $(CURDIR)/package.json))
+	ifeq ($(wildcard $(CURDIR)/package.json))
 		cd js && $(npm) run build
 	else
 		npm run build

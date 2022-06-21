@@ -9,6 +9,7 @@ class MyEvent{
     public String $summary;
     public String $dtStart;
     public String $dtEnd;
+    public $quote;
 
     private Bdd $myDb;
 
@@ -17,10 +18,13 @@ class MyEvent{
                                 ){
         $this->myDb = $myDb;
         $this->id = $e['id'];
-        $this->summary  = $e["objects"][0]["SUMMARY"][0];
         $this->dtStart  = $e["objects"][0]["DTSTART"][0]->format("Y-m-d");
         $this->dtEnd    = $e["objects"][0]["DTEND"][0]->format("Y-m-d");
         $this->nextcloud_users = $this->getNameCalendar($this->id);
+
+        $this->summary  = str_replace("@","",$e["objects"][0]["SUMMARY"][0]);
+        preg_match_all("/D[0-9]{5}/", $this->summary, $this->quote);
+
     }
 
     public function getNameCalendar($calendarsUid){

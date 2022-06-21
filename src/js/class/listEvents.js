@@ -29,7 +29,7 @@ export class listEvents {
         if (!found && (days[from.getDay()] === "sunday" || days[from.getDay()] === "saturday")) {
             myCase.setAttribute('style', 'background-color: var(--color-box-shadow);');
         } else if (!found) {
-            myCase.setAttribute('style', 'background-color: yellow;');
+            myCase.setAttribute('style', 'background-color: var(--color-warning-hover);');
             res += "shame";
         }
 
@@ -59,7 +59,7 @@ export class listEvents {
             myCase.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);');
             myCase.innerText = "";
         } else if (!found) {
-            myCase.setAttribute('style', 'text-align: center; color: white; background-color: green;');
+            myCase.setAttribute('style', 'text-align: center; color: white; background-color: var(--color-success-hover);');
             myCase.innerText = "0";
         }
 

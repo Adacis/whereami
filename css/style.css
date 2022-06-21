@@ -44,12 +44,12 @@ table.dataTable {
 }
 
 table.dataTable.table-striped > thead > tr > * {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-light-hover);
   color: var(--color-text-light);
 }
 
 table.dataTable.table-striped > tfoot > tr > * {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-light-hover);
   color: var(--color-text-light);
 }
 

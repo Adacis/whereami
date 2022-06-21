@@ -23,7 +23,7 @@ export function getData(dtStart, dtEnd, DataTable, classement) {
     oReq.setRequestHeader("Content-Type", "application/json");
     oReq.setRequestHeader("requesttoken", oc_requesttoken);
     oReq.onload = function (e) {
-        if (this.status == 200) {
+        if (this.status === 200) {
             newTablePersonne(this.response, dtStart, dtEnd, classement);
             new DataTable("#" + classement, optionDatatable);
             showSuccess('table loaded');
@@ -62,7 +62,7 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
     Object.keys(res).forEach(element => {
         let from = new Date(dtStart);
         let userListEvents = new listEvents(element, res[element]);
-        if (tablename == 'summary') {
+        if (tablename === 'summary') {
             tbody = getContent(tbody, from, to, userListEvents, true);
         } else {
             tbody = getContent(tbody, from, to, userListEvents, false);
@@ -70,7 +70,7 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
 
     });
 
-    if (tablename == 'summary') {
+    if (tablename === 'summary') {
         tfoot.appendChild(getTotal(tbody));
     }
 

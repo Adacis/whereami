@@ -1,19 +1,20 @@
-import { showError, showSuccess } from "@nextcloud/dialogs";
-import { generateUrl } from "@nextcloud/router";
-import { days_FR, listEvents } from "../class/listEvents";
-import { optionDatatable } from "../main";
+import {showError, showSuccess} from "@nextcloud/dialogs";
+import {generateUrl} from "@nextcloud/router";
+import {days_FR, listEvents} from "../class/listEvents";
+import {optionDatatable} from "../main";
+
 export var baseUrl = generateUrl('/apps/whereami');
 
 /**
- * 
- * @param {*} dtStart 
- * @param {*} dtEnd 
- * @param {*} DataTable 
+ *
+ * @param {*} dtStart
+ * @param {*} dtEnd
+ * @param {*} DataTable
  */
- export function getData(dtStart, dtEnd, DataTable, classement){
+export function getData(dtStart, dtEnd, DataTable, classement) {
     var data = {
         classement: classement,
-        dtStart : dtStart,
+        dtStart: dtStart,
         dtEnd: dtEnd
     };
 
@@ -21,12 +22,12 @@ export var baseUrl = generateUrl('/apps/whereami');
     oReq.open('POST', baseUrl + '/getEvents', true);
     oReq.setRequestHeader("Content-Type", "application/json");
     oReq.setRequestHeader("requesttoken", oc_requesttoken);
-    oReq.onload = function(e){  
+    oReq.onload = function (e) {
         if (this.status == 200) {
-            newTablePersonne(this.response,dtStart,dtEnd, classement);
-            new DataTable("#"+classement, optionDatatable);
+            newTablePersonne(this.response, dtStart, dtEnd, classement);
+            new DataTable("#" + classement, optionDatatable);
             showSuccess('table loaded');
-        }else{
+        } else {
             showError(this.response);
         }
     };
@@ -34,46 +35,46 @@ export var baseUrl = generateUrl('/apps/whereami');
 }
 
 /**
- * 
- * @param {*} response 
- * @param {*} dtStart 
- * @param {*} dtEnd 
- * @param {*} tablename 
+ *
+ * @param {*} response
+ * @param {*} dtStart
+ * @param {*} dtEnd
+ * @param {*} tablename
  */
- function newTablePersonne(response,dtStart,dtEnd,tablename){
+function newTablePersonne(response, dtStart, dtEnd, tablename) {
     var table = document.createElement('table');
     var thead = document.createElement('thead');
     var tbody = document.createElement('tbody');
     var tfoot = document.createElement('tfoot');
-    
+
     table.setAttribute('id', tablename);
     table.setAttribute('class', 'table table-striped');
 
     // var retHead = getHeader(from,to);
     var from = new Date(dtStart);
     var to = new Date(dtEnd);
-    thead.appendChild(getHeader(from,to));
-    
+    thead.appendChild(getHeader(from, to));
+
     var from = new Date(dtStart);
     var to = new Date(dtEnd);
 
     var res = JSON.parse(response);
     Object.keys(res).forEach(element => {
         var from = new Date(dtStart);
-        var userListEvents = new listEvents(element,res[element]);
-        if(tablename=='summary'){
-            tbody = getContent(tbody,from,to,userListEvents,true);
-        }else{
-            tbody = getContent(tbody,from,to,userListEvents,false);
+        var userListEvents = new listEvents(element, res[element]);
+        if (tablename == 'summary') {
+            tbody = getContent(tbody, from, to, userListEvents, true);
+        } else {
+            tbody = getContent(tbody, from, to, userListEvents, false);
         }
-        
+
     });
 
-    if(tablename=='summary'){
+    if (tablename == 'summary') {
         tfoot.appendChild(getTotal(tbody));
     }
 
-    tfoot.appendChild(getHeader(from,to));
+    tfoot.appendChild(getHeader(from, to));
 
     table.appendChild(thead);
     table.appendChild(tbody);
@@ -83,32 +84,32 @@ export var baseUrl = generateUrl('/apps/whereami');
 }
 
 
-function getTotal(tbody){
+function getTotal(tbody) {
     var line = document.createElement('tr');
-    line.appendChild(newCell('td',"Total"));
+    line.appendChild(newCell('td', "Total"));
 
     var totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
-    for(var i=1; i<totalColumn; i++){
+    for (var i = 1; i < totalColumn; i++) {
         var totalByDay = 0;
         tbody.getElementsByTagName('tr').forEach(element => {
             totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText);
         });
-        line.appendChild(newCell(   'td',
-                                    isNaN(totalByDay) ? "" : totalByDay, 
-                                    'text-align:center;'));
+        line.appendChild(newCell('td',
+            isNaN(totalByDay) ? "" : totalByDay,
+            'text-align:center;'));
     }
     return line;
 }
 
 
 /**
- * 
- * @param {*} type 
- * @param {*} data 
- * @param {*} style 
- * @returns 
+ *
+ * @param {*} type
+ * @param {*} data
+ * @param {*} style
+ * @returns
  */
-function newCell(type, data, style = ""){
+function newCell(type, data, style = "") {
     var myCase = document.createElement(type);
     myCase.setAttribute('style', style);
     myCase.innerText = data;
@@ -117,15 +118,15 @@ function newCell(type, data, style = ""){
 
 /**
  * Header of table
- * @param {*} from 
- * @param {*} to 
- * @returns 
+ * @param {*} from
+ * @param {*} to
+ * @returns
  */
-function getHeader(from,to){
+function getHeader(from, to) {
     var line = document.createElement('tr');
-    line.appendChild(newCell("th","Date"));
-    while(from<=to){
-        line.appendChild(newCell("th",days_FR[from.getDay()] + "\n" + from.toLocaleDateString()));
+    line.appendChild(newCell("th", "Date"));
+    while (from <= to) {
+        line.appendChild(newCell("th", days_FR[from.getDay()] + "\n" + from.toLocaleDateString()));
         from.setDate(from.getDate() + 1);
     }
 
@@ -133,24 +134,24 @@ function getHeader(from,to){
 }
 
 /**
- * 
- * @param {*} tbody 
- * @param {*} from 
+ *
+ * @param {*} tbody
+ * @param {*} from
  * @param {*} to
- * @param {*} userListEvents 
- * @param {*} count 
- * @returns 
+ * @param {*} userListEvents
+ * @param {*} count
+ * @returns
  */
-function getContent(tbody,from,to,userListEvents,count=false){
+function getContent(tbody, from, to, userListEvents, count = false) {
     var line = document.createElement('tr');
-    line.appendChild(newCell("td",userListEvents.id));
-    while(from<=to){
-        if(!count){
+    line.appendChild(newCell("td", userListEvents.id));
+    while (from <= to) {
+        if (!count) {
             line.appendChild(userListEvents.eventsAtDay(from));
-        }else{
+        } else {
             line.appendChild(userListEvents.eventsAtDayCount(from));
         }
-        
+
         from.setDate(from.getDate() + 1);
     }
     tbody.appendChild(line);

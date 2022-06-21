@@ -1,32 +1,37 @@
-import { getData } from "./module/xhr";
+import {getData} from "./module/xhr";
 
 // import DataTable from "datatables.net-dt/js/dataTables.dataTables";
 import DataTable from "datatables.net-bs/js/dataTables.bootstrap.min.js";
 import "datatables.net-fixedcolumns/js/dataTables.fixedColumns";
 // import "datatables.net-dt/css/jquery.dataTables.css";
 import "datatables.net-bs/css/dataTables.bootstrap.min.css";
+
 /**
- * 
+ *
  */
- export var optionDatatable = {
-	scrollY:        true,
-	scrollX:        true,
-	scrollCollapse: true,
-	autoWidth: false,
+export var optionDatatable = {
+    scrollY: true,
+    scrollX: true,
+    scrollCollapse: true,
+    autoWidth: false,
     stateSave: true,
     paging: false,
-	fixedColumns: {
+    fixedColumns: {
         left: 1
     },
     language: {
         "search": t('gestion', 'Search'),
         "emptyTable": t('gestion', 'No data available in table'),
-        "info": t('gestion', 'Showing {start} to {end} of {total} entries', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+        "info": t('gestion', 'Showing {start} to {end} of {total} entries', {
+            start: '_START_',
+            end: '_END_',
+            total: '_TOTAL_'
+        }),
         "infoEmpty": t('gestion', 'Showing 0 to 0 of 0 entries'),
         "loadingRecords": t('gestion', 'Loading records …'),
         "processing": t('gestion', 'Processing …'),
-        "infoFiltered": t('gestion', '{max} entries filtered', { max: '_MAX_' }),
-        "lengthMenu": t('gestion', 'Show {menu} entries', { menu: '_MENU_' }),
+        "infoFiltered": t('gestion', '{max} entries filtered', {max: '_MAX_'}),
+        "lengthMenu": t('gestion', 'Show {menu} entries', {menu: '_MENU_'}),
         "zeroRecords": t('gestion', 'No corresponding entry'),
         "paginate": {
             "first": t('gestion', 'First'),
@@ -42,37 +47,37 @@ import "datatables.net-bs/css/dataTables.bootstrap.min.css";
 }
 
 window.addEventListener('click', e => {
-    if( e.target.className.includes("showbyemployees")){
+    if (e.target.className.includes("showbyemployees")) {
         document.getElementById("myapp").innerHTML = "";
         document.getElementById("myapp").appendChild(getLoader());
-        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable,'nextcloud_users');
-    }else if(e.target.className.includes("showbylocation")){
+        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable, 'nextcloud_users');
+    } else if (e.target.className.includes("showbylocation")) {
         document.getElementById("myapp").innerHTML = "";
         document.getElementById("myapp").appendChild(getLoader());
-        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable,'summary');
-    }else if(e.target.className.includes("helper")){
+        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, DataTable, 'summary');
+    } else if (e.target.className.includes("helper")) {
         document.getElementById('helper').style.display = "block";
-    }else if(e.target.className.includes("modalClose")){
+    } else if (e.target.className.includes("modalClose")) {
         e.target.parentElement.parentElement.style.display = "none";
     }
 });
 
 window.addEventListener("DOMContentLoaded", function () {
-	let toDay = new Date();
-	document.getElementById("dtStart").valueAsDate = toDay;
-	toDay.setDate(toDay.getDate() + 15);
-	document.getElementById("dtEnd").valueAsDate = toDay;
-    
+    let toDay = new Date();
+    document.getElementById("dtStart").valueAsDate = toDay;
+    toDay.setDate(toDay.getDate() + 15);
+    document.getElementById("dtEnd").valueAsDate = toDay;
+
     document.getElementById("myapp").appendChild(getLoader());
-	
-    getData(document.getElementById("dtStart").value, 
-            document.getElementById("dtEnd").value, 
-            DataTable,
-             'nextcloud_users'
-            );    
+
+    getData(document.getElementById("dtStart").value,
+        document.getElementById("dtEnd").value,
+        DataTable,
+        'nextcloud_users'
+    );
 });
 
-function getLoader(){
+function getLoader() {
     var center = document.createElement('center');
     var divLoader = document.createElement('div');
     divLoader.setAttribute('class', 'lds-dual-ring');

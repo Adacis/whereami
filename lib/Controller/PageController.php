@@ -15,11 +15,17 @@ use OCA\Polls\Model\CalendarEvent;
 use DateTimeImmutable;
 use DateTime;
 
+/**
+ * 
+ */
 class PageController extends Controller {
 	private $userId;
     private $calendarManager;
 	private $myDb;
 
+	/**
+	 * 
+	 */
 	public function __construct($AppName,
 								$UserId,
 								IRequest $request, 
@@ -68,18 +74,20 @@ class PageController extends Controller {
 
 		foreach($searchResults as $c){
 			$e = new MyEvent($c, $this->myDb);
-			if(preg_match("/^".$charReplace."/", $e->summary)){
-				$cls = strtolower($e->{$classement});
-				$cls = trim(str_replace($charReplace, "", $cls));
-				$cls = explode(",",$cls)[0];
-				$cls = trim($cls);
+			// if(preg_match("/^".$charReplace."/", $e->summary)){
 
-				if(!array_key_exists($cls,$events)){
-					$events[$cls] = [];
-				}
-				array_push($events[$cls], $e);
+			$cls = strtolower($e->{$classement});
+			$cls = trim(str_replace($charReplace, "", $cls));
+			$cls = explode(",",$cls)[0];
+			$cls = trim($cls);
+
+			if(!array_key_exists($cls,$events)){
+				$events[$cls] = [];
 			}
+			array_push($events[$cls], $e);
+			// }
 		}
+		// return new DataResponse([$events,$searchResults], 200, ['Content-Type' => 'application/json']);
 		return new DataResponse($events, 200, ['Content-Type' => 'application/json']);
 	}
 

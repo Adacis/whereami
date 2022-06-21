@@ -1,6 +1,188 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 9944:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+var __webpack_unused_export__;
+
+
+__webpack_require__(9070);
+
+__webpack_unused_export__ = ({
+  value: true
+});
+__webpack_unused_export__ = getCanonicalLocale;
+__webpack_unused_export__ = getDayNames;
+__webpack_unused_export__ = getDayNamesMin;
+__webpack_unused_export__ = getDayNamesShort;
+__webpack_unused_export__ = getFirstDay;
+__webpack_unused_export__ = getLanguage;
+__webpack_unused_export__ = getLocale;
+__webpack_unused_export__ = getMonthNames;
+__webpack_unused_export__ = getMonthNamesShort;
+exports.Iu = translate;
+__webpack_unused_export__ = translatePlural;
+
+__webpack_require__(4916);
+
+__webpack_require__(5306);
+
+/// <reference types="@nextcloud/typings" />
+
+/**
+ * Returns the user's locale
+ */
+function getLocale() {
+  return document.documentElement.dataset.locale || 'en';
+}
+
+function getCanonicalLocale() {
+  return getLocale().replace(/_/g, '-');
+}
+/**
+ * Returns the user's language
+ */
+
+
+function getLanguage() {
+  return document.documentElement.lang || 'en';
+}
+
+/**
+ * Translate a string
+ *
+ * @param {string} app the id of the app for which to translate the string
+ * @param {string} text the string to translate
+ * @param {object} vars map of placeholder key to value
+ * @param {number} number to replace %n with
+ * @param {object} [options] options object
+ * @return {string}
+ */
+function translate(app, text, vars, count, options) {
+  if (typeof OC === 'undefined') {
+    console.warn('No OC found');
+    return text;
+  }
+
+  return OC.L10N.translate(app, text, vars, count, options);
+}
+/**
+ * Translate a plural string
+ *
+ * @param {string} app the id of the app for which to translate the string
+ * @param {string} textSingular the string to translate for exactly one object
+ * @param {string} textPlural the string to translate for n objects
+ * @param {number} count number to determine whether to use singular or plural
+ * @param {Object} vars of placeholder key to value
+ * @param {object} options options object
+ * @return {string}
+ */
+
+
+function translatePlural(app, textSingular, textPlural, count, vars, options) {
+  if (typeof OC === 'undefined') {
+    console.warn('No OC found');
+    return textSingular;
+  }
+
+  return OC.L10N.translatePlural(app, textSingular, textPlural, count, vars, options);
+}
+/**
+ * Get the first day of the week
+ *
+ * @return {number}
+ */
+
+
+function getFirstDay() {
+  if (typeof window.firstDay === 'undefined') {
+    console.warn('No firstDay found');
+    return 1;
+  }
+
+  return window.firstDay;
+}
+/**
+ * Get a list of day names (full names)
+ *
+ * @return {string[]}
+ */
+
+
+function getDayNames() {
+  if (typeof window.dayNames === 'undefined') {
+    console.warn('No dayNames found');
+    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  }
+
+  return window.dayNames;
+}
+/**
+ * Get a list of day names (short names)
+ *
+ * @return {string[]}
+ */
+
+
+function getDayNamesShort() {
+  if (typeof window.dayNamesShort === 'undefined') {
+    console.warn('No dayNamesShort found');
+    return ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+  }
+
+  return window.dayNamesShort;
+}
+/**
+ * Get a list of day names (minified names)
+ *
+ * @return {string[]}
+ */
+
+
+function getDayNamesMin() {
+  if (typeof window.dayNamesMin === 'undefined') {
+    console.warn('No dayNamesMin found');
+    return ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  }
+
+  return window.dayNamesMin;
+}
+/**
+ * Get a list of month names (full names)
+ *
+ * @return {string[]}
+ */
+
+
+function getMonthNames() {
+  if (typeof window.monthNames === 'undefined') {
+    console.warn('No monthNames found');
+    return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  }
+
+  return window.monthNames;
+}
+/**
+ * Get a list of month names (short names)
+ *
+ * @return {string[]}
+ */
+
+
+function getMonthNamesShort() {
+  if (typeof window.monthNamesShort === 'undefined') {
+    console.warn('No monthNamesShort found');
+    return ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
+  }
+
+  return window.monthNamesShort;
+}
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 9753:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -430,7 +612,7 @@ module.exports = function (bitmap, value) {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var isCallable = __webpack_require__(614);
-var createNonEnumerableProperty = __webpack_require__(8880);
+var definePropertyModule = __webpack_require__(3070);
 var makeBuiltIn = __webpack_require__(6339);
 var defineGlobalProperty = __webpack_require__(3072);
 
@@ -446,7 +628,12 @@ module.exports = function (O, key, value, options) {
     if (!options.unsafe) delete O[key];
     else if (O[key]) simple = true;
     if (simple) O[key] = value;
-    else createNonEnumerableProperty(O, key, value);
+    else definePropertyModule.f(O, key, {
+      value: value,
+      enumerable: false,
+      configurable: !options.nonConfigurable,
+      writable: !options.nonWritable
+    });
   } return O;
 };
 
@@ -1801,6 +1988,7 @@ module.exports = function () {
   if (that.multiline) result += 'm';
   if (that.dotAll) result += 's';
   if (that.unicode) result += 'u';
+  if (that.unicodeSets) result += 'v';
   if (that.sticky) result += 'y';
   return result;
 };
@@ -1933,10 +2121,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.8',
+  version: '3.23.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.8/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.23.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -2236,6 +2424,23 @@ module.exports = function (name) {
     }
   } return WellKnownSymbolsStore[name];
 };
+
+
+/***/ }),
+
+/***/ 9070:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+var $ = __webpack_require__(2109);
+var DESCRIPTORS = __webpack_require__(9781);
+var defineProperty = (__webpack_require__(3070).f);
+
+// `Object.defineProperty` method
+// https://tc39.es/ecma262/#sec-object.defineproperty
+// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+$({ target: 'Object', stat: true, forced: Object.defineProperty !== defineProperty, sham: !DESCRIPTORS }, {
+  defineProperty: defineProperty
+});
 
 
 /***/ }),
@@ -36432,7 +36637,7 @@ process.env.TRANSLATIONS.map(function (data) {
 });
 var gt = gtBuilder.build();
 gt.ngettext.bind(gt);
-var index_es_t = gt.gettext.bind(gt);
+var t = gt.gettext.bind(gt);
 
 var ToastType =
 /** @class */
@@ -36565,7 +36770,7 @@ function showUndo(text, onUndo, options) {
   var undoContent = document.createElement('span');
   var undoButton = document.createElement('button');
   undoButton.classList.add('toast-undo-button');
-  undoButton.innerText = index_es_t('Undo');
+  undoButton.innerText = t('Undo');
   undoContent.innerText = text;
   undoContent.appendChild(undoButton);
   undoButton.addEventListener('click', function (event) {
@@ -36588,253 +36793,289 @@ function showUndo(text, onUndo, options) {
 // EXTERNAL MODULE: ./node_modules/@nextcloud/router/dist/index.js
 var router_dist = __webpack_require__(9753);
 ;// CONCATENATED MODULE: ./src/js/class/Event.js
+/**
+ *
+ */
 class Events {
-    constructor(obj) {
-        obj && Object.assign(this, obj);
-    }
+  constructor (obj) {
+    obj && Object.assign(this, obj)
+  }
 
-    getSummary(){
-        return this.summary;
-    }
+  /**
+     *
+     * @returns
+     */
+  getSummary () {
+    return this.summary
+  }
 
-    inInterval(from){
-        var dtStart = new Date(this.dtStart);
-        var dtEnd = new Date(this.dtEnd);
-        if(from >= dtStart
-            && from < dtEnd){
-                return true;
-            }
-        return false;
+  /**
+     *
+     * @param {*} from
+     * @returns
+     */
+  inInterval (from) {
+    const dtStart = new Date(this.dtStart)
+    const dtEnd = new Date(this.dtEnd)
+    if (from >= dtStart &&
+            from < dtEnd) {
+      return true
     }
+    return false
+  }
 }
-;// CONCATENATED MODULE: ./src/js/class/listEvents.js
+
+;// CONCATENATED MODULE: ./src/js/class/ListEvents.js
 
 
-var days = ['sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'saturday'];
-var days_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+const days = ['sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'saturday']
+const daysFr = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 
-class listEvents{
-    
-    constructor(element,le) {
-        this.id = element
-        this.listEvents = le;
+/**
+ *
+ */
+class ListEvents {
+  /**
+     *
+     * @param {*} element
+     * @param {*} le
+     */
+  constructor (element, le) {
+    this.id = element
+    this.ListEvents = le
+  }
+
+  /**
+     *
+     * @param {*} from
+     * @returns
+     */
+  eventsAtDay (from) {
+    const myCase = document.createElement('td')
+    let found = false
+    let res = ''
+    let title = ''
+
+    this.ListEvents.forEach(events => {
+      const e = new Events(events)
+      if (e.inInterval(from)) {
+        const filter = e.getSummary()
+        res += filter.includes(',') ? filter.split(',')[0] + '<br/>' : filter + '<br/>'
+        title += filter.includes(',') ? filter.split(',')[1] + '\n' : ''
+        found = true
+      }
+    })
+
+    if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
+      myCase.setAttribute('style', 'background-color: var(--color-box-shadow);')
+    } else if (!found) {
+      myCase.setAttribute('style', 'background-color: yellow;')
+      res += 'shame'
     }
 
-    eventsAtDay(from){
-        var myCase = document.createElement("td");
-        var trouve = false;
-        var res = "";
-        var title = "";
+    myCase.setAttribute('title', title)
+    myCase.innerHTML = res
+    return myCase
+  }
 
-        this.listEvents.forEach(events => {
-            var e = new Events(events);
-            if(e.inInterval(from)){
-                var filter = e.getSummary().replace('@','');
-                res +=  filter.includes(",") ? filter.split(',')[0] + "<br/>" : filter + "<br/>" ;
-                title += filter.includes(",") ? filter.split(',')[1] + "\n" : "";
-                trouve = true;
-            }
-        });
+  /**
+     *
+     * @param {*} from
+     * @returns
+     */
+  eventsAtDayCount (from) {
+    const myCase = document.createElement('td')
+    let found = false
+    let res = 0
+    let title = ''
+    this.ListEvents.forEach(events => {
+      const e = new Events(events)
+      if (e.inInterval(from)) {
+        res += 1
+        title += e.nextcloud_users + '\n'
+        found = true
+      }
+    })
+    myCase.setAttribute('style', 'text-align: center;')
+    myCase.setAttribute('title', title)
+    myCase.innerText = res
 
-        if(!trouve && (days[from.getDay()] === "sunday" || days[from.getDay()] === "saturday")){
-            myCase.setAttribute('style', 'background-color: var(--color-box-shadow);');
-        }else if(!trouve){
-            myCase.setAttribute('style', 'background-color: yellow;');
-            res += "shame";
-        }
-
-        myCase.setAttribute('title', title);
-        myCase.innerHTML = res;
-        return myCase;
+    if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
+      myCase.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);')
+      myCase.innerText = ''
+    } else if (!found) {
+      myCase.setAttribute('style', 'text-align: center; color: white; background-color: green;')
+      myCase.innerText = '0'
     }
 
-    eventsAtDayCount(from){
-        var myCase = document.createElement("td");
-        var trouve = false;
-        var res = 0;
-        var title = "";
-        this.listEvents.forEach(events => {
-            var e = new Events(events);
-            if(e.inInterval(from)){
-                res +=  1;
-                title += e.nextcloud_users+'\n';
-                trouve = true;
-            }
-        });
-        myCase.setAttribute('style', 'text-align: center;');
-        myCase.setAttribute('title', title);
-        myCase.innerText = res;
-
-        if(!trouve && (days[from.getDay()] === "sunday" || days[from.getDay()] === "saturday")){
-            myCase.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);');
-            myCase.innerText = "";
-        }else if(!trouve){
-            myCase.setAttribute('style', 'text-align: center; color: white; background-color: green;');
-            myCase.innerText = "0";
-        }
-        
-        return myCase;
-    }
+    return myCase
+  }
 }
+
 ;// CONCATENATED MODULE: ./src/js/module/xhr.js
 
 
 
 
-var baseUrl = (0,router_dist/* generateUrl */.nu)('/apps/whereami');
+const baseUrl = (0,router_dist/* generateUrl */.nu)('/apps/whereami')
 
 /**
- * 
- * @param {*} dtStart 
- * @param {*} dtEnd 
- * @param {*} DataTable 
+ *
+ * @param {*} dtStart
+ * @param {*} dtEnd
+ * @param {*} DataTable
+ * @param {*} classement
  */
- function getData(dtStart, dtEnd, DataTable, classement){
-    var data = {
-        classement: classement,
-        dtStart : dtStart,
-        dtEnd: dtEnd
-    };
+function getData (dtStart, dtEnd, DataTable, classement) {
+  const data = {
+    classement,
+    dtStart,
+    dtEnd
+  }
 
-    var oReq = new XMLHttpRequest();
-    oReq.open('POST', baseUrl + '/getEvents', true);
-    oReq.setRequestHeader("Content-Type", "application/json");
-    oReq.setRequestHeader("requesttoken", oc_requesttoken);
-    oReq.onload = function(e){  
-        if (this.status == 200) {
-            newTablePersonne(this.response,dtStart,dtEnd, classement);
-            new DataTable("#"+classement, optionDatatable);
-            showSuccess('table loaded');
-        }else{
-            showError(this.response);
-        }
-    };
-    oReq.send(JSON.stringify(data));
-}
-
-/**
- * 
- * @param {*} response 
- * @param {*} dtStart 
- * @param {*} dtEnd 
- * @param {*} tablename 
- */
- function newTablePersonne(response,dtStart,dtEnd,tablename){
-    var table = document.createElement('table');
-    var thead = document.createElement('thead');
-    var tbody = document.createElement('tbody');
-    var tfoot = document.createElement('tfoot');
-    
-    table.setAttribute('id', tablename);
-    table.setAttribute('class', 'table table-striped');
-
-    // var retHead = getHeader(from,to);
-    var from = new Date(dtStart);
-    var to = new Date(dtEnd);
-    thead.appendChild(getHeader(from,to));
-    
-    var from = new Date(dtStart);
-    var to = new Date(dtEnd);
-
-    var res = JSON.parse(response);
-    Object.keys(res).forEach(element => {
-        var from = new Date(dtStart);
-        var userListEvents = new listEvents(element,res[element]);
-        if(tablename=='summary'){
-            tbody = getContent(tbody,from,to,userListEvents,true);
-        }else{
-            tbody = getContent(tbody,from,to,userListEvents,false);
-        }
-        
-    });
-
-    if(tablename=='summary'){
-        tfoot.appendChild(getTotal(tbody));
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getEvents', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      newTablePersonne(this.response, dtStart, dtEnd, classement)
+      new DataTable('#' + classement, optionDatatable)
+      showSuccess('table loaded')
+    } else {
+      showError(this.response)
     }
-
-    tfoot.appendChild(getHeader(from,to));
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    table.appendChild(tfoot);
-    document.getElementById("myapp").innerHTML = "";
-    document.getElementById("myapp").appendChild(table);
+  }
+  oReq.send(JSON.stringify(data))
 }
-
-
-function getTotal(tbody){
-    var line = document.createElement('tr');
-    line.appendChild(newCell('td',"Total"));
-
-    var totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length;
-    for(var i=1; i<totalColumn; i++){
-        var totalByDay = 0;
-        tbody.getElementsByTagName('tr').forEach(element => {
-            totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText);
-        });
-        line.appendChild(newCell(   'td',
-                                    isNaN(totalByDay) ? "" : totalByDay, 
-                                    'text-align:center;'));
-    }
-    return line;
-}
-
 
 /**
- * 
- * @param {*} type 
- * @param {*} data 
- * @param {*} style 
- * @returns 
+ *
+ * @param {*} response
+ * @param {*} dtStart
+ * @param {*} dtEnd
+ * @param {*} tablename
  */
-function newCell(type, data, style = ""){
-    var myCase = document.createElement(type);
-    myCase.setAttribute('style', style);
-    myCase.innerText = data;
-    return myCase;
+function newTablePersonne (response, dtStart, dtEnd, tablename) {
+  const table = document.createElement('table')
+  const thead = document.createElement('thead')
+  let tbody = document.createElement('tbody')
+  const tfoot = document.createElement('tfoot')
+
+  table.setAttribute('id', tablename)
+  table.setAttribute('class', 'table table-striped')
+
+  // var retHead = getHeader(from,to);
+  // var from = new Date(dtStart)
+  // var to = new Date(dtEnd)
+  thead.appendChild(getHeader(new Date(dtStart), new Date(dtEnd)))
+
+  const to = new Date(dtEnd)
+  const res = JSON.parse(response)
+
+  Object.keys(res).forEach(element => {
+    let from = new Date(dtStart)
+    const userListEvents = new ListEvents(element, res[element])
+    if (tablename === 'summary') {
+      tbody = getContent(tbody, from, to, userListEvents, true)
+    } else {
+      tbody = getContent(tbody, from, to, userListEvents, false)
+    }
+  })
+
+  if (tablename === 'summary') {
+    tfoot.appendChild(getTotal(tbody))
+  }
+
+  tfoot.appendChild(getHeader(new Date(dtStart), to))
+
+  table.appendChild(thead)
+  table.appendChild(tbody)
+  table.appendChild(tfoot)
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(table)
+}
+
+/**
+ *
+ * @param {*} tbody
+ * @returns
+ */
+function getTotal (tbody) {
+  const line = document.createElement('tr')
+  line.appendChild(newCell('td', 'Total'))
+
+  const totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length
+  for (let i = 1; i < totalColumn; i++) {
+    let totalByDay = 0
+    tbody.getElementsByTagName('tr').forEach(element => {
+      totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText)
+    })
+    line.appendChild(newCell('td',
+      isNaN(totalByDay) ? '' : totalByDay,
+      'text-align:center;'))
+  }
+  return line
+}
+
+/**
+ *
+ * @param {*} type
+ * @param {*} data
+ * @param {*} style
+ * @returns
+ */
+function newCell (type, data, style = '') {
+  const myCase = document.createElement(type)
+  myCase.setAttribute('style', style)
+  myCase.innerText = data
+  return myCase
 }
 
 /**
  * Header of table
- * @param {*} from 
- * @param {*} to 
- * @returns 
+ * @param {*} from
+ * @param {*} to
+ * @returns
  */
-function getHeader(from,to){
-    var line = document.createElement('tr');
-    line.appendChild(newCell("th","Date"));
-    while(from<=to){
-        line.appendChild(newCell("th",days_FR[from.getDay()] + "\n" + from.toLocaleDateString()));
-        from.setDate(from.getDate() + 1);
-    }
+function getHeader (from, to) {
+  const line = document.createElement('tr')
+  line.appendChild(newCell('th', 'Date'))
+  while (from <= to) {
+    line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
+    from.setDate(from.getDate() + 1)
+  }
 
-    return line;
+  return line
 }
 
 /**
- * 
- * @param {*} tbody 
- * @param {*} from 
+ *
+ * @param {*} tbody
+ * @param {*} from
  * @param {*} to
- * @param {*} userListEvents 
- * @param {*} count 
- * @returns 
+ * @param {*} userListEvents
+ * @param {*} count
+ * @returns
  */
-function getContent(tbody,from,to,userListEvents,count=false){
-    var line = document.createElement('tr');
-    line.appendChild(newCell("td",userListEvents.id));
-    while(from<=to){
-        if(!count){
-            line.appendChild(userListEvents.eventsAtDay(from));
-        }else{
-            line.appendChild(userListEvents.eventsAtDayCount(from));
-        }
-        
-        from.setDate(from.getDate() + 1);
+function getContent (tbody, from, to, userListEvents, count = false) {
+  const line = document.createElement('tr')
+  line.appendChild(newCell('td', userListEvents.id))
+  while (from <= to) {
+    if (!count) {
+      line.appendChild(userListEvents.eventsAtDay(from))
+    } else {
+      line.appendChild(userListEvents.eventsAtDayCount(from))
     }
-    tbody.appendChild(line);
-    return tbody;
+
+    from.setDate(from.getDate() + 1)
+  }
+  tbody.appendChild(line)
+  return tbody
 }
+
+// EXTERNAL MODULE: ./node_modules/@nextcloud/l10n/dist/index.js
+var l10n_dist = __webpack_require__(9944);
 // EXTERNAL MODULE: ./node_modules/datatables.net-bs/js/dataTables.bootstrap.min.js
 var dataTables_bootstrap_min = __webpack_require__(9700);
 var dataTables_bootstrap_min_default = /*#__PURE__*/__webpack_require__.n(dataTables_bootstrap_min);
@@ -36892,85 +37133,86 @@ var update = injectStylesIntoStyleTag_default()(css_dataTables_bootstrap_min/* d
 ;// CONCATENATED MODULE: ./src/js/main.js
 
 
-// import DataTable from "datatables.net-dt/js/dataTables.dataTables";
 
 
-// import "datatables.net-dt/css/jquery.dataTables.css";
 
-/**
- * 
- */
- var optionDatatable = {
-	scrollY:        true,
-	scrollX:        true,
-	scrollCollapse: true,
-	autoWidth: false,
-    stateSave: true,
-    paging: false,
-	fixedColumns: {
-        left: 1
+
+const optionDatatable = {
+  scrollY: true,
+  scrollX: true,
+  scrollCollapse: true,
+  autoWidth: false,
+  stateSave: true,
+  paging: false,
+  fixedColumns: {
+    left: 1
+  },
+  language: {
+    search: (0,l10n_dist/* translate */.Iu)('gestion', 'Search'),
+    emptyTable: (0,l10n_dist/* translate */.Iu)('gestion', 'No data available in table'),
+    info: (0,l10n_dist/* translate */.Iu)('gestion', 'Showing {start} to {end} of {total} entries', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+    infoEmpty: (0,l10n_dist/* translate */.Iu)('gestion', 'Showing 0 to 0 of 0 entries'),
+    loadingRecords: (0,l10n_dist/* translate */.Iu)('gestion', 'Loading records …'),
+    processing: (0,l10n_dist/* translate */.Iu)('gestion', 'Processing …'),
+    infoFiltered: (0,l10n_dist/* translate */.Iu)('gestion', '{max} entries filtered', { max: '_MAX_' }),
+    lengthMenu: (0,l10n_dist/* translate */.Iu)('gestion', 'Show {menu} entries', { menu: '_MENU_' }),
+    zeroRecords: (0,l10n_dist/* translate */.Iu)('gestion', 'No corresponding entry'),
+    paginate: {
+      first: (0,l10n_dist/* translate */.Iu)('gestion', 'First'),
+      last: (0,l10n_dist/* translate */.Iu)('gestion', 'Last'),
+      next: (0,l10n_dist/* translate */.Iu)('gestion', 'Next'),
+      previous: (0,l10n_dist/* translate */.Iu)('gestion', 'Previous')
     },
-    language: {
-        "search": t('gestion', 'Search'),
-        "emptyTable": t('gestion', 'No data available in table'),
-        "info": t('gestion', 'Showing {start} to {end} of {total} entries', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
-        "infoEmpty": t('gestion', 'Showing 0 to 0 of 0 entries'),
-        "loadingRecords": t('gestion', 'Loading records …'),
-        "processing": t('gestion', 'Processing …'),
-        "infoFiltered": t('gestion', '{max} entries filtered', { max: '_MAX_' }),
-        "lengthMenu": t('gestion', 'Show {menu} entries', { menu: '_MENU_' }),
-        "zeroRecords": t('gestion', 'No corresponding entry'),
-        "paginate": {
-            "first": t('gestion', 'First'),
-            "last": t('gestion', 'Last'),
-            "next": t('gestion', 'Next'),
-            "previous": t('gestion', 'Previous'),
-        },
-        "fixedHeader": {
-            "header": true,
-            "footer": true
-        }
+    fixedHeader: {
+      header: true,
+      footer: true
     }
+  }
 }
 
 window.addEventListener('click', e => {
-    if( e.target.className.includes("showbyemployees")){
-        document.getElementById("myapp").innerHTML = "";
-        document.getElementById("myapp").appendChild(getLoader());
-        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()),'nextcloud_users');
-    }else if(e.target.className.includes("showbylocation")){
-        document.getElementById("myapp").innerHTML = "";
-        document.getElementById("myapp").appendChild(getLoader());
-        getData(document.getElementById("dtStart").value, document.getElementById("dtEnd").value, (dataTables_bootstrap_min_default()),'summary');
-    }else if(e.target.className.includes("helper")){
-        document.getElementById('helper').style.display = "block";
-    }else if(e.target.className.includes("modalClose")){
-        e.target.parentElement.parentElement.style.display = "none";
-    }
-});
+  if (e.target.className.includes('showbyemployees')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'nextcloud_users')
+  } else if (e.target.className.includes('showbylocation')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'summary')
+  } else if (e.target.className.includes('helper')) {
+    document.getElementById('helper').style.display = 'block'
+  } else if (e.target.className.includes('modalClose')) {
+    e.target.parentElement.parentElement.style.display = 'none'
+  }
+})
 
-window.addEventListener("DOMContentLoaded", function () {
-	let toDay = new Date();
-	document.getElementById("dtStart").valueAsDate = toDay;
-	toDay.setDate(toDay.getDate() + 15);
-	document.getElementById("dtEnd").valueAsDate = toDay;
-    
-    document.getElementById("myapp").appendChild(getLoader());
-	
-    getData(document.getElementById("dtStart").value, 
-            document.getElementById("dtEnd").value, 
-            (dataTables_bootstrap_min_default()),
-             'nextcloud_users'
-            );    
-});
+window.addEventListener('DOMContentLoaded', function () {
+  const toDay = new Date()
+  document.getElementById('dtStart').valueAsDate = toDay
+  toDay.setDate(toDay.getDate() + 15)
+  document.getElementById('dtEnd').valueAsDate = toDay
 
-function getLoader(){
-    var center = document.createElement('center');
-    var divLoader = document.createElement('div');
-    divLoader.setAttribute('class', 'lds-dual-ring');
-    center.appendChild(divLoader);
-    return center;
+  document.getElementById('myapp').appendChild(getLoader())
+
+  getData(document.getElementById('dtStart').value,
+    document.getElementById('dtEnd').value,
+    (dataTables_bootstrap_min_default()),
+    'nextcloud_users'
+  )
+})
+
+/**
+ *
+ * @returns
+ */
+function getLoader () {
+  const center = document.createElement('center')
+  const divLoader = document.createElement('div')
+  divLoader.setAttribute('class', 'lds-dual-ring')
+  center.appendChild(divLoader)
+  return center
 }
+
 })();
 
 /******/ })()

@@ -135,27 +135,6 @@ function getHeader (from, to) {
 }
 
 /**
- * Takes a name and returns its tetragraph.
- * "Pierre Martin" will give "PMAR"
- * "Jean-Paul Dupont" will give "JPDU"
- * @param {string} name of the user, separated by spaces or '-' for composed names.
- */
-function compute_tetragraph(name) {
-  const words = name.replace("-", " ").split(" ");  // split by space or -
-  let tetragraph = ""
-  for (let i = 0; i < words.length; i++) {
-    if (i >= words.length - 1) {
-      // takes all first letters from the last word to finish the tetragraph
-      let lettersMissing = Math.max(0, 4 - tetragraph.length)
-      tetragraph += words[i].substring(0, lettersMissing).toUpperCase();
-    } else {
-      tetragraph += words[i][0].toUpperCase();
-    }
-  }
-  return tetragraph;
-}
-
-/**
  *
  * @param {*} tbody
  * @param {*} from
@@ -166,13 +145,7 @@ function compute_tetragraph(name) {
  */
 function getContent (tbody, from, to, userListEvents, count = false) {
   const line = document.createElement('tr')
-  if (!count) {
-    // Displaying names' tetragraph for users
-    line.appendChild(newCell('td', compute_tetragraph(userListEvents.id)))
-  } else {
-    // Displaying location's whole name
-    line.appendChild(newCell('td', userListEvents.id))
-  }
+  line.appendChild(newCell('td', userListEvents.id))
   while (from <= to) {
     if (!count) {
       line.appendChild(userListEvents.eventsAtDay(from))

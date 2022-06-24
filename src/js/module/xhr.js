@@ -26,7 +26,7 @@ export function getData (dtStart, dtEnd, DataTable, classement) {
     if (this.status === 200) {
       newTablePersonne(this.response, dtStart, dtEnd, classement)
       new DataTable('#' + classement, optionDatatable)
-      // showSuccess('table loaded')
+      showSuccess('table loaded')
     } else {
       showError(this.response)
     }
@@ -140,7 +140,7 @@ function getHeader (from, to) {
  * @param {*} from
  * @param {*} to
  * @param {*} userListEvents
- * @param {boolean} count is true when displaying 'by location', false when displaying 'by employees'
+ * @param {*} count is true when displaying 'by location', false when displaying 'by employees'
  * @returns
  */
 function getContent (tbody, from, to, userListEvents, count = false) {

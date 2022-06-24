@@ -39,9 +39,10 @@ export class ListEvents {
     })
 
     if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
-      myCase.setAttribute('style', 'background-color: var(--color-box-shadow);')
+      myCase.style.backgroundColor = "var(--color-box-shadow)";
     } else if (!found) {
-      myCase.setAttribute('style', 'background-color: yellow;')
+      myCase.style.backgroundColor = "yellow";
+      myCase.style.color = "#222";
       res += 'shame'
     }
 

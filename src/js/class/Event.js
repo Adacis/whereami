@@ -22,11 +22,7 @@ export class Events {
   inInterval (from) {
     const dtStart = new Date(this.dtStart)
     const dtEnd = new Date(this.dtEnd)
-    if (from >= dtStart &&
-            from < dtEnd) {
-      return true
-    }
-    return false
+    return from >= dtStart && from < dtEnd;
   }
 
   /**

@@ -1,4 +1,4 @@
-import { getData } from './module/xhr'
+import { getData, lastSeen } from './module/xhr'
 import { translate as t } from '@nextcloud/l10n'
 import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
@@ -38,15 +38,28 @@ export const optionDatatable = {
 }
 
 window.addEventListener('click', e => {
+
   if (e.target.className.includes('showbyemployees')) {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
     getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'nextcloud_users')
-  } else if (e.target.className.includes('showbylocation')) {
+  } 
+  else if (e.target.className.includes('showbylocation')) {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
     getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'summary')
-  } else if (e.target.className.includes('helper')) {
+  } 
+  else if (e.target.className.includes('showbyquote')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'summary')
+  }
+  else if (e.target.className.includes('lastSeen')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable)
+  }
+  else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
   } else if (e.target.className.includes('modalClose')) {
     e.target.parentElement.parentElement.style.display = 'none'

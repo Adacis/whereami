@@ -34,6 +34,85 @@ export function getData (dtStart, dtEnd, DataTable, classement) {
   oReq.send(JSON.stringify(data))
 }
 
+export function lastSeen(dtStart, dtEnd, DataTable){
+  const data = {
+    dtStart,
+    dtEnd
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getLastSeen', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      newTableSeen(this.response);
+      new DataTable('#seen', optionDatatable);
+    } else {
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+
+function newTableSeen (response){
+  const res = JSON.parse(response)
+  var totalPeople = 1;
+
+  const table = document.createElement('table')
+  table.setAttribute('id', 'seen')
+  table.setAttribute('class', 'table table-striped')
+
+  let thead = document.createElement('thead')
+  let tbody = document.createElement('tbody')
+
+  const headLine = document.createElement('tr')
+  headLine.appendChild(newCell('th', ""))
+
+  Object.keys(res).forEach(element => {
+    headLine.appendChild(newCell('th', element));
+    var newLine = document.createElement('tr');
+    newLine.appendChild(newCell('td',element));
+    tbody.appendChild(newLine);
+
+    totalPeople ++;
+  })
+
+  thead.appendChild(headLine);  
+  table.appendChild(thead);
+  table.appendChild(tbody);
+
+  let rows = 0;
+  table.rows.forEach(r => {
+    if(rows > 0){
+      for(var cellPosition = 1 ; cellPosition < totalPeople ; cellPosition++){
+        let peoplerow = r.cells[0].innerText;
+        let peoplecolumn = table.rows[0].cells[cellPosition].innerText
+        
+        let msg = ":'(";
+        let title = "No title";
+
+        if(res[peoplerow]!=null && res[peoplerow][peoplecolumn] != null){
+          title = res[peoplerow][peoplecolumn].place;
+          msg = res[peoplerow][peoplecolumn].seen;
+        }
+  
+        let newCell = r.insertCell(cellPosition);
+        let newText = document.createTextNode(msg);
+        newCell.setAttribute('title', title);
+        newCell.appendChild(newText);
+      }
+    }
+    rows ++;
+  })
+
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(table)
+  
+}
+
+
 /**
  *
  * @param {*} response
@@ -130,7 +209,6 @@ function getHeader (from, to) {
     line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
     from.setDate(from.getDate() + 1)
   }
-
   return line
 }
 

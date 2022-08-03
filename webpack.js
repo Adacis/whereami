@@ -11,7 +11,7 @@ module.exports =
       filename: '../js/main.app.js',
     },
     optimization: {
-      minimize: false
+      minimize: true
     },
     module: {
       rules: [

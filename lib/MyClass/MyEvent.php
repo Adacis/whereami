@@ -124,7 +124,6 @@ class MyEvent{
                 ];
             }
 
-            
         }
         
         return $listSeen; // Retour 

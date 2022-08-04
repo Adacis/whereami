@@ -102,8 +102,6 @@ class PageController extends Controller {
 			
 			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user]);
 		}
-		// var_dump($listSeen);
-        // die();
 		ksort($listSeen, SORT_STRING);
 		return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);
 	}

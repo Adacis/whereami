@@ -105,7 +105,6 @@ class MyEvent{
      */
     public function parseListEvents($events, $listSeen): array{
         foreach($events as $e){
-<<<<<<< HEAD
             $user = strtolower($e->nextcloud_users);
             $thisUser = strtolower($this->nextcloud_users);
 
@@ -120,19 +119,6 @@ class MyEvent{
                     ) 
             ){
                 $listSeen[$user] = [  'place' => $e->place, 
-=======
-            if(     $e->nextcloud_users != $this->nextcloud_users // Je ne me teste pas moi même
-                &&  $e->place === $this->place // On est sur le même lieu
-                && $this->eventCross($e) // Nos dates sont dans le même interval
-                && 
-                    (
-                    (array_key_exists($e->nextcloud_users,$listSeen) && $listSeen[$e->nextcloud_users]->seen < $this->getSeen($e)) // J'ai déjà enregistré pour cet utilisateur
-                    ||
-                    (!array_key_exists($e->nextcloud_users,$listSeen)) // Pas d'informatin précédente sur cet utilisateur
-                    ) 
-            ){
-                $listSeen[$e->nextcloud_users] = [  'place' => $e->place, 
->>>>>>> 5d4d41578036ad54b2f45118822e3b5f7963d177
                                                     'seen' => $this->getSeen($e)];
             }
         }

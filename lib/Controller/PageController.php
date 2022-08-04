@@ -95,7 +95,6 @@ class PageController extends Controller {
 		//Récupération de la liste des événements croisées sur la période
 		$listSeen = [];
 		foreach($events as $e){
-<<<<<<< HEAD
 			$user = strtolower($e->nextcloud_users);
 			if(!array_key_exists($user,$listSeen)){
 				$listSeen[$user] = [];
@@ -104,15 +103,6 @@ class PageController extends Controller {
 			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user]);
 		}
 		ksort($listSeen, SORT_STRING);
-=======
-			if(!array_key_exists($e->nextcloud_users,$listSeen)){
-				$listSeen[$e->nextcloud_users] = [];
-			}
-			
-			$listSeen[$e->nextcloud_users] = $e->parseListEvents($events, $listSeen[$e->nextcloud_users]);
-		}
-
->>>>>>> 5d4d41578036ad54b2f45118822e3b5f7963d177
 		return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);
 	}
 

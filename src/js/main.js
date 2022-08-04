@@ -73,7 +73,6 @@ window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('dtEnd').valueAsDate = toDay
 
   document.getElementById('myapp').appendChild(getLoader())
-
   getData(document.getElementById('dtStart').value,
     document.getElementById('dtEnd').value,
     DataTable,

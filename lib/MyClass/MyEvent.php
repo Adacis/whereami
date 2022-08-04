@@ -117,10 +117,11 @@ class MyEvent{
                         (!array_key_exists($user,$listSeen)) // Pas d'informatin précédente sur cet utilisateur
                     ) 
             ){
-                $listSeen[$user] = [    'load' => False,
-                                        'place' => $e->place, 
-                                        'seen' => $this->getSeen($e),
-                                    ];
+                $listSeen[$user] = [    
+                    'load' => False,
+                    'place' => $e->place, 
+                    'seen' => $this->getSeen($e),
+                ];
             }
 
             

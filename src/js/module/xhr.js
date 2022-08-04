@@ -93,6 +93,10 @@ function newTableSeen (response){
         let msg = ":'(";
         let title = "No title";
 
+        if(peoplerow === peoplecolumn){
+          msg = "-";
+        }
+
         if(res[peoplerow]!=null && res[peoplerow][peoplecolumn] != null){
           title = res[peoplerow][peoplecolumn].place;
           msg = res[peoplerow][peoplecolumn].seen;

@@ -93,9 +93,6 @@ function newTableSeen (response){
         let msg = ":'(";
         let title = "No title";
 
-        console.log(peoplerow);
-        console.log(peoplecolumn);
-
         if(peoplerow === peoplecolumn){
           msg = "-";
         }

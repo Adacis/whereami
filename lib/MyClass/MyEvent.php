@@ -56,16 +56,16 @@ class MyEvent{
         return false;
     }
 
-    /**
-     * Check if a date is in an interval
-     */
-    public function inIntervalNotStrict($d){
-        if($d >= $this->dtStart
-            && $d <= $this->dtEnd){
-                return true;
-            }
-        return false;
-    }
+    // /**
+    //  * Check if a date is in an interval
+    //  */
+    // public function inIntervalNotStrict($d){
+    //     if($d >= $this->dtStart
+    //         && $d <= $this->dtEnd){
+    //             return true;
+    //         }
+    //     return false;
+    // }
 
     /**
      * Clean data
@@ -82,11 +82,10 @@ class MyEvent{
      * test if two date intervals intersect
      */
     public function eventCross($event): bool{
-        if($this->inIntervalNotStrict($event->dtStart) 
-            || $this->inIntervalNotStrict($event->dtEnd)){
-                return true; 
-            }
-        return false;
+        if($this->dtEnd < $event->dtStart || $this->dtStart > $event->dtEnd){
+                return false; 
+        }
+        return true;
     }
 
     /**
@@ -113,15 +112,20 @@ class MyEvent{
                 &&  $this->eventCross($e) // Nos dates sont dans le même interval
                 && 
                     (
-                    (array_key_exists($user,$listSeen) && $listSeen[$user]->seen < $this->getSeen($e)) // J'ai déjà enregistré pour cet utilisateur
-                    ||
-                    (!array_key_exists($user,$listSeen)) // Pas d'informatin précédente sur cet utilisateur
+                        (isset($listSeen[$user]['seen']) && $listSeen[$user]['seen'] < $this->getSeen($e)) // J'ai déjà enregistré pour cet utilisateur
+                        ||
+                        (!array_key_exists($user,$listSeen)) // Pas d'informatin précédente sur cet utilisateur
                     ) 
             ){
-                $listSeen[$user] = [  'place' => $e->place, 
-                                                    'seen' => $this->getSeen($e)];
+                $listSeen[$user] = [    
+                    'load' => False,
+                    'place' => $e->place, 
+                    'seen' => $this->getSeen($e),
+                ];
             }
+
         }
+        
         return $listSeen; // Retour 
     }
 

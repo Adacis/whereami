@@ -2609,6 +2609,29 @@ fixRegExpWellKnownSymbolLogic('replace', function (_, nativeReplace, maybeCallNa
 
 /***/ }),
 
+/***/ 6755:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8081);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3645);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".tags-input-wrapper{background:rgba(0,0,0,0);padding:5px;border-radius:4px;max-width:400px;border:1px solid #ccc}.tags-input-wrapper input{border:none;background:rgba(0,0,0,0);outline:none;width:140px;margin-left:8px}.tags-input-wrapper .tag{display:inline-block;background-color:#9c9c9c;color:#000;border-radius:10px;padding-top:5px;padding-left:13px;padding-right:0px;box-sizing:border-box;min-height:35px;margin-right:5px;margin-bottom:8px;box-shadow:0 5px 10px -2px rgba(96,96,96,.7)}.tags-input-wrapper .tag a{margin:0 7px 3px;display:inline-block;cursor:pointer}.button{background-color:#9c2020;padding:5px;border-radius:4px;border:1px solid #ccc}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ 2750:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -30306,10 +30329,11 @@ function getLoader () {
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "Yu": () => (/* binding */ getData),
-  "No": () => (/* binding */ lastSeen)
+  "No": () => (/* binding */ lastSeen),
+  "zT": () => (/* binding */ sendTags)
 });
 
-// UNUSED EXPORTS: baseUrl, sendTags
+// UNUSED EXPORTS: baseUrl
 
 ;// CONCATENATED MODULE: ./node_modules/@nextcloud/dialogs/dist/index.es.js
 (function() {
@@ -38001,7 +38025,7 @@ function showMessage(data, options) {
  * @param options
  */
 
-function index_es_showError(text, options) {
+function showError(text, options) {
   return showMessage(text, __assign(__assign({}, options), {
     type: ToastType.ERROR
   }));
@@ -38264,7 +38288,7 @@ function getData (dtStart, dtEnd, DataTable, classement) {
       new DataTable('#' + classement, main/* optionDatatable */.o)
       showSuccess('table loaded')
     } else {
-      index_es_showError(this.response)
+      showError(this.response)
     }
   }
   oReq.send(JSON.stringify(data))
@@ -38285,7 +38309,7 @@ function lastSeen(dtStart, dtEnd, DataTable){
       newTableSeen(this.response);
       new DataTable('#seen', main/* optionDatatable */.o);
     } else {
-      index_es_showError(this.response);
+      showError(this.response);
     }
   }
   oReq.send(JSON.stringify(data));
@@ -38575,11 +38599,274 @@ function sendTags (tags) {
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(6887);
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+
+// UNUSED EXPORTS: submit
+
+// EXTERNAL MODULE: ./node_modules/@nextcloud/l10n/dist/index.js
+var dist = __webpack_require__(9944);
+// EXTERNAL MODULE: ./src/js/module/xhr.js + 3 modules
+var xhr = __webpack_require__(7459);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
+var injectStylesIntoStyleTag = __webpack_require__(3379);
+var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleDomAPI.js
+var styleDomAPI = __webpack_require__(7795);
+var styleDomAPI_default = /*#__PURE__*/__webpack_require__.n(styleDomAPI);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertBySelector.js
+var insertBySelector = __webpack_require__(569);
+var insertBySelector_default = /*#__PURE__*/__webpack_require__.n(insertBySelector);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js
+var setAttributesWithoutAttributes = __webpack_require__(3565);
+var setAttributesWithoutAttributes_default = /*#__PURE__*/__webpack_require__.n(setAttributesWithoutAttributes);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertStyleElement.js
+var insertStyleElement = __webpack_require__(9216);
+var insertStyleElement_default = /*#__PURE__*/__webpack_require__.n(insertStyleElement);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleTagTransform.js
+var styleTagTransform = __webpack_require__(4589);
+var styleTagTransform_default = /*#__PURE__*/__webpack_require__.n(styleTagTransform);
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./css/mycss.css
+var mycss = __webpack_require__(6755);
+;// CONCATENATED MODULE: ./css/mycss.css
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (styleTagTransform_default());
+options.setAttributes = (setAttributesWithoutAttributes_default());
+
+      options.insert = insertBySelector_default().bind(null, "head");
+    
+options.domAPI = (styleDomAPI_default());
+options.insertStyleElement = (insertStyleElement_default());
+
+var update = injectStylesIntoStyleTag_default()(mycss/* default */.Z, options);
+
+
+
+
+       /* harmony default export */ const css_mycss = (mycss/* default */.Z && mycss/* default.locals */.Z.locals ? mycss/* default.locals */.Z.locals : undefined);
+
+;// CONCATENATED MODULE: ./src/js/module/tagsInput.js
+
+// Tags input
+"use strict"
+
+// Plugin Constructor
+var TagsInput = function (opts) {
+    this.options = Object.assign(TagsInput.defaults, opts);
+    this.init();
+}
+
+// Initialize the plugin
+TagsInput.prototype.init = function (opts) {
+    this.options = opts ? Object.assign(this.options, opts) : this.options;
+
+    if (this.initialized)
+        this.destroy();
+
+    if (!(this.orignal_input = document.getElementById(this.options.selector))) {
+        console.error("tags-input couldn't find an element with the specified ID");
+        return this;
+    }
+
+    this.arr = [];
+    this.wrapper = document.createElement('div');
+    this.input = document.createElement('input');
+    init(this);
+    initEvents(this);
+
+    this.initialized = true;
+    return this;
+}
+
+// Add Tags
+TagsInput.prototype.addTag = function (string) {
+
+    if (this.anyErrors(string))
+        return;
+
+    this.arr.push(string);
+    var tagInput = this;
+
+    var tag = document.createElement('span');
+    tag.className = this.options.tagClass;
+    tag.innerText = string;
+
+    var closeIcon = document.createElement('a');
+    closeIcon.innerHTML = '&times;';
+
+    // delete the tag when icon is clicked
+    closeIcon.addEventListener('click', function (e) {
+        e.preventDefault();
+        var tag = this.parentNode;
+
+        for (var i = 0; i < tagInput.wrapper.childNodes.length; i++) {
+            if (tagInput.wrapper.childNodes[i] == tag)
+                tagInput.deleteTag(tag, i);
+        }
+    })
+
+
+    tag.appendChild(closeIcon);
+    this.wrapper.insertBefore(tag, this.input);
+    this.orignal_input.value = this.arr.join(',');
+
+    return this;
+}
+
+// Delete Tags
+TagsInput.prototype.deleteTag = function (tag, i) {
+    tag.remove();
+    this.arr.splice(i, 1);
+    this.orignal_input.value = this.arr.join(',');
+    return this;
+}
+
+// Make sure input string have no error with the plugin
+TagsInput.prototype.anyErrors = function (string) {
+    if (this.options.max != null && this.arr.length >= this.options.max) {
+        console.log('max tags limit reached');
+        return true;
+    }
+
+    if (!this.options.duplicate && this.arr.indexOf(string) != -1) {
+        console.log('duplicate found " ' + string + ' " ')
+        return true;
+    }
+
+    return false;
+}
+
+// Add tags programmatically 
+TagsInput.prototype.addData = function (array) {
+    var plugin = this;
+
+    array.forEach(function (string) {
+        plugin.addTag(string);
+    })
+    return this;
+}
+
+// Get the Input String
+TagsInput.prototype.getInputString = function () {
+    return this.arr.join(',');
+}
+
+
+// destroy the plugin
+TagsInput.prototype.destroy = function () {
+    this.orignal_input.removeAttribute('hidden');
+
+    delete this.orignal_input;
+    var self = this;
+
+    Object.keys(this).forEach(function (key) {
+        if (self[key] instanceof HTMLElement)
+            self[key].remove();
+
+        if (key != 'options')
+            delete self[key];
+    });
+
+    this.initialized = false;
+}
+
+// Private function to initialize the tag input plugin
+function init(tags) {
+    tags.wrapper.append(tags.input);
+    tags.wrapper.classList.add(tags.options.wrapperClass);
+    tags.orignal_input.setAttribute('hidden', 'true');
+    tags.orignal_input.parentNode.insertBefore(tags.wrapper, tags.orignal_input);
+}
+
+// initialize the Events
+function initEvents(tags) {
+    tags.wrapper.addEventListener('click', function () {
+        tags.input.focus();
+    });
+
+
+    tags.input.addEventListener('keydown', function (e) {
+        var str = tags.input.value.trim();
+
+        if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
+            e.preventDefault();
+            tags.input.value = "";
+            if (str != "")
+                tags.addTag(str);
+        }
+
+    });
+}
+
+
+// Set All the Default Values
+TagsInput.defaults = {
+    selector: '',
+    wrapperClass: 'tags-input-wrapper',
+    tagClass: 'tag',
+    max: null,
+    duplicate: false
+}
+
+window.TagsInput = TagsInput;
+
+
+;// CONCATENATED MODULE: ./src/js/adminSection.js
+
+
+
+
+
+var tagInput1 = new TagsInput({
+	selector: 'tag-input-words',
+	duplicate: false
+});
+
+var tagInput2 = new TagsInput({
+	selector: 'tag-input-places',
+	duplicate: false
+});
+
+
+
+// submit tags
+window.addEventListener('click', e => {
+	var elem = null;
+	if (e.target.innerText.includes('words')) {
+		console.log("Submit words");
+		elem = document.getElementById('tag-input-words').getInputString;
+	}
+	else if (e.target.innerText.includes('places')) {
+		console.log("Submit places");
+		elem = document.getElementById('tag-input-places').getInputString();
+	}
+	if (elem != null) {
+		(0,xhr/* sendTags */.zT)(elem);
+	}s
+})
+
+function adminSection_submit() {
+	elem = document.getElementById('tag-input-words');
+	console.log("onlclick worked");
+	sendTags(elem);
+}
+
+
+})();
+
 /******/ })()
 ;

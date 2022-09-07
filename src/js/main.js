@@ -69,10 +69,11 @@ window.addEventListener('click', e => {
 window.addEventListener('DOMContentLoaded', function () {
   const toDay = new Date()
   document.getElementById('dtStart').valueAsDate = toDay
-  toDay.setDate(toDay.getDate() + 15)
+  toDay.setDate(toDay.getDate() + 7)
   document.getElementById('dtEnd').valueAsDate = toDay
-
+  
   document.getElementById('myapp').appendChild(getLoader())
+
   getData(document.getElementById('dtStart').value,
     document.getElementById('dtEnd').value,
     DataTable,

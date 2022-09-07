@@ -14,6 +14,10 @@
     <dependencies>
         <nextcloud min-version="22" max-version="25"/>
     </dependencies>
+    <settings>
+        <admin>OCA\Whereami\Settings\WhereamiAdmin</admin>
+        <admin-section>OCA\Whereami\Sections\WhereamiAdmin</admin-section>
+    </settings>
     <navigations>
         <navigation>
             <name>wai</name>

@@ -240,3 +240,25 @@ function getContent (tbody, from, to, userListEvents, count = false) {
   tbody.appendChild(line)
   return tbody
 }
+
+
+/**
+ * @param {*} tags
+ */
+export function sendTags (tags) {
+  const data = {tags};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/setTags', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      //alert(t('Done !'));
+      alert(this.response);
+    } else {
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}

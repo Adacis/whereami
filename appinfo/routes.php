@@ -5,5 +5,6 @@ return [
         ['name' => 'page#quotes', 'url' => '/quotes', 'verb' => 'GET'],
         ['name' => 'page#getLastSeen', 'url' => '/getLastSeen', 'verb' => 'POST'],
         ['name' => 'page#getEvents', 'url' => '/getEvents', 'verb' => 'POST'],
+        ['name' => 'admin#setTags', 'url' => '/setTags', 'verb' => 'POST'],
     ]
 ];

@@ -1,11 +1,12 @@
 import "../../../css/mycss.css";
+//import {sendTags} from "./xhr";
 // Tags input
 "use strict"
 
 // Plugin Constructor
 export var TagsInput = function (opts) {
-    this.options = Object.assign(TagsInput.defaults, opts);
-    this.init();
+    this.options = opts;
+    this.init(opts);
 }
 
 // Initialize the plugin
@@ -23,18 +24,15 @@ TagsInput.prototype.init = function (opts) {
     this.arr = [];
     this.wrapper = document.createElement('div');
     this.input = document.createElement('input');
+    this.input.setAttribute("id", this.orignal_input.getAttribute('id')+"-input-field");
     init(this);
-    initEvents(this);
-
+    //initEvents(this);
     this.initialized = true;
     return this;
 }
 
 // Add Tags
 TagsInput.prototype.addTag = function (string) {
-
-    if (this.anyErrors(string))
-        return;
 
     this.arr.push(string);
     var tagInput = this;
@@ -126,38 +124,18 @@ TagsInput.prototype.destroy = function () {
 function init(tags) {
     tags.wrapper.append(tags.input);
     tags.wrapper.classList.add(tags.options.wrapperClass);
-    tags.orignal_input.setAttribute('hidden', 'true');
+    tags.orignal_input.setAttribute('hidden', 'false');
     tags.orignal_input.parentNode.insertBefore(tags.wrapper, tags.orignal_input);
 }
 
-// initialize the Events
-function initEvents(tags) {
-    tags.wrapper.addEventListener('click', function () {
-        tags.input.focus();
-    });
 
 
-    tags.input.addEventListener('keydown', function (e) {
-        var str = tags.input.value.trim();
 
-        if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
-            e.preventDefault();
-            tags.input.value = "";
-            if (str != "")
-                tags.addTag(str);
-        }
-
-    });
-}
-
-
-// Set All the Default Values
-TagsInput.defaults = {
-    selector: '',
-    wrapperClass: 'tags-input-wrapper',
-    tagClass: 'tag',
-    max: null,
-    duplicate: false
-}
-
-
+// // Set All the Default Values
+// TagsInput.defaults = {
+//     selector: '',
+//     wrapperClass: 'tags-input-wrapper',
+//     tagClass: 'tag',
+//     max: null,
+//     duplicate: false
+// }

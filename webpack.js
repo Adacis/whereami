@@ -6,8 +6,8 @@ module.exports =
     mode: "production",
     performance: { hints: false },
     entry: {
-      main: './src/js/main.js',
-      adminSection: './src/js/adminSection.js',
+      main: './src/js/index/main.js',
+      adminSection: './src/js/admin/adminSection.js',
     },
     output: {
       filename: '../js/[name].app.js',

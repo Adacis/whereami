@@ -22,7 +22,7 @@ __webpack_unused_export__ = getLanguage;
 __webpack_unused_export__ = getLocale;
 __webpack_unused_export__ = getMonthNames;
 __webpack_unused_export__ = getMonthNamesShort;
-exports.Iu = translate;
+__webpack_unused_export__ = translate;
 __webpack_unused_export__ = translatePlural;
 
 __webpack_require__(4916);
@@ -30129,187 +30129,86 @@ function styleTagTransform(css, styleElement) {
 
 module.exports = styleTagTransform;
 
-/***/ }),
+/***/ })
 
-/***/ 6887:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/nonce */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nc = undefined;
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
 "use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "o": () => (/* binding */ optionDatatable)
-});
-
-// EXTERNAL MODULE: ./src/js/module/xhr.js + 3 modules
-var xhr = __webpack_require__(7459);
-// EXTERNAL MODULE: ./node_modules/@nextcloud/l10n/dist/index.js
-var dist = __webpack_require__(9944);
-// EXTERNAL MODULE: ./node_modules/datatables.net-bs/js/dataTables.bootstrap.min.js
-var dataTables_bootstrap_min = __webpack_require__(9700);
-var dataTables_bootstrap_min_default = /*#__PURE__*/__webpack_require__.n(dataTables_bootstrap_min);
-// EXTERNAL MODULE: ./node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.js
-var dataTables_fixedColumns = __webpack_require__(730);
-// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
-var injectStylesIntoStyleTag = __webpack_require__(3379);
-var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
-// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleDomAPI.js
-var styleDomAPI = __webpack_require__(7795);
-var styleDomAPI_default = /*#__PURE__*/__webpack_require__.n(styleDomAPI);
-// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertBySelector.js
-var insertBySelector = __webpack_require__(569);
-var insertBySelector_default = /*#__PURE__*/__webpack_require__.n(insertBySelector);
-// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js
-var setAttributesWithoutAttributes = __webpack_require__(3565);
-var setAttributesWithoutAttributes_default = /*#__PURE__*/__webpack_require__.n(setAttributesWithoutAttributes);
-// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertStyleElement.js
-var insertStyleElement = __webpack_require__(9216);
-var insertStyleElement_default = /*#__PURE__*/__webpack_require__.n(insertStyleElement);
-// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleTagTransform.js
-var styleTagTransform = __webpack_require__(4589);
-var styleTagTransform_default = /*#__PURE__*/__webpack_require__.n(styleTagTransform);
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css
-var css_dataTables_bootstrap_min = __webpack_require__(2750);
-;// CONCATENATED MODULE: ./node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (styleTagTransform_default());
-options.setAttributes = (setAttributesWithoutAttributes_default());
-
-      options.insert = insertBySelector_default().bind(null, "head");
-    
-options.domAPI = (styleDomAPI_default());
-options.insertStyleElement = (insertStyleElement_default());
-
-var update = injectStylesIntoStyleTag_default()(css_dataTables_bootstrap_min/* default */.Z, options);
-
-
-
-
-       /* harmony default export */ const datatables_net_bs_css_dataTables_bootstrap_min = (css_dataTables_bootstrap_min/* default */.Z && css_dataTables_bootstrap_min/* default.locals */.Z.locals ? css_dataTables_bootstrap_min/* default.locals */.Z.locals : undefined);
-
-;// CONCATENATED MODULE: ./src/js/main.js
-
-
-
-
-
-
-const optionDatatable = {
-  scrollY: true,
-  scrollX: true,
-  scrollCollapse: true,
-  autoWidth: false,
-  stateSave: true,
-  paging: false,
-  fixedColumns: {
-    left: 1
-  },
-  language: {
-    search: (0,dist/* translate */.Iu)('gestion', 'Search'),
-    emptyTable: (0,dist/* translate */.Iu)('gestion', 'No data available in table'),
-    info: (0,dist/* translate */.Iu)('gestion', 'Showing {start} to {end} of {total} entries', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
-    infoEmpty: (0,dist/* translate */.Iu)('gestion', 'Showing 0 to 0 of 0 entries'),
-    loadingRecords: (0,dist/* translate */.Iu)('gestion', 'Loading records …'),
-    processing: (0,dist/* translate */.Iu)('gestion', 'Processing …'),
-    infoFiltered: (0,dist/* translate */.Iu)('gestion', '{max} entries filtered', { max: '_MAX_' }),
-    lengthMenu: (0,dist/* translate */.Iu)('gestion', 'Show {menu} entries', { menu: '_MENU_' }),
-    zeroRecords: (0,dist/* translate */.Iu)('gestion', 'No corresponding entry'),
-    paginate: {
-      first: (0,dist/* translate */.Iu)('gestion', 'First'),
-      last: (0,dist/* translate */.Iu)('gestion', 'Last'),
-      next: (0,dist/* translate */.Iu)('gestion', 'Next'),
-      previous: (0,dist/* translate */.Iu)('gestion', 'Previous')
-    },
-    fixedHeader: {
-      header: true,
-      footer: true
-    }
-  }
-}
-
-window.addEventListener('click', e => {
-
-  if (e.target.className.includes('showbyemployees')) {
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    ;(0,xhr/* getData */.Yu)(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'nextcloud_users')
-  } 
-  else if (e.target.className.includes('showbylocation')) {
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    ;(0,xhr/* getData */.Yu)(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'summary')
-  } 
-  else if (e.target.className.includes('showbyquote')) {
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    ;(0,xhr/* getData */.Yu)(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'summary')
-  }
-  else if (e.target.className.includes('lastSeen')) {
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    ;(0,xhr/* lastSeen */.No)(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()))
-  }
-  else if (e.target.className.includes('helper')) {
-    document.getElementById('helper').style.display = 'block'
-  } else if (e.target.className.includes('modalClose')) {
-    e.target.parentElement.parentElement.style.display = 'none'
-  }
-})
-
-window.addEventListener('DOMContentLoaded', function () {
-  const toDay = new Date()
-  document.getElementById('dtStart').valueAsDate = toDay
-  toDay.setDate(toDay.getDate() + 7)
-  document.getElementById('dtEnd').valueAsDate = toDay
-  
-  document.getElementById('myapp').appendChild(getLoader())
-
-  ;(0,xhr/* getData */.Yu)(document.getElementById('dtStart').value,
-    document.getElementById('dtEnd').value,
-    (dataTables_bootstrap_min_default()),
-    'nextcloud_users'
-  )
-})
-
-/**
- *
- * @returns
- */
-function getLoader () {
-  const center = document.createElement('center')
-  const divLoader = document.createElement('div')
-  divLoader.setAttribute('class', 'lds-dual-ring')
-  center.appendChild(divLoader)
-  return center
-}
-
-
-/***/ }),
-
-/***/ 7459:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "Yu": () => (/* binding */ getData),
-  "No": () => (/* binding */ lastSeen)
-});
-
-// UNUSED EXPORTS: baseUrl, sendTags
 
 ;// CONCATENATED MODULE: ./node_modules/@nextcloud/dialogs/dist/index.es.js
 (function() {
@@ -37911,7 +37810,7 @@ process.env.TRANSLATIONS.map(function (data) {
 });
 var gt = gtBuilder.build();
 gt.ngettext.bind(gt);
-var t = gt.gettext.bind(gt);
+var index_es_t = gt.gettext.bind(gt);
 
 var ToastType =
 /** @class */
@@ -38068,7 +37967,7 @@ function showUndo(text, onUndo, options) {
   var undoButton = document.createElement('button');
   undoContent.classList.add('toast-undo-container');
   undoButton.classList.add('toast-undo-button');
-  undoButton.innerText = t('Undo');
+  undoButton.innerText = index_es_t('Undo');
   undoContent.innerText = text;
   undoContent.appendChild(undoButton);
   undoButton.addEventListener('click', function (event) {
@@ -38231,14 +38130,44 @@ class ListEvents {
   }
 }
 
-// EXTERNAL MODULE: ./src/js/main.js + 1 modules
-var main = __webpack_require__(6887);
 ;// CONCATENATED MODULE: ./src/js/module/xhr.js
 
 
 
-
 const baseUrl = (0,router_dist/* generateUrl */.nu)('/apps/whereami')
+
+const optionDatatable = {
+  scrollY: true,
+  scrollX: true,
+  scrollCollapse: true,
+  autoWidth: false,
+  stateSave: true,
+  paging: false,
+  fixedColumns: {
+    left: 1
+  },
+  language: {
+    search: t('gestion', 'Search'),
+    emptyTable: t('gestion', 'No data available in table'),
+    info: t('gestion', 'Showing {start} to {end} of {total} entries', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+    infoEmpty: t('gestion', 'Showing 0 to 0 of 0 entries'),
+    loadingRecords: t('gestion', 'Loading records …'),
+    processing: t('gestion', 'Processing …'),
+    infoFiltered: t('gestion', '{max} entries filtered', { max: '_MAX_' }),
+    lengthMenu: t('gestion', 'Show {menu} entries', { menu: '_MENU_' }),
+    zeroRecords: t('gestion', 'No corresponding entry'),
+    paginate: {
+      first: t('gestion', 'First'),
+      last: t('gestion', 'Last'),
+      next: t('gestion', 'Next'),
+      previous: t('gestion', 'Previous')
+    },
+    fixedHeader: {
+      header: true,
+      footer: true
+    }
+  }
+}
 
 /**
  *
@@ -38257,11 +38186,11 @@ function getData (dtStart, dtEnd, DataTable, classement) {
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getEvents', true)
   oReq.setRequestHeader('Content-Type', 'application/json')
-  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTablePersonne(this.response, dtStart, dtEnd, classement)
-      new DataTable('#' + classement, main/* optionDatatable */.o)
+      new DataTable('#' + classement, optionDatatable)
       showSuccess('table loaded')
     } else {
       index_es_showError(this.response)
@@ -38279,11 +38208,11 @@ function lastSeen(dtStart, dtEnd, DataTable){
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getLastSeen', true)
   oReq.setRequestHeader('Content-Type', 'application/json')
-  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTableSeen(this.response);
-      new DataTable('#seen', main/* optionDatatable */.o);
+      new DataTable('#seen', optionDatatable);
     } else {
       index_es_showError(this.response);
     }
@@ -38487,99 +38416,143 @@ function sendTags (tags) {
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/setTags', true)
   oReq.setRequestHeader('Content-Type', 'application/json')
-  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      //alert(t('Done !'));
-      alert(this.response);
+      console.log(this.response);
     } else {
+      console.log('Controller error');
       showError(this.response);
     }
   }
   oReq.send(JSON.stringify(data));
 }
+// EXTERNAL MODULE: ./node_modules/@nextcloud/l10n/dist/index.js
+var l10n_dist = __webpack_require__(9944);
+// EXTERNAL MODULE: ./node_modules/datatables.net-bs/js/dataTables.bootstrap.min.js
+var dataTables_bootstrap_min = __webpack_require__(9700);
+var dataTables_bootstrap_min_default = /*#__PURE__*/__webpack_require__.n(dataTables_bootstrap_min);
+// EXTERNAL MODULE: ./node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.js
+var dataTables_fixedColumns = __webpack_require__(730);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
+var injectStylesIntoStyleTag = __webpack_require__(3379);
+var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleDomAPI.js
+var styleDomAPI = __webpack_require__(7795);
+var styleDomAPI_default = /*#__PURE__*/__webpack_require__.n(styleDomAPI);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertBySelector.js
+var insertBySelector = __webpack_require__(569);
+var insertBySelector_default = /*#__PURE__*/__webpack_require__.n(insertBySelector);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js
+var setAttributesWithoutAttributes = __webpack_require__(3565);
+var setAttributesWithoutAttributes_default = /*#__PURE__*/__webpack_require__.n(setAttributesWithoutAttributes);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertStyleElement.js
+var insertStyleElement = __webpack_require__(9216);
+var insertStyleElement_default = /*#__PURE__*/__webpack_require__.n(insertStyleElement);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleTagTransform.js
+var styleTagTransform = __webpack_require__(4589);
+var styleTagTransform_default = /*#__PURE__*/__webpack_require__.n(styleTagTransform);
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css
+var css_dataTables_bootstrap_min = __webpack_require__(2750);
+;// CONCATENATED MODULE: ./node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css
 
-/***/ })
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/nonce */
-/******/ 	(() => {
-/******/ 		__webpack_require__.nc = undefined;
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(6887);
-/******/ 	
+var options = {};
+
+options.styleTagTransform = (styleTagTransform_default());
+options.setAttributes = (setAttributesWithoutAttributes_default());
+
+      options.insert = insertBySelector_default().bind(null, "head");
+    
+options.domAPI = (styleDomAPI_default());
+options.insertStyleElement = (insertStyleElement_default());
+
+var update = injectStylesIntoStyleTag_default()(css_dataTables_bootstrap_min/* default */.Z, options);
+
+
+
+
+       /* harmony default export */ const datatables_net_bs_css_dataTables_bootstrap_min = (css_dataTables_bootstrap_min/* default */.Z && css_dataTables_bootstrap_min/* default.locals */.Z.locals ? css_dataTables_bootstrap_min/* default.locals */.Z.locals : undefined);
+
+;// CONCATENATED MODULE: ./src/js/index/main.js
+
+
+
+
+
+
+
+
+window.addEventListener('click', e => {
+
+  if (e.target.className.includes('showbyemployees')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'nextcloud_users')
+  } 
+  else if (e.target.className.includes('showbylocation')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'summary')
+  } 
+  else if (e.target.className.includes('showbyquote')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()), 'summary')
+  }
+  else if (e.target.className.includes('lastSeen')) {
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, (dataTables_bootstrap_min_default()))
+  }
+  else if (e.target.className.includes('helper')) {
+    document.getElementById('helper').style.display = 'block'
+  } else if (e.target.className.includes('modalClose')) {
+    e.target.parentElement.parentElement.style.display = 'none'
+  }
+})
+
+window.addEventListener('DOMContentLoaded', function () {
+  // if page containing 'dtstart' not loaded
+  // if (document.getElementById('dtStart') === null) {
+  //   return;
+  // }
+  const toDay = new Date()
+  document.getElementById('dtStart').valueAsDate = toDay
+  toDay.setDate(toDay.getDate() + 7)
+  document.getElementById('dtEnd').valueAsDate = toDay
+  
+  document.getElementById('myapp').appendChild(getLoader())
+
+  getData(document.getElementById('dtStart').value,
+    document.getElementById('dtEnd').value,
+    (dataTables_bootstrap_min_default()),
+    'nextcloud_users'
+  )
+})
+
+/**
+ *
+ * @returns
+ */
+function getLoader () {
+  const center = document.createElement('center')
+  const divLoader = document.createElement('div')
+  divLoader.setAttribute('class', 'lds-dual-ring')
+  center.appendChild(divLoader)
+  return center
+}
+
+})();
+
 /******/ })()
 ;

@@ -37,6 +37,6 @@ class AdminController extends Controller {
 	 */
 	public function setTags(String $tags){
 
-		return new Response(''. $tags);
+		return new DataResponse($tags, 200, ['Content-Type' => 'application/json']);
 	}
 }

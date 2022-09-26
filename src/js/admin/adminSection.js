@@ -1,4 +1,4 @@
-import { sendTags } from '../module/xhr';
+import { sendTags, getTags } from '../module/xhr';
 import { TagsInput } from '../module/tagsInput';
 
 
@@ -27,7 +27,7 @@ function initEvents(tags) {
 }
 
 var opts1 = {
-	selector: 'tag-input-places',
+	selector: 'place',
 	duplicate: false,
 	wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
@@ -37,7 +37,7 @@ var opts1 = {
 var tagInput2 = new TagsInput(opts1);
 
 var opts2 = {
-	selector: 'tag-input-words',
+	selector: 'activity',
 	wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,

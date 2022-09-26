@@ -1,9 +1,8 @@
 <?php
 namespace OCA\Whereami\Controller;
 
-use Exception;
+use OCA\Whereami\Db\Bdd;
 use OCP\IRequest;
-use OCP\Files\IRootFolder;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Controller;
@@ -18,13 +17,12 @@ class AdminController extends Controller {
 	 */
 	public function __construct($AppName, 
 								IRequest $request,
-								IRootFolder $rootFolder,
 								IURLGenerator $urlGenerator,
-								IConfig $config){
+								IConfig $config,
+								Bdd $myDb){
 
 		parent::__construct($AppName, $request);
 
-		$this->idNextcloud = $UserId;
 		$this->myDb = $myDb;
 		$this->urlGenerator = $urlGenerator;
 		$this->config = $config;
@@ -33,10 +31,31 @@ class AdminController extends Controller {
 
 	/**
 	 * @AdminRequired
-	 * @param string tags
+	 * @param string tag	 
 	 */
-	public function setTags(String $tags){
+	public function setTags(String $tag){
+		$splitted = explode(':', $tag);
+		$this->myDb->insertWordInWordList($splitted[1], $splitted[0]);
+		return new DataResponse($tag, 200, ['Content-Type' => 'application/json']);
+	}
 
-		return new DataResponse($tags, 200, ['Content-Type' => 'application/json']);
+
+	/**
+	 * @AdminRequired
+	 * @param string tag
+	 */
+	public function deleteTag(String $tag) {
+		$splitted = explode(':', $tag);
+		$this->myDb->deleteWordInWordList($splitted[1], $splitted[0]);
+		return new DataResponse($tag, 200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @AdminRequired
+	 * @param string usage
+	 */
+	public function getTags(String $usage) {
+		$data = $this->myDb->getWordInWordList($usage);
+		return new DataResponse($data, 200, ['Content-Type' => 'application/json']);
 	}
 }

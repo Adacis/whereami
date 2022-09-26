@@ -1,5 +1,5 @@
 import "../../../css/mycss.css";
-//import {sendTags} from "./xhr";
+import {deleteTag, getTags} from "./xhr";
 // Tags input
 "use strict"
 
@@ -22,12 +22,19 @@ TagsInput.prototype.init = function (opts) {
     }
 
     this.arr = [];
+    
     this.wrapper = document.createElement('div');
     this.input = document.createElement('input');
     this.input.setAttribute("id", this.orignal_input.getAttribute('id')+"-input-field");
     init(this);
     //initEvents(this);
     this.initialized = true;
+
+    var initialTags= getTags(this.options.selector).onload();
+    for (const tag of initialTags) {
+        this.addTag(tag.word);
+    }
+
     return this;
 }
 
@@ -51,6 +58,7 @@ TagsInput.prototype.addTag = function (string) {
 
         for (var i = 0; i < tagInput.wrapper.childNodes.length; i++) {
             if (tagInput.wrapper.childNodes[i] == tag)
+                deleteTag(tagInput.options.selector + ':' + tagInput.arr[i])
                 tagInput.deleteTag(tag, i);
         }
     })

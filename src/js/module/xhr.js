@@ -277,8 +277,8 @@ function getContent (tbody, from, to, userListEvents, count = false) {
 /**
  * @param {*} tags
  */
-export function sendTags (tags) {
-  const data = {tags};
+export function sendTags (tag) {
+  const data = {tag};
 
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/setTags', true)
@@ -293,4 +293,43 @@ export function sendTags (tags) {
     }
   }
   oReq.send(JSON.stringify(data));
+}
+
+
+export function deleteTag (tag) {
+  const data = {tag};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/deleteTag', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+export function getTags (usage) {
+  const data = {usage};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getTags', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(JSON.parse(this.response));
+      return JSON.parse(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+  return oReq;
 }

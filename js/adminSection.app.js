@@ -10986,8 +10986,8 @@ function getContent (tbody, from, to, userListEvents, count = false) {
 /**
  * @param {*} tags
  */
-function sendTags (tags) {
-  const data = {tags};
+function sendTags (tag) {
+  const data = {tag};
 
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/setTags', true)
@@ -11002,6 +11002,45 @@ function sendTags (tags) {
     }
   }
   oReq.send(JSON.stringify(data));
+}
+
+
+function deleteTag (tag) {
+  const data = {tag};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/deleteTag', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(this.response);
+    } else {
+      console.log('Controller error');
+      index_es_showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+function getTags (usage) {
+  const data = {usage};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getTags', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(JSON.parse(this.response));
+      return JSON.parse(this.response);
+    } else {
+      console.log('Controller error');
+      index_es_showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+  return oReq;
 }
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(3379);
@@ -11054,7 +11093,7 @@ var update = injectStylesIntoStyleTag_default()(mycss/* default */.Z, options);
 
 ;// CONCATENATED MODULE: ./src/js/module/tagsInput.js
 
-//import {sendTags} from "./xhr";
+
 // Tags input
 "use strict"
 
@@ -11077,12 +11116,21 @@ TagsInput.prototype.init = function (opts) {
     }
 
     this.arr = [];
+    
     this.wrapper = document.createElement('div');
     this.input = document.createElement('input');
     this.input.setAttribute("id", this.orignal_input.getAttribute('id')+"-input-field");
     init(this);
     //initEvents(this);
     this.initialized = true;
+
+    var initialTags= getTags(this.options.selector).onload();
+    console.log('test');
+    console.log(initialTags);
+    for (const tag of initialTags) {
+        this.addTag(tag.word);
+    }
+
     return this;
 }
 
@@ -11106,6 +11154,7 @@ TagsInput.prototype.addTag = function (string) {
 
         for (var i = 0; i < tagInput.wrapper.childNodes.length; i++) {
             if (tagInput.wrapper.childNodes[i] == tag)
+                deleteTag(tagInput.options.selector + ':' + tagInput.arr[i])
                 tagInput.deleteTag(tag, i);
         }
     })
@@ -11225,7 +11274,7 @@ function initEvents(tags) {
 }
 
 var opts1 = {
-	selector: 'tag-input-places',
+	selector: 'place',
 	duplicate: false,
 	wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
@@ -11235,7 +11284,7 @@ var opts1 = {
 var tagInput2 = new TagsInput(opts1);
 
 var opts2 = {
-	selector: 'tag-input-words',
+	selector: 'activity',
 	wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,

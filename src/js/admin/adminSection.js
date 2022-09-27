@@ -27,23 +27,23 @@ function initEvents(tags) {
 }
 
 var opts1 = {
-	selector: 'place',
+	selector: 'allowed_events',
 	duplicate: false,
 	wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,
     duplicate: false
 };
-var tagInput2 = new TagsInput(opts1);
+var tagInput1 = new TagsInput(opts1);
 
 var opts2 = {
-	selector: 'activity',
+	selector: 'excluded_places', 
 	wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,
     duplicate: false
 };
-var tagInput1 = new TagsInput(opts2);
+var tagInput2 = new TagsInput(opts2);
 
 
 initEvents(tagInput1);

@@ -1,4 +1,5 @@
 <?php
+
 namespace OCA\Whereami\Controller;
 
 use OCA\Whereami\Db\Bdd;
@@ -19,22 +20,24 @@ use DateTime;
 /**
  * 
  */
-class PageController extends Controller {
+class PageController extends Controller
+{
 	private $userId;
-    private $calendarManager;
+	private $calendarManager;
 	private $myDb;
 	private $urlGenerator;
 
 	/**
 	 * 
 	 */
-	public function __construct($AppName,
-								$UserId,
-								IRequest $request, 
-								IManager $calendarManager,
-								IURLGenerator $urlGenerator,
-								Bdd $myDb
-								){
+	public function __construct(
+		$AppName,
+		$UserId,
+		IRequest $request,
+		IManager $calendarManager,
+		IURLGenerator $urlGenerator,
+		Bdd $myDb
+	) {
 		parent::__construct($AppName, $request);
 
 		$this->userId = $UserId;
@@ -48,7 +51,8 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function index() {
+	public function index()
+	{
 		return new TemplateResponse('whereami', 'index', array('url' => $this->getNavigationLink()));
 	}
 
@@ -56,7 +60,8 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function quotes() {
+	public function quotes()
+	{
 		return new TemplateResponse('whereami', 'quotes', array('url' => $this->getNavigationLink()));
 	}
 
@@ -65,10 +70,12 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function getNavigationLink(){
-		return array(	"index" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.index"),
-						"quotes" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.quotes")
-					);
+	public function getNavigationLink()
+	{
+		return array(
+			"index" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.index"),
+			"quotes" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.quotes")
+		);
 	}
 
 	/**
@@ -76,41 +83,49 @@ class PageController extends Controller {
 	 * @param string $dtStart
 	 * @param string $dtEnd
 	 */
-	public function getLastSeen(String $dtStart, String $dtEnd){
+	public function getLastSeen(String $dtStart, String $dtEnd)
+	{
 		$events = [];
 		$charReplace = "@";
 
+		$toExclude = $this->myDb->getWordInWordList("excluded_places");
+
 		//Récupération de la liste des événements sur la période
-		foreach($this->search($dtStart,$dtEnd) as $c){
+		foreach ($this->search($dtStart, $dtEnd) as $c) {
 			$e = new MyEvent($c, $this->myDb);
 
 			$cls = strtolower($e->{"nextcloud_users"});
 			$cls = trim(str_replace($charReplace, "", $cls));
-			$cls = explode(",",$cls)[0];
+			$cls = explode(",", $cls)[0];
 			$cls = trim($cls);
+
+			if (in_array($cls, $toExclude)) {
+				continue;
+			}
 
 			array_push($events, $e);
 		}
 
 		//Récupération de la liste des événements croisées sur la période
 		$listSeen = [];
-		foreach($events as $e){
+		foreach ($events as $e) {
 			$user = strtolower($e->nextcloud_users);
-			if(!array_key_exists($user,$listSeen)){
+			if (!array_key_exists($user, $listSeen)) {
 				$listSeen[$user] = [];
 			}
-			
+
 			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user]);
 		}
 		ksort($listSeen, SORT_STRING);
 		return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);
 	}
 
-	public function search(String $dtStart, String $dtEnd){
+	public function search(String $dtStart, String $dtEnd)
+	{
 		$from = new DateTime($dtStart);
 		$to = new DateTime($dtEnd);
 		$searchResults = $this->calendarManager->search("@", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
-		
+
 		return $searchResults;
 		// list de tous les utilisateurs
 		// if($e->{$classement} === "nextcloud_users"){
@@ -127,27 +142,47 @@ class PageController extends Controller {
 	 * @param string $dtStart
 	 * @param string $dtEnd
 	 */
-	public function getEvents(String $classement, String $dtStart, String $dtEnd){
-		
+	public function getEvents(String $classement, String $dtStart, String $dtEnd)
+	{
+
 		$events = [];
 		$charReplace = "@";
 
-		foreach($this->search($dtStart,$dtEnd) as $c){
+		$toInclude = $this->myDb->getWordInWordList('allowed_events');
+		$toInclude = $this->arrayFromWordQuery($toInclude);
+
+		foreach ($this->search($dtStart, $dtEnd) as $c) {
 			$e = new MyEvent($c, $this->myDb);
 			// if(preg_match("/^".$charReplace."/", $e->summary)){
 
 			$cls = strtolower($e->{$classement});
 			$cls = trim(str_replace($charReplace, "", $cls));
-			$cls = explode(",",$cls)[0];
+			$cls = explode(",", $cls)[0];
 			$cls = trim($cls);
 
-			if(!array_key_exists($cls,$events)){
-				$events[$cls] = [];
+
+			# selectionner tout ceux qui sont dans la db
+			if (in_array($e->place, $toInclude)) {
+				if (!array_key_exists($cls, $events)) {
+					$events[$cls] = [];
+				}
+				array_push($events[$cls], $e);
 			}
-			array_push($events[$cls], $e);
 			// }
 		}
+
 		return new DataResponse($events, 200, ['Content-Type' => 'application/json']);
 	}
 
+
+	/**
+	 * @NoAdminRequired
+	 */
+	private function arrayFromWordQuery($wordQuery)
+	{
+		$res = array_map(function ($q) {
+			return strtolower(trim($q['word']));
+		}, $wordQuery);
+		return $res;
+	}
 }

@@ -5,13 +5,15 @@ module.exports =
   {
     mode: "production",
     performance: { hints: false },
-    entry: ['./src/js/main.js'
-          ],
+    entry: {
+      main: './src/js/index/main.js',
+      adminSection: './src/js/admin/adminSection.js',
+    },
     output: {
-      filename: '../js/main.app.js',
+      filename: '../js/[name].app.js',
     },
     optimization: {
-      minimize: true
+      minimize: false
     },
     module: {
       rules: [

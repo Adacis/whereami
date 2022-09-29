@@ -1,8 +1,40 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { daysFr, ListEvents } from '../class/ListEvents'
-import { optionDatatable } from '../main'
 export const baseUrl = generateUrl('/apps/whereami')
+
+export const optionDatatable = {
+  scrollY: true,
+  scrollX: true,
+  scrollCollapse: true,
+  autoWidth: false,
+  stateSave: true,
+  paging: false,
+  fixedColumns: {
+    left: 1
+  },
+  language: {
+    search: t('gestion', 'Search'),
+    emptyTable: t('gestion', 'No data available in table'),
+    info: t('gestion', 'Showing {start} to {end} of {total} entries', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+    infoEmpty: t('gestion', 'Showing 0 to 0 of 0 entries'),
+    loadingRecords: t('gestion', 'Loading records …'),
+    processing: t('gestion', 'Processing …'),
+    infoFiltered: t('gestion', '{max} entries filtered', { max: '_MAX_' }),
+    lengthMenu: t('gestion', 'Show {menu} entries', { menu: '_MENU_' }),
+    zeroRecords: t('gestion', 'No corresponding entry'),
+    paginate: {
+      first: t('gestion', 'First'),
+      last: t('gestion', 'Last'),
+      next: t('gestion', 'Next'),
+      previous: t('gestion', 'Previous')
+    },
+    fixedHeader: {
+      header: true,
+      footer: true
+    }
+  }
+}
 
 /**
  *
@@ -21,7 +53,7 @@ export function getData (dtStart, dtEnd, DataTable, classement) {
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getEvents', true)
   oReq.setRequestHeader('Content-Type', 'application/json')
-  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTablePersonne(this.response, dtStart, dtEnd, classement)
@@ -43,7 +75,7 @@ export function lastSeen(dtStart, dtEnd, DataTable){
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getLastSeen', true)
   oReq.setRequestHeader('Content-Type', 'application/json')
-  oReq.setRequestHeader('requesttoken', oc_requesttoken)
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTableSeen(this.response);
@@ -239,4 +271,65 @@ function getContent (tbody, from, to, userListEvents, count = false) {
   }
   tbody.appendChild(line)
   return tbody
+}
+
+
+/**
+ * @param {*} tags
+ */
+export function sendTags (tag) {
+  const data = {tag};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/setTags', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+
+export function deleteTag (tag) {
+  const data = {tag};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/deleteTag', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+export function getTags (usage) {
+  const data = {usage};
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getTags', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(JSON.parse(this.response));
+      return JSON.parse(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+  return oReq;
 }

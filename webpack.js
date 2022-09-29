@@ -13,7 +13,7 @@ module.exports =
       filename: '../js/[name].app.js',
     },
     optimization: {
-      minimize: false
+      minimize: true
     },
     module: {
       rules: [

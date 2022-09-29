@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', function () {
   // }
   const toDay = new Date()
   document.getElementById('dtStart').valueAsDate = toDay
-  toDay.setDate(toDay.getDate() + 7)
+  toDay.setDate(toDay.getDate() + 14)
   document.getElementById('dtEnd').valueAsDate = toDay
   
   document.getElementById('myapp').appendChild(getLoader())

@@ -47,7 +47,7 @@ class AdminController extends Controller {
 	public function deleteTag(String $tag) {
 		$splitted = explode(':', $tag);
 		$this->myDb->deleteWordInWordList($splitted[1], $splitted[0]);
-		return new DataResponse($tag, 200, ['Content-Type' => 'application/json']);
+		return new DataResponse([$tag,$splitted], 200, ['Content-Type' => 'application/json']);
 	}
 
 	/**

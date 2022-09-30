@@ -60,7 +60,7 @@ class Bdd
     public function deleteWordInWordList($word, $usage)
     {
         $sql = "DELETE FROM `" . $this->tableprefix . "wordlist` WHERE `word` = ? AND `usage` = ?";
-        $this->execSQLNoJsonReturn($sql, array($word, $usage));
+        $this->execSQLNoData($sql, array($word, $usage));
     }
 
     /** 

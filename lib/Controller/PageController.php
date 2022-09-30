@@ -89,6 +89,7 @@ class PageController extends Controller
 		$charReplace = "@";
 
 		$toExclude = $this->myDb->getWordInWordList("excluded_places");
+		$toExclude = $this->arrayFromWordQuery($toExclude);
 
 		//Récupération de la liste des événements sur la période
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
@@ -99,11 +100,9 @@ class PageController extends Controller
 			$cls = explode(",", $cls)[0];
 			$cls = trim($cls);
 
-			if (in_array($cls, $toExclude)) {
-				continue;
+			if (!in_array($e->place, $toExclude)) {
+				array_push($events, $e);
 			}
-
-			array_push($events, $e);
 		}
 
 		//Récupération de la liste des événements croisées sur la période

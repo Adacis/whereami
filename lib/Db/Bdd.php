@@ -3,17 +3,20 @@
 namespace OCA\Whereami\Db;
 
 use OCP\IDBConnection;
+use Psr\Log\LoggerInterface;
 
 class Bdd
 {
     // private String $charset = 'utf8mb4';
     private IDbConnection $pdo;
     private String $tableprefix;
+    private $logger;
 
-    public function __construct(IDbConnection $db)
+    public function __construct(IDbConnection $db, LoggerInterface $log)
     {
         $this->pdo = $db;
         $this->tableprefix = '*PREFIX*' . "whereami_";
+        $this->logger = $log;
     }
 
     public function listUID()
@@ -47,7 +50,7 @@ class Bdd
      */
     public function insertWordInWordList($word, $usage)
     {
-        $sql = "INSERT INTO `" . $this->tableprefix . "wordlist` (`word`,`usage`) VALUES (?,?);";
+        $sql = "INSERT INTO `" . $this->tableprefix . "wordlist` (`word`,`usage`) VALUES (?,?)";
         $this->execSQLNoData($sql, array($word, $usage));
         return true;
     }
@@ -72,6 +75,83 @@ class Bdd
     {
         $sql = "SELECT word FROM `" . $this->tableprefix . "wordlist` WHERE `usage` = ?";
         return $this->execSQLNoJsonReturn($sql, array($usage));
+    }
+
+    /**
+     * Add prefix to person with a label in prefixlist
+     * @person
+     * @prefix
+     * @label
+     */
+    public function addPrefixToList($person, $prefix, $label)
+    {
+        $sql = "SELECT `id` FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ? AND `label` = ? AND `prefix` = ?";
+        $res = $this->execSQLNoJsonReturn($sql, array($person, $label, $prefix));
+        if (empty($res)) {
+            $sql = "INSERT INTO `" . $this->tableprefix . "prefixlist` (`person`,`prefix`,`label`) VALUES (?,?,?)";
+            $this->execSQLNoData($sql, array($person, $prefix, $label));
+        }
+    }
+
+    /**
+     * Change prefix corresponding to (person, label) if it exists, otherwise add it
+     * @person
+     * @prefix
+     * @label
+     */
+    public function changeIconInPrefixList($person, $prefix, $label)
+    {
+        $sql = "SELECT `id` FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ? AND `label` = ?";
+        $res = $this->execSQLNoJsonReturn($sql, array($person, $label));
+        $id = intval($res[0]['id']);
+        if (empty($res)) {
+            $sql = "INSERT INTO `" . $this->tableprefix . "prefixlist` (`person`,`prefix`,`label`) VALUES (?,?,?)";
+            $this->execSQLNoData($sql, array($person, $prefix, $label));
+        } else {
+            $sql = "UPDATE `" . $this->tableprefix . "prefixlist` SET `person` = ? ,`prefix` = ? , `label` = ?  WHERE `id` = ?";
+            $this->execSQLNoData($sql, array($person, $prefix, $label, $id));
+        }
+    }
+
+    /**
+     * Change label corresponding to (person, prefix) if it exists, otherwise add it
+     * @person
+     * @prefix
+     * @label
+     */
+    public function changeLabelInPrefixList($person, $prefix, $label)
+    {
+        $sql = "SELECT `id` FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ? AND `prefix` = ?";
+        $res = $this->execSQLNoJsonReturn($sql, array($person, $prefix));
+        $id = intval($res[0]['id']);
+        if (empty($res)) {
+            $sql = "INSERT INTO `" . $this->tableprefix . "prefixlist` (`person`,`prefix`,`label`) VALUES (?,?,?)";
+            $this->execSQLNoData($sql, array($person, $prefix, $label));
+        } else {
+            $sql = "UPDATE `" . $this->tableprefix . "prefixlist` SET `person` = ? ,`prefix` = ? , `label` = ?  WHERE `id` = ?";
+            $this->execSQLNoData($sql, array($person, $prefix, $label, $id));
+        }
+    }
+
+    /**
+     * Delete prefix in prefixlist
+     * @person
+     * @prefix
+     * @label
+     */
+    public function deletePrefixInPrefixList($person, $prefix, $label)
+    {
+        $sql = "DELETE FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ? AND `prefix` = ? AND `label` = ?";
+        $this->execSQLNoData($sql, array($person, $prefix, $label));
+    }
+
+    /**
+     * Get all entries from prefix list (to instantiate UI)
+     */
+    public function getAllEntriesInPrefixList()
+    {
+        $sql = "SELECT * FROM `" . $this->tableprefix . "prefixlist`";
+        return $this->execSQLNoJsonReturn($sql, array());
     }
 
 

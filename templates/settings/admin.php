@@ -9,4 +9,7 @@ script('whereami', array('adminSection.app'));
 
     <h2>Lieux non pris en compte pour last seen:</h2>
     <input type="text" id="excluded_places">
+
+    <h2>Icons:</h2>
+    <button id="addIconsField">Add Icon Field</button>
 </div>

@@ -22,10 +22,8 @@
   padding-top: 5px;
   padding-left: 13px;
   padding-right: 0px;
-  box-sizing: border-box;
   min-height: 35px;
   margin-right: 5px;
-  margin-bottom: 8px;
   box-shadow: 0 5px 10px -2px rgba(96, 96, 96, 0.7);
 }
 
@@ -40,4 +38,44 @@
   padding: 5px;
   border-radius: 4px;
   border: 1px solid #ccc
+}
+
+.icons-to-person-wrapper {
+  background: transparent;
+  padding: 5px;
+  border-radius: 4px;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  position: relative;
+  margin: 3px 3px 3px 0px;
+}
+
+.icons-to-person-wrapper .inputIcon {
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid #ccc;
+  width: 100px;
+}
+
+.icons-to-person-wrapper .finalValue {
+  display: inline-block;
+  background-color: #9c9c9c;
+  color: #000;
+  border-radius: 10px;
+  padding-top: 2.5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-height: 30px;
+  margin-right: 5px;
+  margin-top: 2px;
+  box-shadow: 0 5px 10px -2px rgba(96, 96, 96, .7);
+  margin-bottom: 2px;
+}
+
+.icons-to-person-wrapper .closeIcon {
+  font-size: 20px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  padding-right: 7px;
 }

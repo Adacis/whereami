@@ -43,7 +43,7 @@ export const optionDatatable = {
  * @param {*} DataTable
  * @param {*} classement
  */
-export function getData (dtStart, dtEnd, DataTable, classement) {
+export function getData(dtStart, dtEnd, DataTable, classement) {
   const data = {
     classement,
     dtStart,
@@ -66,7 +66,7 @@ export function getData (dtStart, dtEnd, DataTable, classement) {
   oReq.send(JSON.stringify(data))
 }
 
-export function lastSeen(dtStart, dtEnd, DataTable){
+export function lastSeen(dtStart, dtEnd, DataTable) {
   const data = {
     dtStart,
     dtEnd
@@ -88,7 +88,7 @@ export function lastSeen(dtStart, dtEnd, DataTable){
 }
 
 
-function newTableSeen (response){
+function newTableSeen(response) {
   const res = JSON.parse(response)
   var totalPeople = 1;
 
@@ -105,47 +105,47 @@ function newTableSeen (response){
   Object.keys(res).forEach(element => {
     headLine.appendChild(newCell('th', element));
     var newLine = document.createElement('tr');
-    newLine.appendChild(newCell('td',element));
+    newLine.appendChild(newCell('td', element));
     tbody.appendChild(newLine);
 
-    totalPeople ++;
+    totalPeople++;
   })
 
-  thead.appendChild(headLine);  
+  thead.appendChild(headLine);
   table.appendChild(thead);
   table.appendChild(tbody);
 
   let rows = 0;
   table.rows.forEach(r => {
-    if(rows > 0){
-      for(var cellPosition = 1 ; cellPosition < totalPeople ; cellPosition++){
+    if (rows > 0) {
+      for (var cellPosition = 1; cellPosition < totalPeople; cellPosition++) {
         let peoplerow = r.cells[0].innerText;
         let peoplecolumn = table.rows[0].cells[cellPosition].innerText
-        
+
         let msg = ":'(";
         let title = "No title";
 
-        if(peoplerow === peoplecolumn){
+        if (peoplerow === peoplecolumn) {
           msg = "-";
         }
 
-        if(res[peoplerow]!=null && res[peoplerow][peoplecolumn] != null){
+        if (res[peoplerow] != null && res[peoplerow][peoplecolumn] != null) {
           title = res[peoplerow][peoplecolumn].place;
           msg = res[peoplerow][peoplecolumn].seen;
         }
-  
+
         let newCell = r.insertCell(cellPosition);
         let newText = document.createTextNode(msg);
         newCell.setAttribute('title', title);
         newCell.appendChild(newText);
       }
     }
-    rows ++;
+    rows++;
   })
 
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(table)
-  
+
 }
 
 
@@ -156,7 +156,7 @@ function newTableSeen (response){
  * @param {*} dtEnd
  * @param {*} tablename
  */
-function newTablePersonne (response, dtStart, dtEnd, tablename) {
+function newTablePersonne(response, dtStart, dtEnd, tablename) {
   const table = document.createElement('table')
   const thead = document.createElement('thead')
   let tbody = document.createElement('tbody')
@@ -201,7 +201,7 @@ function newTablePersonne (response, dtStart, dtEnd, tablename) {
  * @param {*} tbody
  * @returns
  */
-function getTotal (tbody) {
+function getTotal(tbody) {
   const line = document.createElement('tr')
   line.appendChild(newCell('td', 'Total'))
 
@@ -225,7 +225,7 @@ function getTotal (tbody) {
  * @param {*} style
  * @returns
  */
-function newCell (type, data, style = '') {
+function newCell(type, data, style = '') {
   const myCase = document.createElement(type)
   myCase.setAttribute('style', style)
   myCase.innerText = data
@@ -238,7 +238,7 @@ function newCell (type, data, style = '') {
  * @param {*} to
  * @returns
  */
-function getHeader (from, to) {
+function getHeader(from, to) {
   const line = document.createElement('tr')
   line.appendChild(newCell('th', 'Date'))
   while (from <= to) {
@@ -257,7 +257,7 @@ function getHeader (from, to) {
  * @param {*} count
  * @returns
  */
-function getContent (tbody, from, to, userListEvents, count = false) {
+function getContent(tbody, from, to, userListEvents, count = false) {
   const line = document.createElement('tr')
   line.appendChild(newCell('td', userListEvents.id))
   while (from <= to) {
@@ -277,8 +277,8 @@ function getContent (tbody, from, to, userListEvents, count = false) {
 /**
  * @param {*} tags
  */
-export function sendTags (tag) {
-  const data = {tag};
+export function sendTags(tag) {
+  const data = { tag };
 
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/setTags', true)
@@ -296,8 +296,8 @@ export function sendTags (tag) {
 }
 
 
-export function deleteTag (tag) {
-  const data = {tag};
+export function deleteTag(tag) {
+  const data = { tag };
 
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/deleteTag', true)
@@ -314,8 +314,8 @@ export function deleteTag (tag) {
   oReq.send(JSON.stringify(data));
 }
 
-export function getTags (usage) {
-  const data = {usage};
+export function getTags(usage) {
+  const data = { usage };
 
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getTags', false)
@@ -331,5 +331,84 @@ export function getTags (usage) {
     }
   }
   oReq.send(JSON.stringify(data));
+  return oReq;
+}
+
+export function sendIcon(person, prefix, label, changeLabel, changeIcon) {
+  const data = {
+    person,
+    prefix,
+    label
+  }
+
+  if (person.length) {
+    alert("Merci de vous assurer d'entrer le quadrigramme de la personne.");
+    return;
+  }
+
+  const oReq = new XMLHttpRequest()
+  if (changeLabel && !changeIcon)
+    oReq.open('POST', baseUrl + '/changeLabel', true)
+  else if (changeIcon && !changeLabel)
+    oReq.open('POST', baseUrl + '/changeIcon', true)
+  else if (!changeIcon && !changeLabel)
+    oReq.open('POST', baseUrl + '/setIcon', true)
+  else {
+    showError("Cannot change Label and Icon at the same time");
+    return;
+  }
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log('Icon set (XHR)');
+      return this.response;
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+  return oReq;
+}
+
+export function deleteIcon(person, prefix, label) {
+  const data = {
+    person,
+    prefix,
+    label,
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/deleteIcon', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+
+export function getIcons() {
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getAllIcons', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(JSON.parse(this.response));
+      return JSON.parse(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send();
   return oReq;
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace OCA\Whereami\Controller;
 
 use OCA\Whereami\Db\Bdd;
@@ -16,13 +15,11 @@ class AdminController extends Controller {
 	/**
 	 * Constructor
 	 */
-	public function __construct(
-		$AppName,
-		IRequest $request,
-		IURLGenerator $urlGenerator,
-		IConfig $config,
-		Bdd $myDb
-	) {
+	public function __construct($AppName,
+								IRequest $request,
+								IURLGenerator $urlGenerator,
+								IConfig $config,
+								Bdd $myDb){
 
 		parent::__construct($AppName, $request);
 
@@ -47,7 +44,7 @@ class AdminController extends Controller {
 	 * @AdminRequired
 	 * @param string tag
 	 */
-	public function deleteTag(String $tag){
+	public function deleteTag(String $tag) {
 		$splitted = explode(':', $tag);
 		$this->myDb->deleteWordInWordList($splitted[1], $splitted[0]);
 		return new DataResponse([$tag,$splitted], 200, ['Content-Type' => 'application/json']);
@@ -57,7 +54,7 @@ class AdminController extends Controller {
 	 * @AdminRequired
 	 * @param string usage
 	 */
-	public function getTags(String $usage){
+	public function getTags(String $usage) {
 		$data = $this->myDb->getWordInWordList($usage);
 		return new DataResponse($data, 200, ['Content-Type' => 'application/json']);
 	}

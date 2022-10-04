@@ -137,22 +137,22 @@ function newTableSeen(response) {
   let rows = 0;
   table.rows.forEach(r => {
     if(rows > 0){
-      for(var cellPosition = 1; cellPosition < totalPeople; cellPosition++){
+      for(var cellPosition = 1 ; cellPosition < totalPeople ; cellPosition++){
         let peoplerow = r.cells[0].innerText;
         let peoplecolumn = table.rows[0].cells[cellPosition].innerText
-
+        
         let msg = ":'(";
         let title = "No title";
 
         if(peoplerow === peoplecolumn){
           msg = "-";
         }
-  
-        if (res[peoplerow]!=null && res[peoplerow][peoplecolumn] != null){
+
+        if(res[peoplerow]!=null && res[peoplerow][peoplecolumn] != null){
           title = res[peoplerow][peoplecolumn].place;
           msg = res[peoplerow][peoplecolumn].seen;
         }
-
+  
         let newCell = r.insertCell(cellPosition);
         let newText = document.createTextNode(msg);
         newCell.setAttribute('title', title);
@@ -164,7 +164,7 @@ function newTableSeen(response) {
 
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(table)
-    
+
 }
 
 
@@ -296,7 +296,7 @@ function getContent (tbody, from, to, userListEvents, count = false) {
 /**
  * @param {*} tags
  */
-export function sendTags(tag) {
+export function sendTags (tag) {
   const data = {tag};
 
   const oReq = new XMLHttpRequest()

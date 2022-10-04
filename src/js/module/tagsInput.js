@@ -29,11 +29,9 @@ TagsInput.prototype.init = function (opts) {
     init(this);
 
     this.initialized = true;
-
     return this;
 }
 
-TagsInput.prototype.initDbTags = function () {
     var initialTags = getTags(this.options.selector).onload();
     for (const tag of initialTags) {
         this.addTag(tag.word);
@@ -57,6 +55,8 @@ TagsInput.prototype.addTag = function (string) {
     closeIcon.addEventListener('click', function (e) {
         e.preventDefault();
         var tag = this.parentNode;
+
+        deleteTag(tagInput.options.selector + ':' + string);
 
         for (var i = 0; i < tagInput.wrapper.childNodes.length; i++) {
             if (tagInput.wrapper.childNodes[i] == tag)

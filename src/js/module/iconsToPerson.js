@@ -57,8 +57,6 @@ IconsToPerson.prototype.init = function () {
     this.inputIconLabel.setAttribute('for', this.inputIcon.id);
     this.inputIconLabel.textContent = 'Préfixe à ajouter : ';
 
-
-
     // Input field for the label of the icon
     this.inputLabel = document.createElement('input');
     this.inputLabel.className = this.options.iconInputClass;
@@ -75,7 +73,6 @@ IconsToPerson.prototype.init = function () {
     this.closeIcon.innerHTML = '&times;';
     this.closeIcon.classList.add(this.options.closeIconClass);
     this.wrapper.append(this.closeIcon);
-
 
     // definir id
     this.options.optsTagsInput.selector = 'test';

@@ -32,6 +32,8 @@ TagsInput.prototype.init = function (opts) {
     return this;
 }
 
+TagsInput.prototype.initDbTags = function () {
+
     var initialTags = getTags(this.options.selector).onload();
     for (const tag of initialTags) {
         this.addTag(tag.word);

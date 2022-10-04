@@ -11,6 +11,7 @@ var opts1 = {
     max: null,
     duplicate: false,
 };
+
 var tagInput1 = new TagsInput(opts1);
 tagInput1.initDbTags();
 
@@ -28,7 +29,6 @@ tagInput2.initDbTags();
 initEventsBase(tagInput1);
 initEventsBase(tagInput2);
 
-
 // base options for prefixe 
 var optsIconTagInput = {
     wrapperClass: 'tags-input-wrapper',
@@ -36,6 +36,7 @@ var optsIconTagInput = {
     max: null,
     duplicate: false
 }
+
 var optsIconsToPerson = {
     wrapperClass: 'icons-to-person-wrapper',
     iconInputClass: 'inputIcon',
@@ -68,7 +69,9 @@ window.addEventListener("DOMContentLoaded", function () {
     if (!addIconsButton) {
         return;
     }
+
     initDbIcons();
+    
     addIconsButton.addEventListener("click", function () {
         new IconsToPerson(optsIconsToPerson);
     });

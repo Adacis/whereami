@@ -11,5 +11,5 @@ script('whereami', array('adminSection.app'));
     <input type="text" id="excluded_places">
 
     <h2>Icons:</h2>
-    <button id="addIconsField">Add Icon Field</button>
+    <button id="addIconsField">Ajouter une icône</button>
 </div>

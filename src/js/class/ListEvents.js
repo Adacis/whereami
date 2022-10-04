@@ -12,7 +12,7 @@ export class ListEvents {
      * @param {*} element
      * @param {*} le
      */
-  constructor (element, le) {
+  constructor(element, le) {
     this.id = element
     this.ListEvents = le
   }
@@ -22,7 +22,7 @@ export class ListEvents {
      * @param {*} from
      * @returns
      */
-  eventsAtDay (from) {
+  eventsAtDay(from) {
     const myCase = document.createElement('td')
     let found = false
     let res = ''
@@ -41,7 +41,7 @@ export class ListEvents {
     if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
       myCase.setAttribute('style', 'background-color: var(--color-box-shadow);')
     } else if (!found) {
-      myCase.setAttribute('style', 'background-color: yellow;')
+      myCase.setAttribute('style', 'background-color: yellow; color: #222;')
       res += 'shame'
     }
 
@@ -55,7 +55,7 @@ export class ListEvents {
      * @param {*} from
      * @returns
      */
-  eventsAtDayCount (from) {
+  eventsAtDayCount(from) {
     const myCase = document.createElement('td')
     let found = false
     let res = 0

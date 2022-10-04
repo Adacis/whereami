@@ -115,21 +115,20 @@ IconsToPerson.prototype.events = function () {
     var thisClass = this
     this.inputIcon.addEventListener('keydown', function (e) {
         var str = this.value.trim();
-        console.log(str);
         if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
             thisClass.createBoxtext(thisClass.inputIcon);
-            if (!thisClass.tagInputInitialized) {
+            if (!thisClass.tagInputInitialized)
                 thisClass.createTagInput();
-                thisClass.tagInput.input.focus();
-            }
+
             else if (thisClass.inputLabel.hidden)
                 thisClass.sendAllTags(false, true);
+
+            thisClass.tagInput.input.focus();
         }
     });
 
     this.inputLabel.addEventListener('keydown', function (e) {
         var str = this.value.trim();
-        console.log(str);
         if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
             thisClass.createBoxtext(thisClass.inputLabel);
             if (!thisClass.iconInputInitialized) {
@@ -183,9 +182,10 @@ IconsToPerson.prototype.createTagInput = function (tags) {
     this.tagInput = new TagsInput(this.options.optsTagsInput);
     initEventTagsIcons(this.inputIcon, this.inputLabel, this.tagInput);
 
-    for (let tag of tags) {
-        this.tagInput.addTag(tag);
-    }
+    if (tags)
+        for (let tag of tags) {
+            this.tagInput.addTag(tag);
+        }
 
     this.tagInputInitialized = true;
 }

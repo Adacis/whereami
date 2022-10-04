@@ -87,6 +87,25 @@ export function lastSeen(dtStart, dtEnd, DataTable) {
   oReq.send(JSON.stringify(data));
 }
 
+export function getIcons(person) {
+  const data = {
+    person
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getIcons', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      return JSON.parse(this.response);
+    } else {
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
 
 function newTableSeen(response) {
   const res = JSON.parse(response)
@@ -335,13 +354,14 @@ export function getTags(usage) {
 }
 
 export function sendIcon(person, prefix, label, changeLabel, changeIcon) {
+  person = person.toUpperCase()
   const data = {
     person,
     prefix,
     label
   }
 
-  if (person.length) {
+  if (person.length !== 4) {
     alert("Merci de vous assurer d'entrer le quadrigramme de la personne.");
     return;
   }
@@ -395,7 +415,7 @@ export function deleteIcon(person, prefix, label) {
 }
 
 
-export function getIcons() {
+export function getAllIcons() {
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getAllIcons', false)
   oReq.setRequestHeader('Content-Type', 'application/json')

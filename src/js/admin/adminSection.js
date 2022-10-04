@@ -1,6 +1,6 @@
 import { TagsInput, initEventsBase } from '../module/tagsInput';
 import { IconsToPerson } from '../module/iconsToPerson';
-import { getIcons } from '../module/xhr';
+import { getAllIcons } from '../module/xhr';
 import { groupBy } from 'lodash/collection';
 
 var opts1 = {
@@ -45,7 +45,7 @@ var optsIconsToPerson = {
 }
 
 function initDbIcons() {
-    var data = getIcons().onload();
+    var data = getAllIcons().onload();
     var groupedLabel = groupBy(data, 'label');
     for (let label in groupedLabel) {
         var groupedIcon = groupBy(groupedLabel[label], 'prefix');

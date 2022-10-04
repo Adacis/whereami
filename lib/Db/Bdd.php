@@ -154,6 +154,41 @@ class Bdd
         return $this->execSQLNoJsonReturn($sql, array());
     }
 
+    /**
+     * Get Icons for a given personne
+     */
+    public function getIconsInPrefixList($person)
+    {
+        $person = $this->getQuadri($person);
+        $sql = "SELECT prefix, label FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ?";
+        return $this->execSQLNoJsonReturn($sql, array($person));
+    }
+
+
+    private function getQuadri($name)
+    {
+        if (strlen($name) < 4) {
+            throw new \Exception("Name given has less than 4 letters.");
+        }
+
+        $name = preg_split('/ (-| ) /', $name);
+        if (count($name) == 1) {
+            $quadri = substr($name[0], 0, 4);
+            return strtoupper($quadri);
+        }
+
+        $quadri = '';
+        for ($i = 0; $i < count($name); $i++) {
+            if ($i == count($name) - 1) {
+                $quadri = $quadri . substr($name[$i], 0, 4 - $i);
+            } else
+                $quadri = $quadri . substr($name[$i], 0, 1);
+        }
+        $quadri = substr($name[0], 0, 1) . substr($name[1], 0, 3);
+        return strtoupper($quadri);
+    }
+
+
 
     /**
      * @sql

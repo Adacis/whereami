@@ -166,7 +166,6 @@ class PageController extends Controller
 			$cls = trim($cls);
 
 
-
 			# selectionner tout ceux qui sont dans la db
 			if (in_array($e->place, $toInclude)) {
 				if (!array_key_exists($cls, $events)) {

@@ -11,11 +11,11 @@ use OCP\IConfig;
 
 class AdminController extends Controller {
 	private $idNextcloud;
-	
+
 	/**
 	 * Constructor
 	 */
-	public function __construct($AppName, 
+	public function __construct($AppName,
 								IRequest $request,
 								IURLGenerator $urlGenerator,
 								IConfig $config,
@@ -56,6 +56,61 @@ class AdminController extends Controller {
 	 */
 	public function getTags(String $usage) {
 		$data = $this->myDb->getWordInWordList($usage);
+		return new DataResponse($data, 200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @AdminRequired
+	 * @param string person
+	 * @param string prefix
+	 * @param string label
+	 */
+	public function setIcon(String $person, String $prefix, String $label){
+		//$data = json_decode($data);
+		$this->myDb->addPrefixToList($person, $prefix, $label);
+		return new Response(200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @AdminRequired
+	 * @param string person
+	 * @param string prefix
+	 * @param string label
+	 */
+	public function changeIcon(String $person, String $prefix, String $label) {
+		//$data = json_decode($data);
+		$this->myDb->changeIconInPrefixList($person, $prefix, $label);
+		return new Response(200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @AdminRequired
+	 * @param string person
+	 * @param string prefix
+	 * @param string label
+	 */
+	public function changeLabel(String $person, String $prefix, String $label) {
+		//$data = json_decode($data);
+		$this->myDb->changeLabelInPrefixList($person, $prefix, $label);
+		return new Response(200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @AdminRequired
+	 * @param string person
+	 * @param string prefix
+	 * @param string label
+	 */
+	public function deleteIcon(String $person, String $prefix, String $label) {
+		$this->myDb->deletePrefixInPrefixList($person, $prefix, $label);
+		return new Response(200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @AdminRequired
+	 */
+	public function getAllIcons() {
+		$data = $this->myDb->getAllEntriesInPrefixList();
 		return new DataResponse($data, 200, ['Content-Type' => 'application/json']);
 	}
 }

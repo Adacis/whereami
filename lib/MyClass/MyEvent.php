@@ -4,6 +4,7 @@ namespace OCA\Whereami\MyClass;
 use OCA\Whereami\Db\Bdd;
 use DateTimeImmutable;
 use DateTime;
+use Psr\Log\LoggerInterface;
 
 class MyEvent{
     public String $id;
@@ -29,6 +30,11 @@ class MyEvent{
 
         preg_match_all("/D[0-9]{5}/", $this->summary, $this->quote);
 
+        $iconsList = $this->myDb->getIconsInPrefixList($this->nextcloud_users);
+        foreach ($iconsList as $values) {
+            $icon = $values['prefix'];
+            $this->nextcloud_users = $icon . $this->nextcloud_users;
+        }
     }
 
     public function getNameCalendar($calendarsUid){
@@ -116,17 +122,14 @@ class MyEvent{
                         ||
                         (!array_key_exists($user,$listSeen)) // Pas d'informatin précédente sur cet utilisateur
                     ) 
-            ){
+            ) {
                 $listSeen[$user] = [    
                     'load' => False,
                     'place' => $e->place, 
                     'seen' => $this->getSeen($e),
                 ];
             }
-
         }
-        
         return $listSeen; // Retour 
     }
-
 }

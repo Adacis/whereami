@@ -1,5 +1,5 @@
 import "../../../css/mycss.css";
-import { deleteTag, getTags } from "./xhr";
+import { deleteTag, getTags, sendTags } from "./xhr";
 // Tags input
 "use strict"
 
@@ -27,15 +27,15 @@ TagsInput.prototype.init = function (opts) {
     this.input = document.createElement('input');
     this.input.setAttribute("id", this.orignal_input.getAttribute('id') + "-input-field");
     init(this);
-    //initEvents(this);
+
     this.initialized = true;
+    return this;
+}
 
     var initialTags = getTags(this.options.selector).onload();
     for (const tag of initialTags) {
         this.addTag(tag.word);
     }
-
-    return this;
 }
 
 // Add Tags
@@ -86,8 +86,7 @@ TagsInput.prototype.anyErrors = function (string) {
         console.log('max tags limit reached');
         return true;
     }
-
-    if (!this.options.duplicate && this.arr.indexOf(string) != -1) {
+    if (!this.options.duplicate && (this.arr.indexOf(string) != -1 || this.arr.indexOf(string.toLowerCase()) != -1)) {
         console.log('duplicate found " ' + string + ' " ')
         return true;
     }
@@ -148,3 +147,37 @@ function init(tags) {
 //     max: null,
 //     duplicate: false
 // }
+
+export function initEventsBase(tags) {
+    tags.wrapper.addEventListener('click', function () {
+        tags.input.focus();
+    });
+
+
+    tags.input.addEventListener('keydown', function (e) {
+        var str = tags.input.value.trim();
+
+        if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
+            e.preventDefault();
+            tags.input.value = "";
+            if (str != "") {
+                if (tags.anyErrors(str))
+                    return;
+                tags.addTag(str);
+
+                // Send to controller with corresponding preffixe
+                if (tags.options.dbPrefixe)
+                    sendTags(tags.options.dbPrefixe + ':' + str);
+                else
+                    sendTags(tags.options.selector + ':' + str);
+            }
+        }
+    });
+
+    tags.wrapper.addEventListener('click', function (e) {
+        if (e.target.nodeName === 'A' && e.target.innerHTML === "×") {
+            var text = e.target.parentNode.firstChild.data;
+            deleteTag(tags.options.selector + ':' + text);
+        }
+    });
+}

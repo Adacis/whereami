@@ -16,6 +16,8 @@ use OCA\Polls\Model\CalendarEvent;
 use OCP\IURLGenerator;
 use DateTimeImmutable;
 use DateTime;
+use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * 
@@ -26,6 +28,7 @@ class PageController extends Controller
 	private $calendarManager;
 	private $myDb;
 	private $urlGenerator;
+	private $logger;
 
 	/**
 	 * 
@@ -36,7 +39,8 @@ class PageController extends Controller
 		IRequest $request,
 		IManager $calendarManager,
 		IURLGenerator $urlGenerator,
-		Bdd $myDb
+		Bdd $myDb,
+		LoggerInterface $log
 	) {
 		parent::__construct($AppName, $request);
 
@@ -45,6 +49,7 @@ class PageController extends Controller
 		$this->calendarManager = $calendarManager;
 		$this->calendars = $this->calendarManager->getCalendars();
 		$this->urlGenerator = $urlGenerator;
+		$this->logger = $log;
 	}
 
 	/**
@@ -99,7 +104,7 @@ class PageController extends Controller
 			$cls = trim(str_replace($charReplace, "", $cls));
 			$cls = explode(",", $cls)[0];
 			$cls = trim($cls);
-
+      
 			if (!in_array($e->place, $toExclude)) {
 				array_push($events, $e);
 			}
@@ -167,10 +172,19 @@ class PageController extends Controller
 				}
 				array_push($events[$cls], $e);
 			}
-			// }
 		}
 
 		return new DataResponse($events, 200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param string personName
+	 */
+	public function getIcons($personName)
+	{
+		$res = $this->myDb->getIconsInPrefixList($personName);
+		return new DataResponse($res, 200, ['Content-Type' => 'application/json']);
 	}
 
 

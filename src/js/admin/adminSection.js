@@ -1,51 +1,75 @@
-import { sendTags, getTags } from '../module/xhr';
-import { TagsInput } from '../module/tagsInput';
-
-
-function initEvents(tags) {
-    tags.wrapper.addEventListener('click', function () {
-        tags.input.focus();
-    });
-
-
-    tags.input.addEventListener('keydown', function (e) {
-        var str = tags.input.value.trim();
-
-        if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
-            e.preventDefault();
-            tags.input.value = "";
-            if (str != ""){
-				if (tags.anyErrors(str))
-        			return;
-                tags.addTag(str);
-
-				// Send to controller with corresponding suffixe
-				sendTags(tags.options.selector + ':' + str);
-			}
-        }
-    });
-}
+import { TagsInput, initEventsBase } from '../module/tagsInput';
+import { IconsToPerson } from '../module/iconsToPerson';
+import { getAllIcons } from '../module/xhr';
+import { groupBy } from 'lodash/collection';
 
 var opts1 = {
-	selector: 'allowed_events',
-	duplicate: false,
-	wrapperClass: 'tags-input-wrapper',
+    selector: 'allowed_events',
+    duplicate: false,
+    wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,
-    duplicate: false
+    duplicate: false,
 };
 var tagInput1 = new TagsInput(opts1);
+tagInput1.initDbTags();
 
 var opts2 = {
-	selector: 'excluded_places', 
-	wrapperClass: 'tags-input-wrapper',
+    selector: 'excluded_places',
+    wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,
     duplicate: false
 };
 var tagInput2 = new TagsInput(opts2);
+tagInput2.initDbTags();
 
 
-initEvents(tagInput1);
-initEvents(tagInput2);
+initEventsBase(tagInput1);
+initEventsBase(tagInput2);
 
+
+// base options for prefixe 
+var optsIconTagInput = {
+    wrapperClass: 'tags-input-wrapper',
+    tagClass: 'tag',
+    max: null,
+    duplicate: false
+}
+var optsIconsToPerson = {
+    wrapperClass: 'icons-to-person-wrapper',
+    iconInputClass: 'inputIcon',
+    optsTagsInput: optsIconTagInput,
+    finalValueClass: 'finalValue',
+    closeIconClass: 'closeIcon'
+}
+
+function initDbIcons() {
+    var data = getAllIcons().onload();
+    var groupedLabel = groupBy(data, 'label');
+    for (let label in groupedLabel) {
+        var groupedIcon = groupBy(groupedLabel[label], 'prefix');
+        for (let icon in groupedIcon) {
+            var newElem = new IconsToPerson(optsIconsToPerson);
+            var persons = [];
+            for (let dic of groupedIcon[icon]) {
+                persons.push(dic.person);
+            }
+
+            newElem.setIcon(icon);
+            newElem.setLabel(label);
+            newElem.setPersons(persons);
+        }
+    }
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+    var addIconsButton = document.getElementById("addIconsField");
+    if (!addIconsButton) {
+        return;
+    }
+    initDbIcons();
+    addIconsButton.addEventListener("click", function () {
+        new IconsToPerson(optsIconsToPerson);
+    });
+});

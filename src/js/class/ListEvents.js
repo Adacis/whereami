@@ -41,7 +41,7 @@ export class ListEvents {
     if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
       myCase.setAttribute('style', 'background-color: var(--color-box-shadow);')
     } else if (!found) {
-      myCase.setAttribute('style', 'background-color: yellow;')
+      myCase.setAttribute('style', 'background-color: yellow; color: #222;')
       res += 'shame'
     }
 

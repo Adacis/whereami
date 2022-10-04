@@ -53,6 +53,6 @@
 		"webpack-cli": ">=4.5.0"
 	},
 	"dependencies": {
-		"select2": "^4.1.0-rc.0"
+		"lodash": "^4.17.21"
 	}
 }

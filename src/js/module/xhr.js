@@ -66,7 +66,7 @@ export function getData (dtStart, dtEnd, DataTable, classement) {
   oReq.send(JSON.stringify(data))
 }
 
-export function lastSeen(dtStart, dtEnd, DataTable){
+export function lastSeen (dtStart, dtEnd, DataTable){
   const data = {
     dtStart,
     dtEnd
@@ -87,8 +87,27 @@ export function lastSeen(dtStart, dtEnd, DataTable){
   oReq.send(JSON.stringify(data));
 }
 
+export function getIcons(person) {
+  const data = {
+    person
+  }
 
-function newTableSeen (response){
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getIcons', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      return JSON.parse(this.response);
+    } else {
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+
+function newTableSeen(response) {
   const res = JSON.parse(response)
   var totalPeople = 1;
 
@@ -145,7 +164,7 @@ function newTableSeen (response){
 
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(table)
-  
+
 }
 
 
@@ -296,7 +315,7 @@ export function sendTags (tag) {
 }
 
 
-export function deleteTag (tag) {
+export function deleteTag(tag) {
   const data = {tag};
 
   const oReq = new XMLHttpRequest()
@@ -331,5 +350,85 @@ export function getTags (usage) {
     }
   }
   oReq.send(JSON.stringify(data));
+  return oReq;
+}
+
+export function sendIcon(person, prefix, label, changeLabel, changeIcon) {
+  person = person.toUpperCase()
+  const data = {
+    person,
+    prefix,
+    label
+  }
+
+  if (person.length !== 4) {
+    alert("Merci de vous assurer d'entrer le quadrigramme de la personne.");
+    return;
+  }
+
+  const oReq = new XMLHttpRequest()
+  if (changeLabel && !changeIcon)
+    oReq.open('POST', baseUrl + '/changeLabel', true)
+  else if (changeIcon && !changeLabel)
+    oReq.open('POST', baseUrl + '/changeIcon', true)
+  else if (!changeIcon && !changeLabel)
+    oReq.open('POST', baseUrl + '/setIcon', true)
+  else {
+    showError("Cannot change Label and Icon at the same time");
+    return;
+  }
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log('Icon set (XHR)');
+      return this.response;
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+  return oReq;
+}
+
+export function deleteIcon(person, prefix, label) {
+  const data = {
+    person,
+    prefix,
+    label,
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/deleteIcon', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
+
+export function getAllIcons() {
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getAllIcons', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(JSON.parse(this.response));
+      return JSON.parse(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send();
   return oReq;
 }

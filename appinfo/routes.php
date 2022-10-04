@@ -8,5 +8,11 @@ return [
         ['name' => 'admin#setTags', 'url' => '/setTags', 'verb' => 'POST'],
         ['name' => 'admin#deleteTag', 'url' => '/deleteTag', 'verb' => 'POST'],
         ['name' => 'admin#getTags', 'url' => '/getTags', 'verb' => 'POST'],
+        ['name' => 'admin#setIcon', 'url' => '/setIcon', 'verb' => 'POST'],
+        ['name' => 'admin#changeIcon', 'url' => '/changeIcon', 'verb' => 'POST'],
+        ['name' => 'admin#changeLabel', 'url' => '/changeLabel', 'verb' => 'POST'],
+        ['name' => 'admin#deleteIcon', 'url' => '/deleteIcon', 'verb' => 'POST'],
+        ['name' => 'admin#getAllIcons', 'url' => '/getAllIcons', 'verb' => 'POST'],
+        ['name' => 'admin#getIcons', 'url' => '/getIcons', 'verb' => 'POST'],
     ]
 ];

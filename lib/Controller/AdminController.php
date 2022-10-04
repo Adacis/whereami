@@ -1,4 +1,5 @@
 <?php
+
 namespace OCA\Whereami\Controller;
 
 use OCA\Whereami\Db\Bdd;
@@ -9,17 +10,20 @@ use OCP\AppFramework\Controller;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 
-class AdminController extends Controller {
+class AdminController extends Controller
+{
 	private $idNextcloud;
 
 	/**
 	 * Constructor
 	 */
-	public function __construct($AppName,
-								IRequest $request,
-								IURLGenerator $urlGenerator,
-								IConfig $config,
-								Bdd $myDb){
+	public function __construct(
+		$AppName,
+		IRequest $request,
+		IURLGenerator $urlGenerator,
+		IConfig $config,
+		Bdd $myDb
+	) {
 
 		parent::__construct($AppName, $request);
 
@@ -33,7 +37,8 @@ class AdminController extends Controller {
 	 * @AdminRequired
 	 * @param string tag	 
 	 */
-	public function setTags(String $tag){
+	public function setTags(String $tag)
+	{
 		$splitted = explode(':', $tag);
 		$this->myDb->insertWordInWordList($splitted[1], $splitted[0]);
 		return new DataResponse($tag, 200, ['Content-Type' => 'application/json']);
@@ -44,17 +49,19 @@ class AdminController extends Controller {
 	 * @AdminRequired
 	 * @param string tag
 	 */
-	public function deleteTag(String $tag) {
+	public function deleteTag(String $tag)
+	{
 		$splitted = explode(':', $tag);
 		$this->myDb->deleteWordInWordList($splitted[1], $splitted[0]);
-		return new DataResponse([$tag,$splitted], 200, ['Content-Type' => 'application/json']);
+		return new DataResponse([$tag, $splitted], 200, ['Content-Type' => 'application/json']);
 	}
 
 	/**
 	 * @AdminRequired
 	 * @param string usage
 	 */
-	public function getTags(String $usage) {
+	public function getTags(String $usage)
+	{
 		$data = $this->myDb->getWordInWordList($usage);
 		return new DataResponse($data, 200, ['Content-Type' => 'application/json']);
 	}
@@ -65,7 +72,8 @@ class AdminController extends Controller {
 	 * @param string prefix
 	 * @param string label
 	 */
-	public function setIcon(String $person, String $prefix, String $label){
+	public function setIcon(String $person, String $prefix, String $label)
+	{
 		//$data = json_decode($data);
 		$this->myDb->addPrefixToList($person, $prefix, $label);
 		return new Response(200, ['Content-Type' => 'application/json']);
@@ -77,7 +85,8 @@ class AdminController extends Controller {
 	 * @param string prefix
 	 * @param string label
 	 */
-	public function changeIcon(String $person, String $prefix, String $label) {
+	public function changeIcon(String $person, String $prefix, String $label)
+	{
 		//$data = json_decode($data);
 		$this->myDb->changeIconInPrefixList($person, $prefix, $label);
 		return new Response(200, ['Content-Type' => 'application/json']);
@@ -89,7 +98,8 @@ class AdminController extends Controller {
 	 * @param string prefix
 	 * @param string label
 	 */
-	public function changeLabel(String $person, String $prefix, String $label) {
+	public function changeLabel(String $person, String $prefix, String $label)
+	{
 		//$data = json_decode($data);
 		$this->myDb->changeLabelInPrefixList($person, $prefix, $label);
 		return new Response(200, ['Content-Type' => 'application/json']);
@@ -101,7 +111,8 @@ class AdminController extends Controller {
 	 * @param string prefix
 	 * @param string label
 	 */
-	public function deleteIcon(String $person, String $prefix, String $label) {
+	public function deleteIcon(String $person, String $prefix, String $label)
+	{
 		$this->myDb->deletePrefixInPrefixList($person, $prefix, $label);
 		return new Response(200, ['Content-Type' => 'application/json']);
 	}
@@ -109,7 +120,8 @@ class AdminController extends Controller {
 	/**
 	 * @AdminRequired
 	 */
-	public function getAllIcons() {
+	public function getAllIcons()
+	{
 		$data = $this->myDb->getAllEntriesInPrefixList();
 		return new DataResponse($data, 200, ['Content-Type' => 'application/json']);
 	}

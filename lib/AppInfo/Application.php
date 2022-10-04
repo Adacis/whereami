@@ -10,18 +10,20 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Bootstrap\IBootContext;
 // use OCP\Notification\IManager;
 
-class Application extends App implements IBootstrap {
+class Application extends App implements IBootstrap
+{
     public const APP_ID = 'whereami';
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(self::APP_ID);
     }
 
-    public function register(IRegistrationContext $context): void {
-
+    public function register(IRegistrationContext $context): void
+    {
     }
 
-    public function boot(IBootContext $context): void {
+    public function boot(IBootContext $context): void
+    {
     }
-
 }

@@ -16,4 +16,3 @@ script('whereami', ['quote.app']);
 		</div>
 	</div>
 </div>
-

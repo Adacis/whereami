@@ -12,12 +12,12 @@ window.addEventListener('click', e => {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
     getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'nextcloud_users')
-  } 
+  }
   else if (e.target.className.includes('showbylocation')) {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
     getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'summary')
-  } 
+  }
   else if (e.target.className.includes('showbyquote')) {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
@@ -44,7 +44,7 @@ window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('dtStart').valueAsDate = toDay
   toDay.setDate(toDay.getDate() + 14)
   document.getElementById('dtEnd').valueAsDate = toDay
-  
+
   document.getElementById('myapp').appendChild(getLoader())
   getData(document.getElementById('dtStart').value,
     document.getElementById('dtEnd').value,
@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', function () {
  *
  * @returns
  */
-function getLoader () {
+function getLoader() {
   const center = document.createElement('center')
   const divLoader = document.createElement('div')
   divLoader.setAttribute('class', 'lds-dual-ring')

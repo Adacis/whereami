@@ -16,4 +16,3 @@ script('whereami', ['main.app']);
 		</div>
 	</div>
 </div>
-

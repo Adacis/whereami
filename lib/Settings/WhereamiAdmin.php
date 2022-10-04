@@ -1,4 +1,5 @@
 <?php
+
 namespace OCA\Whereami\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
@@ -8,7 +9,8 @@ use OCP\Settings\ISettings;
 use OCA\Whereami\Db\Bdd;
 use OCP\IURLGenerator;
 
-class WhereamiAdmin implements ISettings {
+class WhereamiAdmin implements ISettings
+{
 
     /** @var IL10N */
     private $l;
@@ -19,10 +21,12 @@ class WhereamiAdmin implements ISettings {
     /** @var IConfig */
     private $config;
 
-    public function __construct($UserId, 
-                                Bdd $myDb,
-                                IURLGenerator $urlGenerator,
-                                IL10N $l) {
+    public function __construct(
+        $UserId,
+        Bdd $myDb,
+        IURLGenerator $urlGenerator,
+        IL10N $l
+    ) {
         $this->idNextcloud = $UserId;
         $this->myDb = $myDb;
         $this->urlGenerator = $urlGenerator;
@@ -32,14 +36,16 @@ class WhereamiAdmin implements ISettings {
     /**
      * @return TemplateResponse
      */
-    public function getForm() {
+    public function getForm()
+    {
         return new TemplateResponse('whereami', 'settings/admin', array("url" => $this->urlGenerator->linkToRouteAbsolute("whereami.admin.dump")));
     }
 
     /**
      * @return String
      */
-    public function getSection() {
+    public function getSection()
+    {
         return 'whereami';
     }
 
@@ -50,8 +56,8 @@ class WhereamiAdmin implements ISettings {
      *
      * E.g.: 70
      */
-    public function getPriority() {
+    public function getPriority()
+    {
         return 55;
     }
-
 }

@@ -104,7 +104,7 @@ class PageController extends Controller
 			$cls = trim(str_replace($charReplace, "", $cls));
 			$cls = explode(",", $cls)[0];
 			$cls = trim($cls);
-      
+
 			if (!in_array($e->place, $toExclude)) {
 				array_push($events, $e);
 			}

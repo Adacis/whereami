@@ -35,7 +35,7 @@ export class Events {
    * "Jean-Paul Dupont" will give "JPDU"
    * @param {string} name of the user, separated by spaces or '-' for composed names.
    */
-  compute_tetragraph(name) {
+  static compute_tetragraph(name) {
     const words = name.replace("-", " ").split(" ");  // split by space or -
     let tetragraph = ""
     for (let i = 0; i < words.length; i++) {

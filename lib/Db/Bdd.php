@@ -157,21 +157,26 @@ class Bdd
     /**
      * Get Icons for a given personne
      */
-    public function getIconsInPrefixList($person)
+    public function getIconsInPrefixList($person, $label)
     {
         $person = $this->getQuadri($person);
-        $sql = "SELECT prefix, label FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ?";
-        return $this->execSQLNoJsonReturn($sql, array($person));
+        if ($label == "") {
+            $sql = "SELECT prefix, label FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ?";
+            return $this->execSQLNoJsonReturn($sql, array($person));
+        } else {
+            $sql = "SELECT prefix, label FROM `" . $this->tableprefix . "prefixlist` WHERE `person` = ? AND `label` = ?";
+            return $this->execSQLNoJsonReturn($sql, array($person, $label));
+        }
     }
 
 
     private function getQuadri($name)
     {
         if (strlen($name) < 4) {
-            throw new \Exception("Name given has less than 4 letters.");
+            throw new \Exception("Name given has less than 4 letters : " . $name);
         }
 
-        $name = preg_split('/ (-| ) /', $name);
+        $name = preg_split('/(-|\s)/', $name);
         if (count($name) == 1) {
             $quadri = substr($name[0], 0, 4);
             return strtoupper($quadri);
@@ -179,12 +184,11 @@ class Bdd
 
         $quadri = '';
         for ($i = 0; $i < count($name); $i++) {
-            if ($i == count($name) - 1) {
+            if ($i == count($name) - 1)
                 $quadri = $quadri . substr($name[$i], 0, 4 - $i);
-            } else
+            else
                 $quadri = $quadri . substr($name[$i], 0, 1);
         }
-        $quadri = substr($name[0], 0, 1) . substr($name[1], 0, 3);
         return strtoupper($quadri);
     }
 

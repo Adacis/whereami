@@ -32,12 +32,6 @@ class MyEvent
         $this->place            = $this->extractData(",", 0, $this->summary);
 
         preg_match_all("/D[0-9]{5}/", $this->summary, $this->quote);
-
-        $iconsList = $this->myDb->getIconsInPrefixList($this->nextcloud_users);
-        foreach ($iconsList as $values) {
-            $icon = $values['prefix'];
-            $this->nextcloud_users = $icon . $this->nextcloud_users;
-        }
     }
 
     public function getNameCalendar($calendarsUid)

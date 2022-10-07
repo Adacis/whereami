@@ -161,8 +161,8 @@ function newTableSeen(response) {
   table.rows.forEach(r => {
     if (rows > 0) {
       let peoplerow = r.cells[0].innerText;
-
       for (var cellPosition = 1; cellPosition < totalPeople; cellPosition++) {
+
         let peoplecolumn = table.rows[0].cells[cellPosition].innerText
 
         let msg = ":'(";

@@ -6,7 +6,8 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
-class WhereamiAdmin implements IIconSection {
+class WhereamiAdmin implements IIconSection
+{
 
 	/** @var IL10N */
 	private $l;
@@ -18,7 +19,8 @@ class WhereamiAdmin implements IIconSection {
 	 * @param IURLGenerator $url
 	 * @param IL10N $l
 	 */
-	public function __construct(IURLGenerator $url, IL10N $l) {
+	public function __construct(IURLGenerator $url, IL10N $l)
+	{
 		$this->url = $url;
 		$this->l = $l;
 	}
@@ -30,7 +32,8 @@ class WhereamiAdmin implements IIconSection {
 	 * @returns string
 	 * @since 12
 	 */
-	public function getIcon() {
+	public function getIcon()
+	{
 		return $this->url->imagePath('whereami', 'app-dark.svg');
 	}
 
@@ -41,7 +44,8 @@ class WhereamiAdmin implements IIconSection {
 	 * @returns string
 	 * @since 9.1
 	 */
-	public function getID() {
+	public function getID()
+	{
 		return 'whereami';
 	}
 
@@ -52,7 +56,8 @@ class WhereamiAdmin implements IIconSection {
 	 * @return string
 	 * @since 9.1
 	 */
-	public function getName() {
+	public function getName()
+	{
 		return $this->l->t('Whereami');
 	}
 
@@ -64,7 +69,8 @@ class WhereamiAdmin implements IIconSection {
 	 * E.g.: 70
 	 * @since 9.1
 	 */
-	public function getPriority() {
+	public function getPriority()
+	{
 		return 55;
 	}
 }

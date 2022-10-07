@@ -12,7 +12,7 @@ export class ListEvents {
      * @param {*} element
      * @param {*} le
      */
-  constructor (element, le) {
+  constructor(element, le) {
     this.id = element
     this.ListEvents = le
   }
@@ -22,7 +22,7 @@ export class ListEvents {
      * @param {*} from
      * @returns
      */
-  eventsAtDay (from) {
+  eventsAtDay(from) {
     const myCase = document.createElement('td')
     let found = false
     let res = ''
@@ -55,7 +55,7 @@ export class ListEvents {
      * @param {*} from
      * @returns
      */
-  eventsAtDayCount (from) {
+  eventsAtDayCount(from) {
     const myCase = document.createElement('td')
     let found = false
     let res = 0

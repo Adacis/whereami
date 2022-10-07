@@ -2,7 +2,7 @@
  *
  */
 export class Events {
-  constructor (obj) {
+  constructor(obj) {
     obj && Object.assign(this, obj)
   }
 
@@ -10,7 +10,7 @@ export class Events {
      *
      * @returns
      */
-  getSummary () {
+  getSummary() {
     return this.summary
   }
 
@@ -19,11 +19,11 @@ export class Events {
      * @param {*} from
      * @returns
      */
-  inInterval (from) {
+  inInterval(from) {
     const dtStart = new Date(this.dtStart)
     const dtEnd = new Date(this.dtEnd)
     if (from >= dtStart &&
-            from < dtEnd) {
+      from < dtEnd) {
       return true
     }
     return false

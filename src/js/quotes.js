@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', function () {
  *
  * @returns
  */
-function getLoader () {
+function getLoader() {
   const center = document.createElement('center')
   const divLoader = document.createElement('div')
   divLoader.setAttribute('class', 'lds-dual-ring')

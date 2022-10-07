@@ -71,7 +71,7 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
     initDbIcons();
-    
+
     addIconsButton.addEventListener("click", function () {
         new IconsToPerson(optsIconsToPerson);
     });

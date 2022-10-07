@@ -63,6 +63,7 @@ export class ListEvents {
     let found = false
     let res = 0
     let title = ''
+    let isSomeoneThere = false
     let groupedIcons = groupBy(icons, 'person')
     this.ListEvents.forEach(events => {
       const e = new Events(events)
@@ -71,8 +72,10 @@ export class ListEvents {
         res += 1
         if (groupedIcons[userTetra])
           for (let dic of groupedIcons[userTetra]) {
-            if (e.place === dic.label.toLowerCase())
+            if (e.place === dic.label.toLowerCase()) {
               title += dic.prefix + "(" + dic.label + ") "
+              isSomeoneThere = true
+            }
           }
         title += e.nextcloud_users + '\n'
         found = true
@@ -81,6 +84,8 @@ export class ListEvents {
     myCell.setAttribute('style', 'text-align: center;')
     myCell.setAttribute('title', title)
     myCell.innerText = res
+    if (!isSomeoneThere)
+      myCell.style = "background-color: red; text-align: center;"
 
     if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
       myCell.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);')

@@ -1,7 +1,30 @@
 import { sendIcon, deleteIcon } from './xhr';
 import { TagsInput } from './tagsInput';
 
-function initEventTagsIcons(iconField, labelField, tags) {
+
+/**
+ * Creates a random string Id (taken from : https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript)
+ * @param {int} length 
+ * @returns {string}
+ */
+function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
+}
+
+
+/**
+ * Initializes the event for the TagsInput of the IconToPerson class
+ * @param {IconsToPerson} mainClass 
+ * @param {TagsInput} tags 
+ */
+function initEventTagsIcons(mainClass, tags) {
     tags.wrapper.addEventListener('click', function () {
         tags.input.focus();
     });
@@ -16,14 +39,14 @@ function initEventTagsIcons(iconField, labelField, tags) {
             if (str != "") {
                 if (tags.anyErrors(str))
                     return;
-                if (!iconField.hidden || !labelField.hidden) {
+                if (!mainClass.iconValueFinalised || !mainClass.labelValueFinalised) {
                     alert("Veuillez finaliser la valeur du label et du préfixe.");
                     return;
                 }
                 tags.addTag(str);
 
                 // Send to controller with corresponding suffixe
-                sendIcon(str, iconField.value, labelField.value, false, false);
+                sendIcon(str, mainClass.inputIcon.value, mainClass.inputLabel.value, false, false);
             }
         }
     });
@@ -31,18 +54,23 @@ function initEventTagsIcons(iconField, labelField, tags) {
     tags.wrapper.addEventListener('click', function (e) {
         if (e.target.nodeName === 'A' && e.target.innerHTML === "×") {
             var text = e.target.parentNode.firstChild.data;
-            deleteIcon(text, iconField.value, labelField.value);
+            deleteIcon(text, mainClass.inputIcon.value, mainClass.inputLabel.value);
         }
     });
 }
 
-// Plugin Constructor
+/**
+ * Constructor of the class
+ * @param {Object} opts 
+ */
 export var IconsToPerson = function (opts) {
     this.options = opts;
     this.init();
 }
 
-// Initialize the plugin
+/**
+ * Initializes all the attributes from the class
+ */
 IconsToPerson.prototype.init = function () {
     if (this.initialized)
         this.destroy();
@@ -56,6 +84,9 @@ IconsToPerson.prototype.init = function () {
     this.inputIconLabel = document.createElement('label');
     this.inputIconLabel.setAttribute('for', this.inputIcon.id);
     this.inputIconLabel.textContent = 'Préfixe à ajouter : ';
+    var icondiv = document.createElement('div');
+    icondiv.append(this.inputIconLabel);
+    icondiv.append(this.inputIcon);
 
     // Input field for the label of the icon
     this.inputLabel = document.createElement('input');
@@ -67,57 +98,78 @@ IconsToPerson.prototype.init = function () {
     var labeldiv = document.createElement('div');
     labeldiv.append(this.inputLabelLabel);
     labeldiv.append(this.inputLabel);
-    this.wrapper.append(labeldiv);
 
+    // Close button to delete the element
     this.closeIcon = document.createElement('a');
     this.closeIcon.innerHTML = '&times;';
     this.closeIcon.classList.add(this.options.closeIconClass);
+
+    this.options.optsTagsInput.selector = makeid(8);
+
+    // Position everything
+    this.wrapper.append(labeldiv);
+    this.wrapper.append(icondiv);
     this.wrapper.append(this.closeIcon);
-
-    // definir id
-    this.options.optsTagsInput.selector = 'test';
-
-    // Position
     this.wrapper.classList.add(this.options.wrapperClass);
-    var button = document.getElementById('addIconsField');
-    button.parentNode.insertBefore(this.wrapper, button.nextSibling);
+    document.getElementById("divIconsToPerson").append(this.wrapper);
+    this.setIcon('');
+    this.createTagInput();
+
+
+    // init events and check variables
     this.events();
     this.initialized = true;
-    this.tagInputInitialized = false;
-    this.iconInputInitialized = false;
+
+    this.labelValueFinalised = false;
+    this.iconValueFinalised = false;
 }
 
+
+/**
+ * Set the the value of the label Input field
+ * @param {string} labeltext 
+ */
 IconsToPerson.prototype.setLabel = function (labeltext) {
     this.inputLabel.value = labeltext;
-    this.createBoxtext(this.inputLabel);
+    this.labelValueFinalised = true;
 }
 
+
+/**
+ * Set the value of the icon input field
+ * @param {string} icontext 
+ */
 IconsToPerson.prototype.setIcon = function (icontext) {
     this.inputIcon.value = icontext;
-    var icondiv = document.createElement('div');
-    icondiv.append(this.inputIconLabel);
-    icondiv.append(this.inputIcon);
-    this.wrapper.append(icondiv);
 
-    this.createBoxtext(this.inputIcon);
-    this.iconInputInitialized = true;
+    this.iconValueFinalised = true;
 }
 
+
+/**
+ * Add tags with the corresponding values in the tagsInput field
+ * @param {Array<string>} persons 
+ */
 IconsToPerson.prototype.setPersons = function (persons) {
-    this.createTagInput(persons);
+    if (persons)
+        for (let tag of persons) {
+            this.tagInput.addTag(tag);
+        }
 }
 
+
+/**
+ * Initializes events for the class
+ */
 IconsToPerson.prototype.events = function () {
 
     var thisClass = this
     this.inputIcon.addEventListener('keydown', function (e) {
-        var str = this.value.trim();
+        thisClass.iconValueFinalised = false;
         if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
-            thisClass.createBoxtext(thisClass.inputIcon);
-            if (!thisClass.tagInputInitialized)
-                thisClass.createTagInput();
+            thisClass.iconValueFinalised = true;
 
-            else if (thisClass.inputLabel.hidden)
+            if (thisClass.labelValueFinalised)
                 thisClass.sendAllTags(false, true);
 
             thisClass.tagInput.input.focus();
@@ -125,24 +177,19 @@ IconsToPerson.prototype.events = function () {
     });
 
     this.inputLabel.addEventListener('keydown', function (e) {
-        var str = this.value.trim();
+        thisClass.labelValueFinalised = false;
         if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
-            thisClass.createBoxtext(thisClass.inputLabel);
-            if (!thisClass.iconInputInitialized) {
-                thisClass.iconInputInitialized = true;
-                var icondiv = document.createElement('div');
-                icondiv.append(thisClass.inputIconLabel);
-                icondiv.append(thisClass.inputIcon);
-                thisClass.wrapper.append(icondiv);
-                thisClass.inputIcon.focus();
-            }
-            else if (thisClass.inputIcon.hidden)
+            thisClass.labelValueFinalised = true;
+
+            if (thisClass.iconValueFinalised)
                 thisClass.sendAllTags(true, false);
+
+            thisClass.inputIcon.focus();
         }
     });
 
     this.closeIcon.addEventListener('click', function () {
-        if (thisClass.tagInputInitialized && thisClass.iconInputInitialized)
+        if (thisClass.tagInputInitialized)
             for (let person of thisClass.tagInput.arr) {
                 deleteIcon(person, thisClass.inputIcon.value, thisClass.inputLabel.value);
             }
@@ -150,6 +197,12 @@ IconsToPerson.prototype.events = function () {
     });
 }
 
+
+/**
+ * (Not used anymore) 
+ * Used to express that the value is finalized, hides the input field and shows a tag instead 
+ * @param {*} input 
+ */
 IconsToPerson.prototype.createBoxtext = function (input) {
     var tag = document.createElement('span');
     tag.className = this.options.finalValueClass;
@@ -166,7 +219,10 @@ IconsToPerson.prototype.createBoxtext = function (input) {
 }
 
 
-IconsToPerson.prototype.createTagInput = function (tags) {
+/**
+ * Creates the tagsInput field 
+ */
+IconsToPerson.prototype.createTagInput = function () {
     this.textDiv = document.createElement('div');
     this.wrapper.append(this.textDiv);
     this.originalInputLabel = document.createTextNode("Pour les personnes : ");
@@ -177,17 +233,18 @@ IconsToPerson.prototype.createTagInput = function (tags) {
     this.wrapper.append(this.originalInputTag);
 
     this.tagInput = new TagsInput(this.options.optsTagsInput);
-    initEventTagsIcons(this.inputIcon, this.inputLabel, this.tagInput);
+    initEventTagsIcons(this, this.tagInput);
 
-    if (tags)
-        for (let tag of tags) {
-            this.tagInput.addTag(tag);
-        }
 
     this.tagInputInitialized = true;
 }
 
 
+/**
+ * Send all the tags contained in the the tagsInput field. Used when the label or the icon has been changed
+ * @param {Boolean} changeLabel 
+ * @param {Boolean} changeIcon 
+ */
 IconsToPerson.prototype.sendAllTags = function (changeLabel, changeIcon) {
     var prefix = this.inputIcon.value;
     var label = this.inputLabel.value;

@@ -13,6 +13,6 @@ return [
         ['name' => 'admin#changeLabel', 'url' => '/changeLabel', 'verb' => 'POST'],
         ['name' => 'admin#deleteIcon', 'url' => '/deleteIcon', 'verb' => 'POST'],
         ['name' => 'admin#getAllIcons', 'url' => '/getAllIcons', 'verb' => 'POST'],
-        ['name' => 'admin#getIcons', 'url' => '/getIcons', 'verb' => 'POST'],
+        ['name' => 'page#getIcons', 'url' => '/getIcons', 'verb' => 'POST'],
     ]
 ];

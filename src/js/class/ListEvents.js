@@ -1,4 +1,6 @@
-import { Events } from './Event'
+import { Events } from './Event';
+import { groupBy } from 'lodash/collection';
+
 
 export const days = ['sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'saturday']
 export const daysFr = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
@@ -23,7 +25,7 @@ export class ListEvents {
      * @returns
      */
   eventsAtDay(from) {
-    const myCase = document.createElement('td')
+    const myCell = document.createElement('td')
     let found = false
     let res = ''
     let title = ''
@@ -39,47 +41,60 @@ export class ListEvents {
     })
 
     if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
-      myCase.setAttribute('style', 'background-color: var(--color-box-shadow);')
+      myCell.setAttribute('style', 'background-color: var(--color-box-shadow);')
     } else if (!found) {
-      myCase.setAttribute('style', 'background-color: yellow; color: #222;')
+      myCell.setAttribute('style', 'background-color: yellow; color: #222;')
       res += 'shame'
     }
 
-    myCase.setAttribute('title', title)
-    myCase.innerHTML = res
-    return myCase
+    myCell.setAttribute('title', title)
+    myCell.innerHTML = res
+    return myCell
   }
 
   /**
      *
      * @param {*} from
+     * @param {*} icons
      * @returns
      */
-  eventsAtDayCount(from) {
-    const myCase = document.createElement('td')
+  eventsAtDayCount(from, icons) {
+    const myCell = document.createElement('td')
     let found = false
     let res = 0
     let title = ''
+    let isSomeoneThere = false
+    let groupedIcons = groupBy(icons, 'person')
     this.ListEvents.forEach(events => {
       const e = new Events(events)
       if (e.inInterval(from)) {
+        let userTetra = Events.compute_tetragraph(e.nextcloud_users)
         res += 1
+        if (groupedIcons[userTetra])
+          for (let dic of groupedIcons[userTetra]) {
+            if (e.place === dic.label.toLowerCase()) {
+              title += dic.prefix + "(" + dic.label + ") "
+              isSomeoneThere = true
+            }
+          }
         title += e.nextcloud_users + '\n'
         found = true
       }
     })
-    myCase.setAttribute('style', 'text-align: center;')
-    myCase.setAttribute('title', title)
-    myCase.innerText = res
+    myCell.setAttribute('style', 'text-align: center;')
+    myCell.setAttribute('title', title)
+    myCell.innerText = res
+    if (!isSomeoneThere)
+      myCell.style = "background-color: red; text-align: center;"
 
     if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
-      myCase.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);')
-      myCase.innerText = ''
+      myCell.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);')
+      myCell.innerText = ''
     } else if (!found) {
-      myCase.setAttribute('style', 'text-align: center; color: white; background-color: green;')
-      myCase.innerText = '0'
+      myCell.setAttribute('style', 'text-align: center; color: white; background-color: green;')
+      myCell.innerText = '0'
     }
 
-    return myCase
+    return myCell
   }
 }

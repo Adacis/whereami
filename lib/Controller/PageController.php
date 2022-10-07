@@ -181,9 +181,9 @@ class PageController extends Controller
 	 * @NoAdminRequired
 	 * @param string personName
 	 */
-	public function getIcons($personName)
+	public function getIcons($person, $label)
 	{
-		$res = $this->myDb->getIconsInPrefixList($personName);
+		$res = $this->myDb->getIconsInPrefixList($person, $label);
 		return new DataResponse($res, 200, ['Content-Type' => 'application/json']);
 	}
 

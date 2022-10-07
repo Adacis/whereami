@@ -1,5 +1,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+import { groupBy } from 'lodash/collection'
+import { Events } from '../class/Event'
 import { daysFr, ListEvents } from '../class/ListEvents'
 export const baseUrl = generateUrl('/apps/whereami')
 
@@ -87,9 +89,16 @@ export function lastSeen(dtStart, dtEnd, DataTable) {
   oReq.send(JSON.stringify(data));
 }
 
-export function getIcons(person) {
+
+/**
+ * Get icons corresponding to person, with label if given
+ * @param {string} person 
+ * @param {string} label 
+ */
+export function getIcons(person, label = "") {
   const data = {
-    person
+    person,
+    label
   }
 
   const oReq = new XMLHttpRequest()
@@ -104,6 +113,15 @@ export function getIcons(person) {
     }
   }
   oReq.send(JSON.stringify(data));
+  return oReq;
+}
+
+
+function setTitleWithIcons(element, icons) {
+  for (let dic of icons) {
+    element.title = dic.prefix + "(" + dic.label + ")\n" + element.title;
+    element.innerText = dic.prefix + element.innerText;
+  }
 }
 
 
@@ -121,10 +139,13 @@ function newTableSeen(response) {
   const headLine = document.createElement('tr')
   headLine.appendChild(newCell('th', ""))
 
-  Object.keys(res).forEach(element => {
-    headLine.appendChild(newCell('th', element));
+  Object.keys(res).forEach(person => {
+    let th = newCell('th', person);
+    headLine.appendChild(th);
+
     var newLine = document.createElement('tr');
-    newLine.appendChild(newCell('td', element));
+    let tr = newCell('td', person);
+    newLine.appendChild(tr);
     tbody.appendChild(newLine);
 
     totalPeople++;
@@ -134,11 +155,14 @@ function newTableSeen(response) {
   table.appendChild(thead);
   table.appendChild(tbody);
 
+  let icons = getAllIcons().onload();
+  let groupedIcons = groupBy(icons, 'person');
   let rows = 0;
   table.rows.forEach(r => {
     if (rows > 0) {
+      let peoplerow = r.cells[0].innerText;
       for (var cellPosition = 1; cellPosition < totalPeople; cellPosition++) {
-        let peoplerow = r.cells[0].innerText;
+
         let peoplecolumn = table.rows[0].cells[cellPosition].innerText
 
         let msg = ":'(";
@@ -157,7 +181,12 @@ function newTableSeen(response) {
         let newText = document.createTextNode(msg);
         newCell.setAttribute('title', title);
         newCell.appendChild(newText);
+
+        //setTitleWithIcons(table.rows[0].cells[cellPosition], groupedIcons[peoplecolumn])
       }
+      let tetrarow = Events.compute_tetragraph(peoplerow)
+      if (groupedIcons[tetrarow])
+        setTitleWithIcons(r.cells[0], groupedIcons[tetrarow])
     }
     rows++;
   })
@@ -191,14 +220,14 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
 
   const to = new Date(dtEnd)
   const res = JSON.parse(response)
-
+  let icons = getAllIcons().onload()
   Object.keys(res).forEach(element => {
     let from = new Date(dtStart)
     const userListEvents = new ListEvents(element, res[element])
     if (tablename === 'summary') {
-      tbody = getContent(tbody, from, to, userListEvents, true)
+      tbody = getContent(tbody, from, to, userListEvents, icons, true)
     } else {
-      tbody = getContent(tbody, from, to, userListEvents, false)
+      tbody = getContent(tbody, from, to, userListEvents, icons, false)
     }
   })
 
@@ -273,17 +302,27 @@ function getHeader(from, to) {
  * @param {*} from
  * @param {*} to
  * @param {*} userListEvents
+ * @param {*} icons
  * @param {*} count
  * @returns
  */
-function getContent(tbody, from, to, userListEvents, count = false) {
+function getContent(tbody, from, to, userListEvents, icons, count = false) {
   const line = document.createElement('tr')
-  line.appendChild(newCell('td', userListEvents.id))
+  let td = newCell('td', userListEvents.id)
+  line.appendChild(td)
+  if (!count) {
+    icons = groupBy(icons, "person")
+    let tetra = Events.compute_tetragraph(userListEvents.id)
+    if (icons[tetra] != undefined)
+      setTitleWithIcons(td, icons[tetra])
+
+  }
+
   while (from <= to) {
     if (!count) {
       line.appendChild(userListEvents.eventsAtDay(from))
     } else {
-      line.appendChild(userListEvents.eventsAtDayCount(from))
+      line.appendChild(userListEvents.eventsAtDayCount(from, icons))
     }
 
     from.setDate(from.getDate() + 1)
@@ -305,7 +344,7 @@ export function sendTags(tag) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(this.response);
+      console.log("Tag sent.");
     } else {
       console.log('Controller error');
       showError(this.response);
@@ -324,7 +363,7 @@ export function deleteTag(tag) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(this.response);
+      console.log("Tag deleted.");
     } else {
       console.log('Controller error');
       showError(this.response);
@@ -342,7 +381,7 @@ export function getTags(usage) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(JSON.parse(this.response));
+      console.log("Tag retrieved.");
       return JSON.parse(this.response);
     } else {
       console.log('Controller error');
@@ -405,7 +444,7 @@ export function deleteIcon(person, prefix, label) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(this.response);
+      console.log("Icon deleted");
     } else {
       console.log('Controller error');
       showError(this.response);
@@ -422,7 +461,7 @@ export function getAllIcons() {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(JSON.parse(this.response));
+      console.log("Received all icons.");
       return JSON.parse(this.response);
     } else {
       console.log('Controller error');

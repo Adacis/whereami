@@ -16,7 +16,7 @@ jobs:
 
       - name: Create tar
         run: |
-          cd whereami && make npm-init && make build-js && make appstore
+          cd whereami && make appstore
 
       - name: load app
         run: |

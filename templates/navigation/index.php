@@ -1,5 +1,5 @@
 <ul class="app-navigation">
-	<li class="app-navigation-entry"><span class="navmarg"></span><b>Where am I V 0.0.15</b></li>
+	<li class="app-navigation-entry"><span class="navmarg"></span><b>Where am I V 0.0.16</b></li>
 	<li class="app-navigation-entry">
 		<ul class="app-navigation">
 			<li class="app-navigation-entry"><span class="navmarg icon-contacts-dark"></span><a class="a-entry" href="<?php echo ($_['url']['index']); ?>"><?php p($l->t('Employees')); ?></a>

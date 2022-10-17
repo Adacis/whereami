@@ -222,7 +222,9 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
   const to = new Date(dtEnd)
   const res = JSON.parse(response)
   let icons = getAllIcons().onload()
-  let excludedPlaces = getTags("excluded_places").onload().map(element => element.word.toLowerCase())
+  let excludedPlaces
+  if (tablename === 'summary')
+    excludedPlaces = getTags("excluded_places").onload().map(element => element.word.toLowerCase())
 
   Object.keys(res).forEach(element => {
     let from = new Date(dtStart)

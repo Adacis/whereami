@@ -130,11 +130,21 @@ class MyEvent
                     (!array_key_exists($user, $listSeen)) // Pas d'informatin précédente sur cet utilisateur
                 )
             ) {
-                $listSeen[$user] = [
-                    'load' => False,
-                    'place' => $e->place,
-                    'seen' => $this->getSeen($e),
-                ];
+                if (array_key_exists($user, $listSeen)) {
+                    $listSeen[$user] = [
+                        'load' => False,
+                        'place' => $e->place,
+                        'seen' => $this->getSeen($e),
+                        'count' => $listSeen[$user]['count'] + 1
+                    ];
+                } else {
+                    $listSeen[$user] = [
+                        'load' => False,
+                        'place' => $e->place,
+                        'seen' => $this->getSeen($e),
+                        'count' => 1
+                    ];
+                }
             }
         }
         return $listSeen; // Retour 

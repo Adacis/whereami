@@ -1,8 +1,10 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+import { toInteger } from 'lodash'
 import { groupBy } from 'lodash/collection'
 import { Events } from '../class/Event'
 import { daysFr, ListEvents } from '../class/ListEvents'
+import { translate as tr } from '@nextcloud/l10n'
 export const baseUrl = generateUrl('/apps/whereami')
 
 export const optionDatatable = {
@@ -127,7 +129,8 @@ function setTitleWithIcons(element, icons) {
 
 function newTableSeen(response) {
   const res = JSON.parse(response)
-  var totalPeople = 1;
+  var totalPeople = 1
+  const today = new Date()
 
   const table = document.createElement('table')
   table.setAttribute('id', 'seen')
@@ -167,20 +170,32 @@ function newTableSeen(response) {
 
         let msg = ":'(";
         let title = "No title";
+        var daysLastSeen = -1
 
         if (peoplerow === peoplecolumn) {
           msg = "-";
+          daysLastSeen = 0
         }
 
         if (res[peoplerow] != null && res[peoplerow][peoplecolumn] != null) {
           title = res[peoplerow][peoplecolumn].place;
           msg = res[peoplerow][peoplecolumn].seen;
+          const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
+          daysLastSeen = toInteger(timeLastSeen / (1000 * 3600 * 24))
+          title = title + " (" + daysLastSeen + ' day(s) and ' + res[peoplerow][peoplecolumn].count + ' times)'
         }
+
 
         let newCell = r.insertCell(cellPosition);
         let newText = document.createTextNode(msg);
         newCell.setAttribute('title', title);
         newCell.appendChild(newText);
+        if (daysLastSeen >= 30) {
+          newCell.style = "background-color: orange;"
+        }
+        if (daysLastSeen == -1 || daysLastSeen >= 60) {
+          newCell.style = "background-color: red;"
+        }
 
         //setTitleWithIcons(table.rows[0].cells[cellPosition], groupedIcons[peoplecolumn])
       }

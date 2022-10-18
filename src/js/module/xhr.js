@@ -190,10 +190,10 @@ function newTableSeen(response) {
         let newText = document.createTextNode(msg);
         newCell.setAttribute('title', title);
         newCell.appendChild(newText);
-        if (daysLastSeen >= 30) {
+        if (daysLastSeen >= 20) {
           newCell.style = "background-color: orange;"
         }
-        if (daysLastSeen == -1 || daysLastSeen >= 60) {
+        if (daysLastSeen == -1 || daysLastSeen >= 30) {
           newCell.style = "background-color: red;"
         }
 

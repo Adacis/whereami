@@ -8,7 +8,7 @@ function setDateLastSeen() {
   const toDay = new Date()
   toDay.setDate(toDay.getDate() + 1)
   document.getElementById('dtEnd').valueAsDate = toDay
-  toDay.setDate(toDay.getDate() - 90)
+  toDay.setDate(toDay.getDate() - 35)
   document.getElementById('dtStart').valueAsDate = toDay
 }
 

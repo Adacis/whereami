@@ -121,7 +121,7 @@ export function getIcons(person, label = "") {
 function setTitleWithIcons(element, icons) {
   for (let dic of icons) {
     element.title = dic.prefix + "(" + dic.label + ")\n" + element.title;
-    element.innerText = dic.prefix + element.innerText;
+    element.innerText = element.innerText + dic.prefix;
   }
 }
 

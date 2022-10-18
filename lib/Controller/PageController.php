@@ -128,6 +128,8 @@ class PageController extends Controller
 	{
 		$from = new DateTime($dtStart);
 		$to = new DateTime($dtEnd);
+		// It looks like search does not include the upper bound
+		$to->modify('+1 day');
 		$searchResults = $this->calendarManager->search("@", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
 
 		return $searchResults;

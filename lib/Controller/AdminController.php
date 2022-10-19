@@ -57,7 +57,7 @@ class AdminController extends Controller
 	}
 
 	/**
-	 * @AdminRequired
+	 * @NoAdminRequired
 	 * @param string usage
 	 */
 	public function getTags(String $usage)
@@ -118,7 +118,7 @@ class AdminController extends Controller
 	}
 
 	/**
-	 * @AdminRequired
+	 * @NoAdminRequired
 	 */
 	public function getAllIcons()
 	{

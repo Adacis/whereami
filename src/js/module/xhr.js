@@ -1,5 +1,6 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+import { map } from 'lodash'
 import { groupBy } from 'lodash/collection'
 import { Events } from '../class/Event'
 import { daysFr, ListEvents } from '../class/ListEvents'
@@ -120,7 +121,7 @@ export function getIcons(person, label = "") {
 function setTitleWithIcons(element, icons) {
   for (let dic of icons) {
     element.title = dic.prefix + "(" + dic.label + ")\n" + element.title;
-    element.innerText = dic.prefix + element.innerText;
+    element.innerText = element.innerText + dic.prefix;
   }
 }
 
@@ -221,11 +222,15 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
   const to = new Date(dtEnd)
   const res = JSON.parse(response)
   let icons = getAllIcons().onload()
+  let excludedPlaces
+  if (tablename === 'summary')
+    excludedPlaces = getTags("excluded_places").onload().map(element => element.word.toLowerCase())
+
   Object.keys(res).forEach(element => {
     let from = new Date(dtStart)
     const userListEvents = new ListEvents(element, res[element])
     if (tablename === 'summary') {
-      tbody = getContent(tbody, from, to, userListEvents, icons, true)
+      tbody = getContent(tbody, from, to, userListEvents, icons, excludedPlaces, true)
     } else {
       tbody = getContent(tbody, from, to, userListEvents, icons, false)
     }
@@ -306,23 +311,25 @@ function getHeader(from, to) {
  * @param {*} count
  * @returns
  */
-function getContent(tbody, from, to, userListEvents, icons, count = false) {
+function getContent(tbody, from, to, userListEvents, icons, excludedPlaces = null, count = false) {
   const line = document.createElement('tr')
   let td = newCell('td', userListEvents.id)
   line.appendChild(td)
+  let placeIsExcluded
   if (!count) {
     icons = groupBy(icons, "person")
     let tetra = Events.compute_tetragraph(userListEvents.id)
     if (icons[tetra] != undefined)
       setTitleWithIcons(td, icons[tetra])
-
   }
+  else
+    placeIsExcluded = excludedPlaces.includes(userListEvents.id)
 
   while (from <= to) {
     if (!count) {
       line.appendChild(userListEvents.eventsAtDay(from))
     } else {
-      line.appendChild(userListEvents.eventsAtDayCount(from, icons))
+      line.appendChild(userListEvents.eventsAtDayCount(from, icons, placeIsExcluded))
     }
 
     from.setDate(from.getDate() + 1)

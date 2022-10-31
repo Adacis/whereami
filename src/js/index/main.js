@@ -14,9 +14,11 @@ function setDateLastSeen() {
 
 function setDateUsual() {
   const toDay = new Date()
-  document.getElementById('dtStart').valueAsDate = toDay
-  toDay.setDate(toDay.getDate() + 14)
-  document.getElementById('dtEnd').valueAsDate = toDay
+  if (document.getElementById('seen') !== null) {
+    document.getElementById('dtStart').valueAsDate = toDay
+    toDay.setDate(toDay.getDate() + 14)
+    document.getElementById('dtEnd').valueAsDate = toDay
+  }
 }
 
 
@@ -78,7 +80,10 @@ window.addEventListener('DOMContentLoaded', function () {
   // if (document.getElementById('dtStart') === null) {
   //   return;
   // }
-  setDateUsual()
+  const toDay = new Date()
+  document.getElementById('dtStart').valueAsDate = toDay
+  toDay.setDate(toDay.getDate() + 14)
+  document.getElementById('dtEnd').valueAsDate = toDay
 
   document.getElementById('myapp').appendChild(getLoader())
   getData(document.getElementById('dtStart').value,

@@ -123,20 +123,22 @@ class MyEvent
                 $user != $thisUser // Je ne me teste pas moi même
                 &&  strtoupper($e->place) === strtoupper($this->place) // On est sur le même lieu
                 &&  $this->eventCross($e) // Nos dates sont dans le même interval
-                &&
-                (
-                    (isset($listSeen[$user]['seen']) && $listSeen[$user]['seen'] < $this->getSeen($e)) // J'ai déjà enregistré pour cet utilisateur
-                    ||
-                    (!array_key_exists($user, $listSeen)) // Pas d'informatin précédente sur cet utilisateur
-                )
+                // &&
+                // (
+                //     (isset($listSeen[$user]['seen']) && $listSeen[$user]['seen'] < $this->getSeen($e)) // J'ai déjà enregistré pour cet utilisateur
+                //     ||
+                //     (!array_key_exists($user, $listSeen)) // Pas d'informatin précédente sur cet utilisateur
+                // )
             ) {
-                if (array_key_exists($user, $listSeen)) {
+                if (array_key_exists($user, $listSeen) && $listSeen[$user]['seen'] < $this->getSeen($e)) {
                     $listSeen[$user] = [
                         'load' => False,
                         'place' => $e->place,
                         'seen' => $this->getSeen($e),
                         'count' => $listSeen[$user]['count'] + 1
                     ];
+                } else if (array_key_exists($user, $listSeen)) {
+                    $listSeen[]
                 } else {
                     $listSeen[$user] = [
                         'load' => False,

@@ -182,7 +182,11 @@ function newTableSeen(response) {
           msg = res[peoplerow][peoplecolumn].seen;
           const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
           daysLastSeen = toInteger(timeLastSeen / (1000 * 3600 * 24))
-          title = title + " (" + daysLastSeen + ' day(s) and ' + res[peoplerow][peoplecolumn].count + ' times)'
+          msg = msg + " (" + res[peoplerow][peoplecolumn].count + ' times)'
+          if (daysLastSeen == 0)
+            title = title + " today"
+          else
+            title = title + ' ' + daysLastSeen + ' day(s) ago'
         }
 
 

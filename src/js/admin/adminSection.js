@@ -3,6 +3,8 @@ import { IconsToPerson } from '../module/iconsToPerson';
 import { getAllIcons } from '../module/xhr';
 import { groupBy } from 'lodash/collection';
 
+
+// Setup for selector allowed event in places
 var opts1 = {
     selector: 'allowed_events',
     duplicate: false,
@@ -14,7 +16,9 @@ var opts1 = {
 
 var tagInput1 = new TagsInput(opts1);
 tagInput1.initDbTags();
+initEventsBase(tagInput1);
 
+// setup for selector of excluded places in last seen
 var opts2 = {
     selector: 'excluded_places',
     wrapperClass: 'tags-input-wrapper',
@@ -24,10 +28,19 @@ var opts2 = {
 };
 var tagInput2 = new TagsInput(opts2);
 tagInput2.initDbTags();
-
-
-initEventsBase(tagInput1);
 initEventsBase(tagInput2);
+
+// setup for selector of excluded places for the keys
+var opts3 = {
+    selector: 'accounted_for_keys',
+    wrapperClass: 'tags-input-wrapper',
+    tagClass: 'tag',
+    max: null,
+    duplicate: false
+};
+var tagInput3 = new TagsInput(opts3);
+tagInput3.initDbTags();
+initEventsBase(tagInput3);
 
 // base options for prefixe 
 var optsIconTagInput = {

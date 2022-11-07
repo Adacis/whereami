@@ -58,6 +58,10 @@ var optsIconsToPerson = {
     closeIconClass: 'closeIcon'
 }
 
+
+/**
+ * Initializes with the values stored in DB
+ */
 function initDbIcons() {
     var data = getAllIcons().onload();
     var groupedLabel = groupBy(data, 'label');

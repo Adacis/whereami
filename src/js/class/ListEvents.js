@@ -40,8 +40,9 @@ export class ListEvents {
       }
     })
 
-    if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
+    if (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday') {
       myCell.setAttribute('style', 'background-color: var(--color-box-shadow);')
+      res = ''
     } else if (!found) {
       myCell.setAttribute('style', 'background-color: yellow; color: #222;')
       res += 'shame'
@@ -71,8 +72,9 @@ export class ListEvents {
       if (e.inInterval(from)) {
         let userTetra = Events.compute_tetragraph(e.nextcloud_users)
         res += 1
-        if (placeIsExcluded)
+        if (placeIsExcluded) {
           isSomeoneThere = true
+        }
 
         else if (groupedIcons[userTetra])
           for (let dic of groupedIcons[userTetra]) {
@@ -92,7 +94,7 @@ export class ListEvents {
     if (!isSomeoneThere)
       myCell.style = "background-color: red; text-align: center;"
 
-    if (!found && (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday')) {
+    if (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday') {
       myCell.setAttribute('style', 'text-align: center; background-color: var(--color-box-shadow);')
       myCell.innerText = ''
     } else if (!found) {

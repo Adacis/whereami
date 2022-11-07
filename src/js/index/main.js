@@ -1,5 +1,5 @@
-import { getData, lastSeen, optionDatatable, getLoader } from '../module/xhr'
-import { translate as t } from '@nextcloud/l10n'
+import { getData, lastSeen } from '../module/xhr'
+import { getLoader } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 
@@ -75,10 +75,6 @@ window.addEventListener('click', e => {
 })
 
 window.addEventListener('DOMContentLoaded', function () {
-  // if page containing 'dtstart' not loaded
-  // if (document.getElementById('dtStart') === null) {
-  //   return;
-  // }
   const toDay = new Date()
   document.getElementById('dtStart').valueAsDate = toDay
   toDay.setDate(toDay.getDate() + 14)

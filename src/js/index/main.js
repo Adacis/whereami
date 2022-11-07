@@ -1,6 +1,5 @@
-import { getData, lastSeen, optionDatatable } from '../module/xhr'
+import { getData, lastSeen, optionDatatable, getLoader } from '../module/xhr'
 import { translate as t } from '@nextcloud/l10n'
-import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 
@@ -45,28 +44,28 @@ window.addEventListener('click', e => {
     setDateDisabled(false)
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'nextcloud_users')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users')
   }
   else if (e.target.className.includes('showbylocation')) {
     setDateUsual()
     setDateDisabled(false)
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'summary')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary')
   }
   else if (e.target.className.includes('showbyquote')) {
     setDateUsual()
     setDateDisabled(false)
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable, 'summary')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary')
   }
   else if (e.target.className.includes('lastSeen')) {
     setDateLastSeen()
     setDateDisabled(true)
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, DataTable)
+    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
@@ -88,19 +87,8 @@ window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('myapp').appendChild(getLoader())
   getData(document.getElementById('dtStart').value,
     document.getElementById('dtEnd').value,
-    DataTable,
     'nextcloud_users'
   )
 })
 
-/**
- *
- * @returns
- */
-function getLoader() {
-  const center = document.createElement('center')
-  const divLoader = document.createElement('div')
-  divLoader.setAttribute('class', 'lds-dual-ring')
-  center.appendChild(divLoader)
-  return center
-}
+

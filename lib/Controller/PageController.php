@@ -28,7 +28,7 @@ class PageController extends Controller
 	private $calendarManager;
 	private $myDb;
 	private $urlGenerator;
-	private $logger;
+	public $logger;
 
 	/**
 	 * 

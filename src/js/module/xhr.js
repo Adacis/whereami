@@ -4,7 +4,12 @@ import { toInteger } from 'lodash'
 import { groupBy } from 'lodash/collection'
 import { Events } from '../class/Event'
 import { daysFr, ListEvents } from '../class/ListEvents'
-import { translate as tr } from '@nextcloud/l10n'
+import { translate as t } from '@nextcloud/l10n'
+import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
+import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
+import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
+
+
 export const baseUrl = generateUrl('/apps/whereami')
 
 export const optionDatatable = {
@@ -42,12 +47,24 @@ export const optionDatatable = {
 
 /**
  *
+ * @returns
+ */
+export function getLoader() {
+  const center = document.createElement('center')
+  const divLoader = document.createElement('div')
+  divLoader.setAttribute('class', 'lds-dual-ring')
+  center.appendChild(divLoader)
+  return center
+}
+
+/**
+ *
  * @param {*} dtStart
  * @param {*} dtEnd
  * @param {*} DataTable
  * @param {*} classement
  */
-export function getData(dtStart, dtEnd, DataTable, classement) {
+export function getData(dtStart, dtEnd, classement, filter = null) {
   const data = {
     classement,
     dtStart,
@@ -61,7 +78,10 @@ export function getData(dtStart, dtEnd, DataTable, classement) {
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTablePersonne(this.response, dtStart, dtEnd, classement)
-      new DataTable('#' + classement, optionDatatable)
+      let dt = new DataTable('#' + classement, optionDatatable)
+      if (filter)
+        dt.search(filter)
+      dt.search()
       showSuccess('table loaded')
     } else {
       showError(this.response)
@@ -70,7 +90,7 @@ export function getData(dtStart, dtEnd, DataTable, classement) {
   oReq.send(JSON.stringify(data))
 }
 
-export function lastSeen(dtStart, dtEnd, DataTable) {
+export function lastSeen(dtStart, dtEnd) {
   const data = {
     dtStart,
     dtEnd
@@ -119,10 +139,22 @@ export function getIcons(person, label = "") {
 }
 
 
-function setTitleWithIcons(element, icons) {
+function setTitleWithIcons(element, icons, tablePersonne = false) {
   for (let dic of icons) {
-    element.title = dic.prefix + "(" + dic.label + ")\n" + element.title;
-    element.innerText = dic.prefix + element.innerText;
+    element.title = dic.prefix + "(" + dic.label + ")\n" + element.title
+    if (tablePersonne) {
+      let a = document.createElement('a')
+      a.innerText = dic.prefix + "(" + dic.label + ")\n"
+      a.addEventListener('click', () => {
+        document.getElementById('myapp').innerHTML = ''
+        document.getElementById('myapp').appendChild(getLoader())
+        getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', dic.label)
+      })
+      element.appendChild(a)
+
+    }
+    else
+      element.innerText = element.innerText + dic.prefix
   }
 }
 
@@ -235,7 +267,7 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
   // var retHead = getHeader(from,to);
   // var from = new Date(dtStart)
   // var to = new Date(dtEnd)
-  thead.appendChild(getHeader(new Date(dtStart), new Date(dtEnd)))
+  thead.appendChild(getHeader(new Date(dtStart), new Date(dtEnd), tablename != 'summary'))
 
   const to = new Date(dtEnd)
   const res = JSON.parse(response)
@@ -254,7 +286,7 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
     tfoot.appendChild(getTotal(tbody))
   }
 
-  tfoot.appendChild(getHeader(new Date(dtStart), to))
+  tfoot.appendChild(getHeader(new Date(dtStart), to, tablename != 'summary'))
 
   table.appendChild(thead)
   table.appendChild(tbody)
@@ -305,9 +337,11 @@ function newCell(type, data, style = '') {
  * @param {*} to
  * @returns
  */
-function getHeader(from, to) {
+function getHeader(from, to, tablePersonne = false) {
   const line = document.createElement('tr')
   line.appendChild(newCell('th', 'Date'))
+  if (tablePersonne)
+    line.appendChild(newCell('th', 'Clés'))
   while (from <= to) {
     line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
     from.setDate(from.getDate() + 1)
@@ -329,12 +363,15 @@ function getContent(tbody, from, to, userListEvents, icons, count = false) {
   const line = document.createElement('tr')
   let td = newCell('td', userListEvents.id)
   line.appendChild(td)
+
+
   if (!count) {
+    let iconsCell = newCell('td', '')
+    line.appendChild(iconsCell)
     icons = groupBy(icons, "person")
     let tetra = Events.compute_tetragraph(userListEvents.id)
     if (icons[tetra] != undefined)
-      setTitleWithIcons(td, icons[tetra])
-
+      setTitleWithIcons(iconsCell, icons[tetra], true)
   }
 
   while (from <= to) {

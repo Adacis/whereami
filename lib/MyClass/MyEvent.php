@@ -3,9 +3,7 @@
 namespace OCA\Whereami\MyClass;
 
 use OCA\Whereami\Db\Bdd;
-use DateTimeImmutable;
 use DateTime;
-use Psr\Log\LoggerInterface;
 
 class MyEvent
 {
@@ -25,13 +23,18 @@ class MyEvent
     ) {
         $this->myDb             = $myDb;
         $this->id               = $e['id'];
-        $this->dtStart          = $e["objects"][0]["DTSTART"][0]->format("Y-m-d");
-        $this->dtEnd            = $e["objects"][0]["DTEND"][0]->format("Y-m-d");
+        $this->dtStart          = $e["objects"][0]["DTSTART"][0]->modify('+ 1 minute')->format('Y-m-d H:i:s');
+        $this->dtEnd            = $e["objects"][0]["DTEND"][0]->modify('- 1 minute')->format('Y-m-d H:i:s');
         $this->nextcloud_users  = $this->getNameCalendar($this->id);
         $this->summary          = str_replace("@", "", $e["objects"][0]["SUMMARY"][0]);
         $this->place            = $this->extractData(",", 0, $this->summary);
 
         preg_match_all("/D[0-9]{5}/", $this->summary, $this->quote);
+    }
+
+    public function toString()
+    {
+        return "Event at " . $this->place . " by " . $this->nextcloud_users . " From " . $this->dtStart . " to " . $this->dtStart;
     }
 
     public function getNameCalendar($calendarsUid)
@@ -104,9 +107,9 @@ class MyEvent
     public function getSeen($e)
     {
         if ($this->dtEnd > $e->dtEnd) {
-            return (new DateTime($e->dtEnd))->modify('-1 day')->format("Y-m-d");
+            return (new DateTime($e->dtEnd))->format("Y-m-d");
         } else {
-            return (new DateTime($this->dtEnd))->modify('-1 day')->format("Y-m-d");
+            return (new DateTime($this->dtEnd))->format("Y-m-d");
         }
     }
 
@@ -123,23 +126,17 @@ class MyEvent
                 $user != $thisUser // Je ne me teste pas moi même
                 &&  strtoupper($e->place) === strtoupper($this->place) // On est sur le même lieu
                 &&  $this->eventCross($e) // Nos dates sont dans le même interval
-                // &&
-                // (
-                //     (isset($listSeen[$user]['seen']) && $listSeen[$user]['seen'] < $this->getSeen($e)) // J'ai déjà enregistré pour cet utilisateur
-                //     ||
-                //     (!array_key_exists($user, $listSeen)) // Pas d'informatin précédente sur cet utilisateur
-                // )
             ) {
-                if (array_key_exists($user, $listSeen) && $listSeen[$user]['seen'] < $this->getSeen($e)) {
+                if (array_key_exists($user, $listSeen) && $listSeen[$user]['seen'] < $this->getSeen($e)) { // La date enregistrée est plus ancienne, on l'update
                     $listSeen[$user] = [
                         'load' => False,
                         'place' => $e->place,
                         'seen' => $this->getSeen($e),
                         'count' => $listSeen[$user]['count'] + 1
                     ];
-                } else if (array_key_exists($user, $listSeen)) {
-                    $listSeen[]
-                } else {
+                } else if (array_key_exists($user, $listSeen)) { // La date enregistrée est plus récente, on incrémente le compteur tout de même
+                    $listSeen[$user]['count'] = $listSeen[$user]['count'] + 1;
+                } else { // nouvel event, on l'ajoute
                     $listSeen[$user] = [
                         'load' => False,
                         'place' => $e->place,

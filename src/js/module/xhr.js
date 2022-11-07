@@ -1,6 +1,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { toInteger } from 'lodash'
+import { map } from 'lodash'
 import { groupBy } from 'lodash/collection'
 import { Events } from '../class/Event'
 import { daysFr, ListEvents } from '../class/ListEvents'
@@ -272,13 +273,17 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
   const to = new Date(dtEnd)
   const res = JSON.parse(response)
   let icons = getAllIcons().onload()
+  let whitelistKeys
+  if (tablename === 'summary')
+    whitelistKeys = getTags("accounted_for_keys").onload().map(element => element.word.toLowerCase())
+
   Object.keys(res).forEach(element => {
     let from = new Date(dtStart)
     const userListEvents = new ListEvents(element, res[element])
     if (tablename === 'summary') {
-      tbody = getContent(tbody, from, to, userListEvents, icons, true)
+      tbody = getContent(tbody, from, to, userListEvents, icons, whitelistKeys, true)
     } else {
-      tbody = getContent(tbody, from, to, userListEvents, icons, false)
+      tbody = getContent(tbody, from, to, userListEvents, icons)
     }
   })
 
@@ -304,7 +309,12 @@ function getTotal(tbody) {
   const line = document.createElement('tr')
   line.appendChild(newCell('td', 'Total'))
 
-  const totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length
+  let totalColumn
+  try {
+    totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length
+  } catch (error) {
+    totalColumn = 0
+  }
   for (let i = 1; i < totalColumn; i++) {
     let totalByDay = 0
     tbody.getElementsByTagName('tr').forEach(element => {
@@ -359,12 +369,11 @@ function getHeader(from, to, tablePersonne = false) {
  * @param {*} count
  * @returns
  */
-function getContent(tbody, from, to, userListEvents, icons, count = false) {
+function getContent(tbody, from, to, userListEvents, icons, whitelistKeys = null, count = false) {
   const line = document.createElement('tr')
   let td = newCell('td', userListEvents.id)
   line.appendChild(td)
-
-
+  let placeIsExcluded
   if (!count) {
     let iconsCell = newCell('td', '')
     line.appendChild(iconsCell)
@@ -373,12 +382,14 @@ function getContent(tbody, from, to, userListEvents, icons, count = false) {
     if (icons[tetra] != undefined)
       setTitleWithIcons(iconsCell, icons[tetra], true)
   }
+  else
+    placeIsExcluded = !whitelistKeys.includes(userListEvents.id)
 
   while (from <= to) {
     if (!count) {
       line.appendChild(userListEvents.eventsAtDay(from))
     } else {
-      line.appendChild(userListEvents.eventsAtDayCount(from, icons))
+      line.appendChild(userListEvents.eventsAtDayCount(from, icons, placeIsExcluded))
     }
 
     from.setDate(from.getDate() + 1)

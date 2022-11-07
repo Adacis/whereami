@@ -11,6 +11,10 @@ script('whereami', array('adminSection.app'));
         <h2 class="header2">Lieux non pris en compte pour last seen:</h2>
         <input type="text" id="excluded_places">
     </div>
+    <div class="div-main">
+        <h2 class="header2">Lieux à prendre en compte pour les clés:</h2>
+        <input type="text" id="accounted_for_keys">
+    </div>
 
 
     <div class="div-main">

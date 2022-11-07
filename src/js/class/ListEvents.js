@@ -56,9 +56,10 @@ export class ListEvents {
      *
      * @param {*} from
      * @param {*} icons
+     * @param {*} exluded_places
      * @returns
      */
-  eventsAtDayCount(from, icons) {
+  eventsAtDayCount(from, icons, placeIsExcluded) {
     const myCell = document.createElement('td')
     let found = false
     let res = 0
@@ -70,13 +71,17 @@ export class ListEvents {
       if (e.inInterval(from)) {
         let userTetra = Events.compute_tetragraph(e.nextcloud_users)
         res += 1
-        if (groupedIcons[userTetra])
+        if (placeIsExcluded)
+          isSomeoneThere = true
+
+        else if (groupedIcons[userTetra])
           for (let dic of groupedIcons[userTetra]) {
             if (e.place === dic.label.toLowerCase()) {
               title += dic.prefix + "(" + dic.label + ") "
               isSomeoneThere = true
             }
           }
+
         title += e.nextcloud_users + '\n'
         found = true
       }

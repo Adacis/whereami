@@ -1,9 +1,12 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
-import { map } from 'lodash'
-import { groupBy } from 'lodash/collection'
-import { Events } from '../class/Event'
-import { daysFr, ListEvents } from '../class/ListEvents'
+import { translate as t } from '@nextcloud/l10n'
+import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
+import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
+import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
+import { newTablePersonne, newTableSeen } from "./datatables.js"
+
+
 export const baseUrl = generateUrl('/apps/whereami')
 
 export const optionDatatable = {
@@ -39,6 +42,8 @@ export const optionDatatable = {
   }
 }
 
+
+
 /**
  *
  * @param {*} dtStart
@@ -46,7 +51,7 @@ export const optionDatatable = {
  * @param {*} DataTable
  * @param {*} classement
  */
-export function getData(dtStart, dtEnd, DataTable, classement) {
+export function getData(dtStart, dtEnd, classement, filter = null) {
   const data = {
     classement,
     dtStart,
@@ -60,7 +65,13 @@ export function getData(dtStart, dtEnd, DataTable, classement) {
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTablePersonne(this.response, dtStart, dtEnd, classement)
-      new DataTable('#' + classement, optionDatatable)
+      let dt = new DataTable('#' + classement, optionDatatable)
+
+      if (filter !== null)
+        dt.search(filter).draw()
+      else
+        dt.search('').draw()
+
       showSuccess('table loaded')
     } else {
       showError(this.response)
@@ -69,7 +80,7 @@ export function getData(dtStart, dtEnd, DataTable, classement) {
   oReq.send(JSON.stringify(data))
 }
 
-export function lastSeen(dtStart, dtEnd, DataTable) {
+export function lastSeen(dtStart, dtEnd) {
   const data = {
     dtStart,
     dtEnd
@@ -116,233 +127,6 @@ export function getIcons(person, label = "") {
   oReq.send(JSON.stringify(data));
   return oReq;
 }
-
-
-function setTitleWithIcons(element, icons) {
-  for (let dic of icons) {
-    element.title = dic.prefix + "(" + dic.label + ")\n" + element.title;
-    element.innerText = element.innerText + dic.prefix;
-  }
-}
-
-
-function newTableSeen(response) {
-  const res = JSON.parse(response)
-  var totalPeople = 1;
-
-  const table = document.createElement('table')
-  table.setAttribute('id', 'seen')
-  table.setAttribute('class', 'table table-striped')
-
-  let thead = document.createElement('thead')
-  let tbody = document.createElement('tbody')
-
-  const headLine = document.createElement('tr')
-  headLine.appendChild(newCell('th', ""))
-
-  Object.keys(res).forEach(person => {
-    let th = newCell('th', person);
-    headLine.appendChild(th);
-
-    var newLine = document.createElement('tr');
-    let tr = newCell('td', person);
-    newLine.appendChild(tr);
-    tbody.appendChild(newLine);
-
-    totalPeople++;
-  })
-
-  thead.appendChild(headLine);
-  table.appendChild(thead);
-  table.appendChild(tbody);
-
-  let icons = getAllIcons().onload();
-  let groupedIcons = groupBy(icons, 'person');
-  let rows = 0;
-  table.rows.forEach(r => {
-    if (rows > 0) {
-      let peoplerow = r.cells[0].innerText;
-      for (var cellPosition = 1; cellPosition < totalPeople; cellPosition++) {
-
-        let peoplecolumn = table.rows[0].cells[cellPosition].innerText
-
-        let msg = ":'(";
-        let title = "No title";
-
-        if (peoplerow === peoplecolumn) {
-          msg = "-";
-        }
-
-        if (res[peoplerow] != null && res[peoplerow][peoplecolumn] != null) {
-          title = res[peoplerow][peoplecolumn].place;
-          msg = res[peoplerow][peoplecolumn].seen;
-        }
-
-        let newCell = r.insertCell(cellPosition);
-        let newText = document.createTextNode(msg);
-        newCell.setAttribute('title', title);
-        newCell.appendChild(newText);
-
-        //setTitleWithIcons(table.rows[0].cells[cellPosition], groupedIcons[peoplecolumn])
-      }
-      let tetrarow = Events.compute_tetragraph(peoplerow)
-      if (groupedIcons[tetrarow])
-        setTitleWithIcons(r.cells[0], groupedIcons[tetrarow])
-    }
-    rows++;
-  })
-
-  document.getElementById('myapp').innerHTML = ''
-  document.getElementById('myapp').appendChild(table)
-
-}
-
-
-/**
- *
- * @param {*} response
- * @param {*} dtStart
- * @param {*} dtEnd
- * @param {*} tablename
- */
-function newTablePersonne(response, dtStart, dtEnd, tablename) {
-  const table = document.createElement('table')
-  const thead = document.createElement('thead')
-  let tbody = document.createElement('tbody')
-  const tfoot = document.createElement('tfoot')
-
-  table.setAttribute('id', tablename)
-  table.setAttribute('class', 'table table-striped')
-
-  // var retHead = getHeader(from,to);
-  // var from = new Date(dtStart)
-  // var to = new Date(dtEnd)
-  thead.appendChild(getHeader(new Date(dtStart), new Date(dtEnd)))
-
-  const to = new Date(dtEnd)
-  const res = JSON.parse(response)
-  let icons = getAllIcons().onload()
-  let whitelistKeys
-  if (tablename === 'summary')
-    whitelistKeys = getTags("accounted_for_keys").onload().map(element => element.word.toLowerCase())
-
-  Object.keys(res).forEach(element => {
-    let from = new Date(dtStart)
-    const userListEvents = new ListEvents(element, res[element])
-    if (tablename === 'summary') {
-      tbody = getContent(tbody, from, to, userListEvents, icons, whitelistKeys, true)
-    } else {
-      tbody = getContent(tbody, from, to, userListEvents, icons)
-    }
-  })
-
-  if (tablename === 'summary') {
-    tfoot.appendChild(getTotal(tbody))
-  }
-
-  tfoot.appendChild(getHeader(new Date(dtStart), to))
-
-  table.appendChild(thead)
-  table.appendChild(tbody)
-  table.appendChild(tfoot)
-  document.getElementById('myapp').innerHTML = ''
-  document.getElementById('myapp').appendChild(table)
-}
-
-/**
- *
- * @param {*} tbody
- * @returns
- */
-function getTotal(tbody) {
-  const line = document.createElement('tr')
-  line.appendChild(newCell('td', 'Total'))
-
-  let totalColumn
-  try {
-    totalColumn = tbody.getElementsByTagName('tr')[0].getElementsByTagName('td').length
-  } catch (error) {
-    totalColumn = 0
-  }
-  for (let i = 1; i < totalColumn; i++) {
-    let totalByDay = 0
-    tbody.getElementsByTagName('tr').forEach(element => {
-      totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText)
-    })
-    line.appendChild(newCell('td',
-      isNaN(totalByDay) ? '' : totalByDay,
-      'text-align:center;'))
-  }
-  return line
-}
-
-/**
- *
- * @param {*} type
- * @param {*} data
- * @param {*} style
- * @returns
- */
-function newCell(type, data, style = '') {
-  const myCase = document.createElement(type)
-  myCase.setAttribute('style', style)
-  myCase.innerText = data
-  return myCase
-}
-
-/**
- * Header of table
- * @param {*} from
- * @param {*} to
- * @returns
- */
-function getHeader(from, to) {
-  const line = document.createElement('tr')
-  line.appendChild(newCell('th', 'Date'))
-  while (from <= to) {
-    line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
-    from.setDate(from.getDate() + 1)
-  }
-  return line
-}
-
-/**
- *
- * @param {*} tbody
- * @param {*} from
- * @param {*} to
- * @param {*} userListEvents
- * @param {*} icons
- * @param {*} count
- * @returns
- */
-function getContent(tbody, from, to, userListEvents, icons, whitelistKeys = null, count = false) {
-  const line = document.createElement('tr')
-  let td = newCell('td', userListEvents.id)
-  line.appendChild(td)
-  let placeIsExcluded
-  if (!count) {
-    icons = groupBy(icons, "person")
-    let tetra = Events.compute_tetragraph(userListEvents.id)
-    if (icons[tetra] != undefined)
-      setTitleWithIcons(td, icons[tetra])
-  }
-  else
-    placeIsExcluded = !whitelistKeys.includes(userListEvents.id)
-
-  while (from <= to) {
-    if (!count) {
-      line.appendChild(userListEvents.eventsAtDay(from))
-    } else {
-      line.appendChild(userListEvents.eventsAtDayCount(from, icons, placeIsExcluded))
-    }
-
-    from.setDate(from.getDate() + 1)
-  }
-  tbody.appendChild(line)
-  return tbody
-}
-
 
 /**
  * @param {*} tags

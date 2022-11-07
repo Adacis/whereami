@@ -1,5 +1,5 @@
 import "../../../css/mycss.css";
-import { deleteTag, getTags, sendTags } from "./xhr";
+import { deleteTag, getTags, sendTags } from "../module/xhr";
 // Tags input
 "use strict"
 

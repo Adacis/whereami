@@ -4,6 +4,9 @@ import { Events } from "../class/Event"
 import { daysFr, ListEvents } from "../class/ListEvents"
 import { getAllIcons, getData, getTags } from "./xhr"
 
+const FRACTION_FOR_ORANGE = 2 / 3
+const FRACTION_FOR_RED = 0.90
+
 /**
  *
  * @returns
@@ -28,7 +31,6 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
                 getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', dic.label)
             })
             element.appendChild(a)
-
         }
         else
             element.innerText = element.innerText + dic.prefix
@@ -36,10 +38,11 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
 }
 
 
-export function newTableSeen(response) {
+export function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
     var totalPeople = 1
     const today = new Date()
+    const periodLength = toInteger((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
 
     const table = document.createElement('table')
     table.setAttribute('id', 'seen')
@@ -91,23 +94,25 @@ export function newTableSeen(response) {
                     msg = res[peoplerow][peoplecolumn].seen;
                     const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
                     daysLastSeen = toInteger(timeLastSeen / (1000 * 3600 * 24))
-                    msg = msg + " (" + res[peoplerow][peoplecolumn].count + ' times)'
                     if (daysLastSeen == 0)
                         title = title + " today"
                     else
                         title = title + ' ' + daysLastSeen + ' day(s) ago'
+                    title = title + " (" + res[peoplerow][peoplecolumn].count + ' time(s))'
                 }
 
 
-                let newCell = r.insertCell(cellPosition);
-                let newText = document.createTextNode(msg);
-                newCell.setAttribute('title', title);
-                newCell.appendChild(newText);
-                if (daysLastSeen >= 20) {
+                let newCell = r.insertCell(cellPosition)
+                let newText = document.createTextNode(msg)
+                newCell.setAttribute('title', title)
+                newCell.appendChild(newText)
+
+                if (daysLastSeen >= toInteger(FRACTION_FOR_ORANGE * periodLength)) {
                     newCell.style = "background-color: orange;"
                 }
-                if (daysLastSeen == -1 || daysLastSeen >= 30) {
+                if (daysLastSeen == -1 || daysLastSeen >= toInteger(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
                     newCell.style = "background-color: red;"
+                    newCell.title = "Not seend in the last " + periodLength + " days"
                 }
 
                 //setTitleWithIcons(table.rows[0].cells[cellPosition], groupedIcons[peoplecolumn])

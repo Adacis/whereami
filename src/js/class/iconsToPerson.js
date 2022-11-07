@@ -1,4 +1,4 @@
-import { sendIcon, deleteIcon } from './xhr';
+import { sendIcon, deleteIcon } from '../module/xhr';
 import { TagsInput } from './tagsInput';
 
 

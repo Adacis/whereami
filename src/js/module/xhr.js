@@ -92,7 +92,7 @@ export function lastSeen(dtStart, dtEnd) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      newTableSeen(this.response);
+      newTableSeen(this.response, dtStart, dtEnd);
       new DataTable('#seen', optionDatatable);
     } else {
       showError(this.response);

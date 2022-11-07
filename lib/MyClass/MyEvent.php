@@ -91,14 +91,28 @@ class MyEvent
     }
 
     /**
-     * test if two date intervals intersect
+     * test if two date intervals intersect, return 0 if event do not cross, return the length of intersection otherwise
      */
-    public function eventCross($event): bool
+    public function eventCross($event): int
     {
         if ($this->dtEnd < $event->dtStart || $this->dtStart > $event->dtEnd) {
-            return false;
+            return 0;
         }
-        return true;
+        if ($this->dtEnd >= $event->dtEnd && $this->dtStart <= $event->dtStart) {
+            $dateEnd = new Datetime($event->dtEnd);
+            $dateStart = new Datetime($event->dtStart);
+        } else if ($this->dtEnd <= $event->dtEnd && $this->dtStart >= $event->dtStart) {
+            $dateEnd = new Datetime($this->dtEnd);
+            $dateStart = new Datetime($this->dtStart);
+        } else if ($this->dtEnd >= $event->dtEnd && $this->dtStart >= $event->dtStart) {
+            $dateEnd = new Datetime($event->dtEnd);
+            $dateStart = new Datetime($this->dtStart);
+        } else {
+            $dateEnd = new Datetime($this->dtEnd);
+            $dateStart = new Datetime($event->dtStart);
+        }
+        $inter = $dateEnd->modify('+1 minute')->diff($dateStart->modify('-1 minute'))->days;
+        return $inter;
     }
 
     /**
@@ -121,27 +135,27 @@ class MyEvent
         foreach ($events as $e) {
             $user = strtolower($e->nextcloud_users);
             $thisUser = strtolower($this->nextcloud_users);
-
+            $inter = $this->eventCross($e);
             if (
                 $user != $thisUser // Je ne me teste pas moi même
                 &&  strtoupper($e->place) === strtoupper($this->place) // On est sur le même lieu
-                &&  $this->eventCross($e) // Nos dates sont dans le même interval
+                &&  $inter // Nos dates sont dans le même interval
             ) {
                 if (array_key_exists($user, $listSeen) && $listSeen[$user]['seen'] < $this->getSeen($e)) { // La date enregistrée est plus ancienne, on l'update
                     $listSeen[$user] = [
                         'load' => False,
                         'place' => $e->place,
                         'seen' => $this->getSeen($e),
-                        'count' => $listSeen[$user]['count'] + 1
+                        'count' => $listSeen[$user]['count'] + $inter
                     ];
                 } else if (array_key_exists($user, $listSeen)) { // La date enregistrée est plus récente, on incrémente le compteur tout de même
-                    $listSeen[$user]['count'] = $listSeen[$user]['count'] + 1;
+                    $listSeen[$user]['count'] = $listSeen[$user]['count'] + $inter;
                 } else { // nouvel event, on l'ajoute
                     $listSeen[$user] = [
                         'load' => False,
                         'place' => $e->place,
                         'seen' => $this->getSeen($e),
-                        'count' => 1
+                        'count' => $inter
                     ];
                 }
             }

@@ -104,4 +104,23 @@ export class ListEvents {
 
     return myCell
   }
+
+  countTypeForUser(type) {
+    const myCell = document.createElement('td')
+    let res = 0
+    this.ListEvents.forEach(event => {
+      const e = new Events(event)
+      if ((e.place.toLowerCase() === type.toLowerCase() || type.toLowerCase() === 'total')) {
+        const dtStart = new Date(e.dtStart)
+        const dtEnd = new Date(e.dtEnd)
+        res += Math.round((dtEnd - dtStart) / (3600 * 1000 * 24))
+      }
+    })
+
+    myCell.innerText = res
+    myCell.style = 'text-align: center; '
+    myCell.title = type
+
+    return myCell
+  }
 }

@@ -26,28 +26,19 @@ function setDateUsual() {
 window.addEventListener('click', e => {
 
   if (e.target.className.includes('showbyemployees')) {
-    setDateUsual()
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', 'byEmployee')
   }
   else if (e.target.className.includes('showbylocation')) {
-    setDateUsual()
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', 'byLocation')
   }
   else if (e.target.className.includes('showbyquote')) {
-    setDateUsual()
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
     getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary')
-  }
-  else if (e.target.className.includes('lastSeen')) {
-    setDateLastSeen()
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
@@ -65,7 +56,8 @@ window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('myapp').appendChild(getLoader())
   getData(document.getElementById('dtStart').value,
     document.getElementById('dtEnd').value,
-    'nextcloud_users'
+    'nextcloud_users',
+    'byEmployee'
   )
 })
 

@@ -70,6 +70,15 @@ class PageController extends Controller
 		return new TemplateResponse('whereami', 'quotes', array('url' => $this->getNavigationLink()));
 	}
 
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function hr()
+	{
+		return new TemplateResponse('whereami', 'hr', array('url' => $this->getNavigationLink()));
+	}
+
 
 	/**
 	 * @NoAdminRequired

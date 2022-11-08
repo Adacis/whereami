@@ -51,7 +51,7 @@ export const optionDatatable = {
  * @param {*} DataTable
  * @param {*} classement
  */
-export function getData(dtStart, dtEnd, classement, filter = null) {
+export function getData(dtStart, dtEnd, classement, tableName, filter = null) {
   const data = {
     classement,
     dtStart,
@@ -64,14 +64,38 @@ export function getData(dtStart, dtEnd, classement, filter = null) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      newTablePersonne(this.response, dtStart, dtEnd, classement)
-      let dt = new DataTable('#' + classement, optionDatatable)
+      console.log(JSON.parse(this.response))
+
+      newTablePersonne(this.response, dtStart, dtEnd, tableName)
+      let dt = new DataTable('#' + tableName, optionDatatable)
 
       if (filter !== null)
         dt.search(filter).draw()
       else
         dt.search('').draw()
 
+      showSuccess('table loaded')
+    } else {
+      showError(this.response)
+    }
+  }
+  oReq.send(JSON.stringify(data))
+}
+
+export function retrieveData(dtStart, dtEnd, classement, callback) {
+  const data = {
+    classement,
+    dtStart,
+    dtEnd
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getEvents', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      callback(data, this.response)
       showSuccess('table loaded')
     } else {
       showError(this.response)

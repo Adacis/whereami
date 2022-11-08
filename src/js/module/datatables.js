@@ -2,7 +2,10 @@ import groupBy from "lodash/groupBy"
 import toInteger from "lodash/toInteger"
 import { Events } from "../class/Event"
 import { daysFr, ListEvents } from "../class/ListEvents"
-import { getAllIcons, getData, getTags } from "./xhr"
+import { getAllIcons, getData, getTags, optionDatatable } from "./xhr"
+import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
+import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
+import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 
 /**
  *
@@ -25,7 +28,7 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
             a.addEventListener('click', () => {
                 document.getElementById('myapp').innerHTML = ''
                 document.getElementById('myapp').appendChild(getLoader())
-                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', dic.label)
+                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', 'byLocation', dic.label)
             })
             element.appendChild(a)
 
@@ -144,26 +147,27 @@ export function newTablePersonne(response, dtStart, dtEnd, tablename) {
     // var retHead = getHeader(from,to);
     // var from = new Date(dtStart)
     // var to = new Date(dtEnd)
-    thead.appendChild(getHeader(new Date(dtStart), new Date(dtEnd), tablename != 'summary'))
+    const head = getHeader(new Date(dtStart), new Date(dtEnd), tablename == 'byEmployee')
+    thead.appendChild(head)
 
     const to = new Date(dtEnd)
     const res = JSON.parse(response)
     let icons = getAllIcons().onload()
     let whitelistKeys
-    if (tablename === 'summary')
+    if (tablename === 'byLocation')
         whitelistKeys = getTags("accounted_for_keys").onload().map(element => element.word.toLowerCase())
 
     Object.keys(res).forEach(element => {
         let from = new Date(dtStart)
         const userListEvents = new ListEvents(element, res[element])
-        if (tablename === 'summary') {
-            tbody = getContent(tbody, from, to, userListEvents, icons, whitelistKeys, true)
+        if (tablename === 'byLocation') {
+            tbody = getContent(tbody, head, 1, userListEvents, 'byLocation', icons, whitelistKeys)
         } else {
-            tbody = getContent(tbody, from, to, userListEvents, icons)
+            tbody = getContent(tbody, head, 2, userListEvents, 'byEmployee', icons)
         }
     })
 
-    if (tablename === 'summary') {
+    if (tablename === 'byLocation') {
         tfoot.appendChild(getTotal(tbody))
     }
 
@@ -235,22 +239,32 @@ function getHeader(from, to, tablePersonne = false) {
     return line
 }
 
+
+
+function getHeaderWithValues(values) {
+    const line = document.createElement('tr')
+    values.forEach(value => {
+        line.appendChild(newCell('th', value))
+    })
+    return line
+}
+
 /**
  *
  * @param {*} tbody
- * @param {*} from
- * @param {*} to
+ * @param {*} headerLine
+ * @param {*} startIndex
  * @param {*} userListEvents
  * @param {*} icons
  * @param {*} count
  * @returns
  */
-function getContent(tbody, from, to, userListEvents, icons, whitelistKeys = null, count = false) {
+function getContent(tbody, headerLine, startIndex, userListEvents, type, icons = null, whitelistKeys = null) {
     const line = document.createElement('tr')
     let td = newCell('td', userListEvents.id)
     line.appendChild(td)
     let placeIsExcluded
-    if (!count) {
+    if (type === "byEmployee") {
         let iconsCell = newCell('td', '')
         line.appendChild(iconsCell)
         icons = groupBy(icons, "person")
@@ -258,18 +272,74 @@ function getContent(tbody, from, to, userListEvents, icons, whitelistKeys = null
         if (icons[tetra] != undefined)
             setTitleWithIcons(iconsCell, icons[tetra], true)
     }
-    else
+    else if (type === 'byLocation')
         placeIsExcluded = !whitelistKeys.includes(userListEvents.id)
 
-    while (from <= to) {
-        if (!count) {
-            line.appendChild(userListEvents.eventsAtDay(from))
-        } else {
-            line.appendChild(userListEvents.eventsAtDayCount(from, icons, placeIsExcluded))
+    let counter = 0
+    headerLine.children.forEach(elem => {
+        if (counter >= startIndex) {
+            let value
+            if (type === 'byEmployee' || type === 'byLocation') {
+                const innerDate = elem.innerHTML.split('<br>')[1]
+                value = new Date(innerDate.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/, "$3-$1-$2"))
+            }
+            else if (type === 'HRsummary') {
+                value = elem.innerText
+            }
+
+
+            if (type === "byEmployee") {
+                line.appendChild(userListEvents.eventsAtDay(value))
+            } else if (type === 'byLocation') {
+                line.appendChild(userListEvents.eventsAtDayCount(value, icons, placeIsExcluded))
+            } else if (type === 'HRsummary') {
+                line.appendChild(userListEvents.countTypeForUser(value))
+            }
         }
 
-        from.setDate(from.getDate() + 1)
-    }
+        counter += 1
+    })
     tbody.appendChild(line)
     return tbody
+}
+
+
+
+export function newTableHR(dataSent, response) {
+    const tableName = 'HRsummary'
+    const table = document.createElement('table')
+    const thead = document.createElement('thead')
+    let tbody = document.createElement('tbody')
+    const tfoot = document.createElement('tfoot')
+
+    table.setAttribute('id', tableName)
+    table.setAttribute('class', 'table table-striped')
+
+    const headerValues = [
+        'Personne',
+        'RTT',
+        'Congés',
+        'Astreinte',
+        'Férié',
+        'Total'
+    ]
+    const head = getHeaderWithValues(headerValues)
+    thead.appendChild(head)
+
+    const res = JSON.parse(response)
+    console.log(res)
+    Object.keys(res).forEach(element => {
+        const userListEvents = new ListEvents(element, res[element])
+        tbody = getContent(tbody, head, 1, userListEvents, tableName)
+
+    })
+
+    tfoot.appendChild(getHeaderWithValues(headerValues))
+
+    table.appendChild(thead)
+    table.appendChild(tbody)
+    table.appendChild(tfoot)
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(table)
+    new DataTable('#' + tableName, optionDatatable)
 }

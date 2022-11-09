@@ -1,6 +1,6 @@
 /* App configuration */
 #app-navigation:not(.hidden)+#app-content {
-  margin-left: 230px;
+  margin-left: 0px;
 }
 
 #app-navigation:not(.vue) {
@@ -8,12 +8,11 @@
 }
 
 .app-navigation-entry {
-  margin-left: 10px;
+  margin-left: 0px;
 }
 
-#content {
-  width: 100%;
-}
+/* #content {
+} */
 
 #contentTable {
   background-color: var(--color-main-background);
@@ -24,6 +23,7 @@
 
 #app {
   width: 100%;
+  display: flex;
 }
 
 #myapp {

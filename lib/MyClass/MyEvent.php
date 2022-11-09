@@ -4,6 +4,7 @@ namespace OCA\Whereami\MyClass;
 
 use OCA\Whereami\Db\Bdd;
 use DateTime;
+use Psr\Log\LoggerInterface;
 
 class MyEvent
 {
@@ -12,22 +13,35 @@ class MyEvent
     public String $dtStart;
     public String $dtEnd;
     public String $place;
+    public String $place2;
     public String $nextcloud_users;
     public $quote;
+
+    private LoggerInterface $log;
 
     private Bdd $myDb;
 
     public function __construct(
         $e,
-        Bdd $myDb
+        Bdd $myDb,
+        LoggerInterface $logger,
     ) {
+        $this->log = $logger;
         $this->myDb             = $myDb;
         $this->id               = $e['id'];
         $this->dtStart          = $e["objects"][0]["DTSTART"][0]->modify('+ 1 minute')->format('Y-m-d H:i:s');
         $this->dtEnd            = $e["objects"][0]["DTEND"][0]->modify('- 1 minute')->format('Y-m-d H:i:s');
         $this->nextcloud_users  = $this->getNameCalendar($this->id);
         $this->summary          = str_replace("@", "", $e["objects"][0]["SUMMARY"][0]);
-        $this->place            = $this->extractData(",", 0, $this->summary);
+
+        $tmp                    = $this->extractData(",", 0, $e["objects"][0]["SUMMARY"][0]);
+        $this->place = $tmp[0];
+        if (count($tmp) >= 2) {
+            $this->place2 = $tmp[1];
+        } else {
+            $this->place2 = '';
+        }
+
 
         preg_match_all("/D[0-9]{5}/", $this->summary, $this->quote);
     }
@@ -81,12 +95,16 @@ class MyEvent
     /**
      * Clean data
      */
-    public function extractData($separator, $position, $data): String
+    public function extractData($separator, $position, $data): array
     {
-        $cls = strtolower($data);
-        $cls = trim($cls);
-        $cls = explode($separator, $cls)[$position];
-        $cls = trim($cls);
+        $re = '/@([^' . $separator . '\s]+)(' . $separator . '\s?@([^' . $separator . '\s]+))?.*/m';
+
+        preg_match_all($re, strtolower($data), $matches, PREG_SET_ORDER, 0);
+
+        $cls = [$matches[0][1]];
+        if (count($matches[0]) >= 4) {
+            array_push($cls, $matches[0][3]);
+        }
         return $cls;
     }
 

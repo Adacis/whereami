@@ -28,7 +28,7 @@ class PageController extends Controller
 	private $calendarManager;
 	private $myDb;
 	private $urlGenerator;
-	public $logger;
+	public LoggerInterface $logger;
 
 	/**
 	 * 
@@ -107,7 +107,7 @@ class PageController extends Controller
 
 		//Récupération de la liste des événements sur la période
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
-			$e = new MyEvent($c, $this->myDb);
+			$e = new MyEvent($c, $this->myDb, $this->logger);
 
 			$cls = strtolower($e->{"nextcloud_users"});
 			$cls = trim(str_replace($charReplace, "", $cls));
@@ -166,8 +166,9 @@ class PageController extends Controller
 		$toInclude = $this->myDb->getWordInWordList('allowed_events');
 		$toInclude = $this->arrayFromWordQuery($toInclude);
 
+		$this->logger->error('test');
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
-			$e = new MyEvent($c, $this->myDb);
+			$e = new MyEvent($c, $this->myDb, $this->logger);
 			// if(preg_match("/^".$charReplace."/", $e->summary)){
 
 			$cls = strtolower($e->{$classement});

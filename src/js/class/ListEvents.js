@@ -110,11 +110,18 @@ export class ListEvents {
     let res = 0
     this.ListEvents.forEach(event => {
       const e = new Events(event)
-      if ((e.place.toLowerCase() === type.toLowerCase() || type.toLowerCase() === 'total')) {
-        const dtStart = new Date(e.dtStart)
-        const dtEnd = new Date(e.dtEnd)
-        res += Math.round((dtEnd - dtStart) / (3600 * 1000 * 24))
-      }
+      const ar = [e.place, e.place2]
+      var count = 0
+      var tmp = 0
+      ar.forEach(place => {
+        if ((place.toLowerCase() === type.toLowerCase() || type.toLowerCase() === 'total')) {
+          const dtStart = new Date(e.dtStart)
+          const dtEnd = new Date(e.dtEnd)
+          tmp += Math.round((dtEnd - dtStart) / (3600 * 1000 * 24))
+          count += 1
+        }
+      })
+      res += (tmp > 0) ? tmp / count : 0
     })
 
     myCell.innerText = res

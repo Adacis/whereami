@@ -43,6 +43,11 @@ function initEventTagsIcons(mainClass, tags) {
                     alert("Veuillez finaliser la valeur du label et du préfixe.");
                     return;
                 }
+                if (str.length !== 4) {
+                    alert("Assurez vous d'entrer le quadrigramme de la personne");
+                    tags.input.value = str;
+                    return;
+                }
                 tags.addTag(str);
 
                 // Send to controller with corresponding suffixe

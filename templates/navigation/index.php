@@ -5,13 +5,13 @@
 			<li class="app-navigation-entry"><span class="navmarg icon-contacts-dark"></span><a class="a-entry" href="<?php echo ($_['url']['index']); ?>"><?php p($l->t('Employees')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
-			<li class="app-navigation-entry"><span class="navmarg icon-contacts-dark"></span><a href="<?php echo ($_['url']['locations']); ?>"><?php p($l->t('Locations')); ?></a>
+			<li class="app-navigation-entry"><span class="navmarg icon-address"></span><a href="<?php echo ($_['url']['locations']); ?>"><?php p($l->t('Locations')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
-			<li class="app-navigation-entry"><span class="navmarg icon-contacts-dark"></span><a href="<?php echo ($_['url']['lastSeen']); ?>"><?php p($l->t('Last Seen')); ?></a>
+			<li class="app-navigation-entry"><span class="navmarg icon-toggle-dark"></span><a href="<?php echo ($_['url']['lastSeen']); ?>"><?php p($l->t('Last Seen')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
-			<li class="app-navigation-entry"><span class="navmarg icon-contacts-dark"></span><a href="<?php echo ($_['url']['hr']); ?>"><?php p($l->t('Summary')); ?></a>
+			<li class="app-navigation-entry"><span class="navmarg icon-category-office"></span><a href="<?php echo ($_['url']['hr']); ?>"><?php p($l->t('Summary')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
 			<li class="app-navigation-entry"><span class="navmarg icon-template-add"></span><a href="<?php echo ($_['url']['quotes']); ?>"><?php p($l->t('Quotes')); ?></a>

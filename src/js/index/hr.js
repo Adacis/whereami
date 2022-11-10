@@ -15,7 +15,7 @@ function setDateLastSeen() {
 
 function setDateSummary() {
     const toDay = new Date()
-    if (document.getElementById('seen') !== null) {
+    if (document.getElementById('HRsummary') === null) {
         document.getElementById('dtEnd').valueAsDate = toDay
         toDay.setDate(toDay.getDate() - 30)
         document.getElementById('dtStart').valueAsDate = toDay
@@ -45,10 +45,7 @@ window.addEventListener('click', e => {
 
 
 window.addEventListener('DOMContentLoaded', function () {
-    const toDay = new Date()
-    document.getElementById('dtStart').valueAsDate = toDay
-    toDay.setDate(toDay.getDate() + 14)
-    document.getElementById('dtEnd').valueAsDate = toDay
+    setDateSummary()
 
     document.getElementById('myapp').appendChild(getLoader())
     retrieveData(

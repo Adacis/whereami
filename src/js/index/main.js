@@ -33,12 +33,12 @@ window.addEventListener('click', e => {
   else if (e.target.className.includes('showbylocation')) {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', 'byLocation')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation')
   }
   else if (e.target.className.includes('showbyquote')) {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place')
   }
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'

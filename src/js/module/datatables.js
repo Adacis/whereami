@@ -176,7 +176,7 @@ export function newTablePersonne(response, dtStart, dtEnd, tablename) {
         tfoot.appendChild(getTotal(tbody))
     }
 
-    tfoot.appendChild(getHeader(new Date(dtStart), to, tablename != 'summary'))
+    tfoot.appendChild(getHeader(new Date(dtStart), to, tablename == 'byEmployee'))
 
     table.appendChild(thead)
     table.appendChild(tbody)
@@ -202,12 +202,23 @@ function getTotal(tbody) {
     }
     for (let i = 1; i < totalColumn; i++) {
         let totalByDay = 0
+        let totalByDay2 = 0
         tbody.getElementsByTagName('tr').forEach(element => {
-            totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText)
+            let mainDiv = element.getElementsByTagName('td')[i].children[0]
+            totalByDay += parseInt(mainDiv.firstChild.innerText)
+            if (mainDiv.children.length === 2) {
+                totalByDay2 += parseInt(mainDiv.children[1].innerText)
+            }
         })
-        line.appendChild(newCell('td',
-            isNaN(totalByDay) ? '' : totalByDay,
-            'text-align:center;'))
+        let text = ''
+        if (!isNaN(totalByDay)) {
+            text += totalByDay
+            if (totalByDay2 != 0) {
+                text += ", " + totalByDay2
+                console.log(text)
+            }
+        }
+        line.appendChild(newCell('td', text, 'text-align: center;'))
     }
     return line
 }

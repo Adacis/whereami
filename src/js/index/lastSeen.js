@@ -5,27 +5,21 @@ import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 
 function setDateLastSeen() {
   const toDay = new Date()
-  toDay.setDate(toDay.getDate() + 1)
-  document.getElementById('dtEnd').valueAsDate = toDay
-  toDay.setDate(toDay.getDate() - 35)
-  document.getElementById('dtStart').valueAsDate = toDay
-}
-
-function setDateUsual() {
-  const toDay = new Date()
-  if (document.getElementById('byEmployee') === null) {
-    document.getElementById('dtStart').valueAsDate = toDay
-    toDay.setDate(toDay.getDate() + 14)
+  if (document.getElementById('seen') === null) {
+    toDay.setDate(toDay.getDate())
     document.getElementById('dtEnd').valueAsDate = toDay
+    toDay.setDate(toDay.getDate() - 35)
+    document.getElementById('dtStart').valueAsDate = toDay
   }
 }
 
 window.addEventListener('click', e => {
 
-  if (e.target.className.includes('showbyemployees')) {
+  if (e.target.className.includes('lastSeen')) {
+    setDateLastSeen()
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', 'byEmployee')
+    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
@@ -35,13 +29,11 @@ window.addEventListener('click', e => {
 })
 
 window.addEventListener('DOMContentLoaded', function () {
-  setDateUsual()
+  setDateLastSeen()
 
   document.getElementById('myapp').appendChild(getLoader())
-  getData(document.getElementById('dtStart').value,
-    document.getElementById('dtEnd').value,
-    'nextcloud_users'
-  )
+  lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+
 })
 
 

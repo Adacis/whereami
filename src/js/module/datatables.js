@@ -194,11 +194,22 @@ function getTotal(tbody) {
     for (let i = 1; i < totalColumn; i++) {
         let totalByDay = 0
         tbody.getElementsByTagName('tr').forEach(element => {
-            totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText)
+            let mainDiv = element.getElementsByTagName('td')[i].children[0]
+            totalByDay += parseInt(mainDiv.firstChild.innerText)
+            if (mainDiv.children.length === 2)
+                totalByDay2 += parseInt(mainDiv.children[1].innerText)
+            else
+                totalByDay2 += parseInt(mainDiv.firstChild.innerText)
         })
-        line.appendChild(newCell('td',
-            isNaN(totalByDay) ? '' : totalByDay,
-            'text-align:center;'))
+        let text = ''
+        if (!isNaN(totalByDay)) {
+            text += totalByDay
+            if (totalByDay2 != totalByDay) {
+                text += ", " + totalByDay2
+                console.log(text)
+            }
+        }
+        line.appendChild(newCell('td', text, 'text-align: center;'))
     }
     return line
 }

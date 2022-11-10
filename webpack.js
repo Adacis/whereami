@@ -1,22 +1,25 @@
 const path = require('path');
 
 module.exports =
-[
-  {
-    mode: "production",
-    performance: { hints: false },
-    entry: {
-      main: './src/js/index/main.js',
-      adminSection: './src/js/admin/adminSection.js',
-    },
-    output: {
-      filename: '../js/[name].app.js',
-    },
-    optimization: {
-      minimize: true
-    },
-    module: {
-      rules: [
+  [
+    {
+      mode: "production",
+      performance: { hints: false },
+      entry: {
+        main: './src/js/index/main.js',
+        adminSection: './src/js/admin/adminSection.js',
+        hr: './src/js/index/hr.js',
+        locations: './src/js/index/locations.js',
+        lastSeen: './src/js/index/lastSeen.js'
+      },
+      output: {
+        filename: '../js/[name].app.js',
+      },
+      optimization: {
+        minimize: false
+      },
+      module: {
+        rules: [
           {
             test: /\.less$/,
             use: [
@@ -32,29 +35,29 @@ module.exports =
             ],
           },
           {
-              test: /\.(css|scss)$/i,
-              use: [
-                  {
-                    loader: 'style-loader',
-                  },
-                  {
-                    loader: 'css-loader',
-                  },
-                  {
-                    loader: 'postcss-loader',
-                  },
-                  {
-                    loader: 'sass-loader',
-                  },
-              ],
-            },
-            {
-              test: /\.(ttf|eot|svg|gif|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-              use: [{
-                  loader: 'file-loader'
-              }]
-            },
+            test: /\.(css|scss)$/i,
+            use: [
+              {
+                loader: 'style-loader',
+              },
+              {
+                loader: 'css-loader',
+              },
+              {
+                loader: 'postcss-loader',
+              },
+              {
+                loader: 'sass-loader',
+              },
+            ],
+          },
+          {
+            test: /\.(ttf|eot|svg|gif|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+            use: [{
+              loader: 'file-loader'
+            }]
+          },
         ],
+      },
     },
-  },
-];
+  ];

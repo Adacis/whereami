@@ -70,6 +70,33 @@ class PageController extends Controller
 		return new TemplateResponse('whereami', 'quotes', array('url' => $this->getNavigationLink()));
 	}
 
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function hr()
+	{
+		return new TemplateResponse('whereami', 'hr', array('url' => $this->getNavigationLink()));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function locations()
+	{
+		return new TemplateResponse('whereami', 'locations', array('url' => $this->getNavigationLink()));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function lastSeen()
+	{
+		return new TemplateResponse('whereami', 'lastSeen', array('url' => $this->getNavigationLink()));
+	}
+
 
 	/**
 	 * @NoAdminRequired
@@ -79,7 +106,10 @@ class PageController extends Controller
 	{
 		return array(
 			"index" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.index"),
-			"quotes" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.quotes")
+			"quotes" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.quotes"),
+			"locations" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.locations"),
+			"lastSeen" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.lastSeen"),
+			"hr" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.hr")
 		);
 	}
 
@@ -161,18 +191,20 @@ class PageController extends Controller
 			$e = new MyEvent($c, $this->myDb);
 			// if(preg_match("/^".$charReplace."/", $e->summary)){
 
-			$cls = strtolower($e->{$classement});
-			$cls = trim(str_replace($charReplace, "", $cls));
-			$cls = explode(",", $cls)[0];
-			$cls = trim($cls);
-
+			$cls = trim(strtolower($e->{$classement}));
 
 			# selectionner tout ceux qui sont dans la db
-			if (in_array($e->place, $toInclude)) {
+			if (in_array($e->place, $toInclude) && ($e->place2 === "" || in_array($e->place2, $toInclude))) {
 				if (!array_key_exists($cls, $events)) {
 					$events[$cls] = [];
 				}
 				array_push($events[$cls], $e);
+				if ($classement === 'place' && $e->place2 !== '') {
+					if (!array_key_exists($e->place2, $events)) {
+						$events[$e->place2] = [];
+					}
+					array_push($events[$e->place2], $e);
+				}
 			}
 		}
 

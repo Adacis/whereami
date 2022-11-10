@@ -246,7 +246,8 @@ function newCell(type, data, style = '') {
  */
 function getHeader(from, to, tablePersonne = false) {
     const line = document.createElement('tr')
-    line.appendChild(newCell('th', 'Date'))
+    let titre = (tablePersonne) ? 'Personne' : 'Lieu'
+    line.appendChild(newCell('th', titre))
     if (tablePersonne)
         line.appendChild(newCell('th', 'Clés'))
     while (from <= to) {

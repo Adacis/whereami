@@ -48,7 +48,7 @@ class MyEvent
 
     public function toString()
     {
-        return "Event at " . $this->place . " by " . $this->nextcloud_users . " From " . $this->dtStart . " to " . $this->dtStart;
+        return "Event at " . $this->place . '/' . $this->place2 . " by " . $this->nextcloud_users . " From " . $this->dtStart . " to " . $this->dtStart;
     }
 
     public function getNameCalendar($calendarsUid)
@@ -145,24 +145,44 @@ class MyEvent
         }
     }
 
+    function getPlaceCommon($e): String
+    {
+        if ($this->nextcloud_users != $e->nextcloud_users) {
+            $this->log->debug('First in comp : ' . $this->toString());
+            $this->log->debug('Second in comp : ' . $e->toString());
+        }
+        if (strtoupper($e->place) === strtoupper($this->place)) {
+            return $e->place;
+        } else if (strtoupper($this->place2) === strtoupper($e->place)) {
+            return $e->place;
+        } else if (strtoupper($e->place2) === strtoupper($this->place)) {
+            return $e->place2;
+        } else if (strtoupper($this->place2) === strtoupper($e->place2)) {
+            return $this->place2;
+        }
+        return '';
+    }
+
     /**
      * Parse a list of events and determine last event that intersect with this event
      */
-    public function parseListEvents($events, $listSeen): array
+    public function parseListEvents($events, $listSeen, $toExclude): array
     {
         foreach ($events as $e) {
             $user = strtolower($e->nextcloud_users);
             $thisUser = strtolower($this->nextcloud_users);
             $inter = $this->eventCross($e);
+            $commonPlace = $this->getPlaceCommon($e);
             if (
                 $user != $thisUser // Je ne me teste pas moi même
-                &&  strtoupper($e->place) === strtoupper($this->place) // On est sur le même lieu
+                &&  $commonPlace != '' // On est sur le même lieu une partie de la journée
+                &&  !in_array($commonPlace, $toExclude)
                 &&  $inter // Nos dates sont dans le même interval
             ) {
                 if (array_key_exists($user, $listSeen) && $listSeen[$user]['seen'] < $this->getSeen($e)) { // La date enregistrée est plus ancienne, on l'update
                     $listSeen[$user] = [
                         'load' => False,
-                        'place' => $e->place,
+                        'place' => $commonPlace,
                         'seen' => $this->getSeen($e),
                         'count' => $listSeen[$user]['count'] + $inter
                     ];
@@ -171,7 +191,7 @@ class MyEvent
                 } else { // nouvel event, on l'ajoute
                     $listSeen[$user] = [
                         'load' => False,
-                        'place' => $e->place,
+                        'place' => $commonPlace,
                         'seen' => $this->getSeen($e),
                         'count' => $inter
                     ];

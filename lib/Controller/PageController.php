@@ -135,9 +135,7 @@ class PageController extends Controller
 			$cls = explode(",", $cls)[0];
 			$cls = trim($cls);
 
-			if (!in_array($e->place, $toExclude)) {
-				array_push($events, $e);
-			}
+			array_push($events, $e);
 		}
 
 		//Récupération de la liste des événements croisées sur la période
@@ -148,7 +146,7 @@ class PageController extends Controller
 				$listSeen[$user] = [];
 			}
 
-			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user]);
+			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user], $toExclude);
 		}
 		ksort($listSeen, SORT_STRING);
 		return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);

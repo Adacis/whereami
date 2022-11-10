@@ -147,10 +147,6 @@ class MyEvent
 
     function getPlaceCommon($e): String
     {
-        if ($this->nextcloud_users != $e->nextcloud_users) {
-            $this->log->debug('First in comp : ' . $this->toString());
-            $this->log->debug('Second in comp : ' . $e->toString());
-        }
         if (strtoupper($e->place) === strtoupper($this->place)) {
             return $e->place;
         } else if (strtoupper($this->place2) === strtoupper($e->place)) {

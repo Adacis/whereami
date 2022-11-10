@@ -28,11 +28,7 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
         if (tablePersonne) {
             let a = document.createElement('a')
             a.innerText = dic.prefix + "(" + dic.label + ")\n"
-            a.addEventListener('click', () => {
-                document.getElementById('myapp').innerHTML = ''
-                document.getElementById('myapp').appendChild(getLoader())
-                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', 'byLocation', dic.label)
-            })
+            a.href = location.href + "locations?filter=" + dic.label
             element.appendChild(a)
         }
         else
@@ -129,7 +125,6 @@ export function newTableSeen(response, dtStart, dtEnd) {
 
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(table)
-
 }
 
 

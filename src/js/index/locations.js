@@ -30,11 +30,15 @@ window.addEventListener('click', e => {
 window.addEventListener('DOMContentLoaded', function () {
   setDateUsual()
 
+  var url = new URL(this.location.href)
+  var filter = url.searchParams.get('filter')
+
   document.getElementById('myapp').appendChild(getLoader())
   getData(document.getElementById('dtStart').value,
     document.getElementById('dtEnd').value,
     'place',
-    'byLocation'
+    'byLocation',
+    filter
   )
 })
 

@@ -13,22 +13,13 @@ function setDateLastSeen() {
   }
 }
 
-function setDateUsual() {
-  const toDay = new Date()
-  if (document.getElementById('byEmployee') === null) {
-    document.getElementById('dtStart').valueAsDate = toDay
-    toDay.setDate(toDay.getDate() + 14)
-    document.getElementById('dtEnd').valueAsDate = toDay
-  }
-}
-
-
 window.addEventListener('click', e => {
 
-  if (e.target.className.includes('showbyemployees')) {
+  if (e.target.className.includes('lastSeen')) {
+    setDateLastSeen()
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', 'byEmployee')
+    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
@@ -38,14 +29,11 @@ window.addEventListener('click', e => {
 })
 
 window.addEventListener('DOMContentLoaded', function () {
-  setDateUsual()
+  setDateLastSeen()
 
   document.getElementById('myapp').appendChild(getLoader())
-  getData(document.getElementById('dtStart').value,
-    document.getElementById('dtEnd').value,
-    'nextcloud_users',
-    'byEmployee'
-  )
+  lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+
 })
 
 

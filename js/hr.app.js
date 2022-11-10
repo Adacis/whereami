@@ -37696,16 +37696,15 @@ var __webpack_exports__ = {};
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/lodash/groupBy.js
-var groupBy = __webpack_require__(7739);
-var groupBy_default = /*#__PURE__*/__webpack_require__.n(groupBy);
+var lodash_groupBy = __webpack_require__(7739);
+var groupBy_default = /*#__PURE__*/__webpack_require__.n(lodash_groupBy);
 // EXTERNAL MODULE: ./node_modules/lodash/toInteger.js
-var toInteger = __webpack_require__(554);
-var toInteger_default = /*#__PURE__*/__webpack_require__.n(toInteger);
+var lodash_toInteger = __webpack_require__(554);
 ;// CONCATENATED MODULE: ./src/js/class/Event.js
 /**
  *
  */
-class Events {
+class Event_Events {
   constructor(obj) {
     obj && Object.assign(this, obj)
   }
@@ -37791,7 +37790,7 @@ class ListEvents {
     let title = ''
 
     this.ListEvents.forEach(events => {
-      const e = new Events(events)
+      const e = new Event_Events(events)
       if (e.inInterval(from)) {
         const filter = e.getSummary()
         //res += filter.includes(',') ? filter.split(',')[0] + '<br/>' : filter + '<br/>'
@@ -37858,9 +37857,9 @@ class ListEvents {
     let isSomeoneThere2 = false
     let groupedIcons = (0,collection.groupBy)(icons, 'person')
     this.ListEvents.forEach(events => {
-      const e = new Events(events)
+      const e = new Event_Events(events)
       if (e.inInterval(from)) {
-        let userTetra = Events.compute_tetragraph(e.nextcloud_users)
+        let userTetra = Event_Events.compute_tetragraph(e.nextcloud_users)
         if (e.place2 === '') {
           e.place2 = e.place
         }
@@ -37935,7 +37934,7 @@ class ListEvents {
     let res = 0
     let title = ''
     this.ListEvents.forEach(event => {
-      const e = new Events(event)
+      const e = new Event_Events(event)
       let fullDay = false
       if (e.place2 === '') {
         e.place2 = e.place
@@ -45936,9 +45935,9 @@ function lastSeen(dtStart, dtEnd) {
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTableSeen(this.response, dtStart, dtEnd);
-      new (dataTables_bootstrap_min_default())('#seen', optionDatatable);
+      new DataTable('#seen', optionDatatable);
     } else {
-      index_es_showError(this.response);
+      showError(this.response);
     }
   }
   oReq.send(JSON.stringify(data));
@@ -46093,7 +46092,7 @@ function deleteIcon(person, prefix, label) {
 }
 
 
-function getAllIcons() {
+function xhr_getAllIcons() {
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getAllIcons', false)
   oReq.setRequestHeader('Content-Type', 'application/json')
@@ -46120,7 +46119,7 @@ function getAllIcons() {
 
 
 
-const FRACTION_FOR_ORANGE = 2 / 3
+const FRACTION_FOR_ORANGE = (/* unused pure expression or super */ null && (2 / 3))
 const FRACTION_FOR_RED = 0.90
 
 /**
@@ -46154,11 +46153,11 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
 }
 
 
-function newTableSeen(response, dtStart, dtEnd) {
+function datatables_newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
     var totalPeople = 1
     const today = new Date()
-    const periodLength = toInteger_default()((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
+    const periodLength = toInteger((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
 
     const table = document.createElement('table')
     table.setAttribute('id', 'seen')
@@ -46187,7 +46186,7 @@ function newTableSeen(response, dtStart, dtEnd) {
     table.appendChild(tbody);
 
     let icons = getAllIcons().onload();
-    let groupedIcons = groupBy_default()(icons, 'person');
+    let groupedIcons = groupBy(icons, 'person');
     let rows = 0;
     table.rows.forEach(r => {
         if (rows > 0) {
@@ -46209,7 +46208,7 @@ function newTableSeen(response, dtStart, dtEnd) {
                     title = res[peoplerow][peoplecolumn].place;
                     msg = res[peoplerow][peoplecolumn].seen;
                     const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
-                    daysLastSeen = toInteger_default()(timeLastSeen / (1000 * 3600 * 24))
+                    daysLastSeen = toInteger(timeLastSeen / (1000 * 3600 * 24))
                     if (daysLastSeen == 0)
                         title = title + " today"
                     else
@@ -46223,10 +46222,10 @@ function newTableSeen(response, dtStart, dtEnd) {
                 newCell.setAttribute('title', title)
                 newCell.appendChild(newText)
 
-                if (daysLastSeen >= toInteger_default()(FRACTION_FOR_ORANGE * periodLength)) {
+                if (daysLastSeen >= toInteger(FRACTION_FOR_ORANGE * periodLength)) {
                     newCell.style = "background-color: orange;"
                 }
-                if (daysLastSeen == -1 || daysLastSeen >= toInteger_default()(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
+                if (daysLastSeen == -1 || daysLastSeen >= toInteger(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
                     newCell.style = "background-color: red;"
                     newCell.title = "Not seend in the last " + periodLength + " days"
                 }
@@ -46270,7 +46269,7 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
 
     const to = new Date(dtEnd)
     const res = JSON.parse(response)
-    let icons = getAllIcons().onload()
+    let icons = xhr_getAllIcons().onload()
     let whitelistKeys
     if (tablename === 'byLocation')
         whitelistKeys = getTags("accounted_for_keys").onload().map(element => element.word.toLowerCase())
@@ -46319,14 +46318,15 @@ function getTotal(tbody) {
         tbody.getElementsByTagName('tr').forEach(element => {
             let mainDiv = element.getElementsByTagName('td')[i].children[0]
             totalByDay += parseInt(mainDiv.firstChild.innerText)
-            if (mainDiv.children.length === 2) {
+            if (mainDiv.children.length === 2)
                 totalByDay2 += parseInt(mainDiv.children[1].innerText)
-            }
+            else
+                totalByDay2 += parseInt(mainDiv.firstChild.innerText)
         })
         let text = ''
         if (!isNaN(totalByDay)) {
             text += totalByDay
-            if (totalByDay2 != 0) {
+            if (totalByDay2 != totalByDay) {
                 text += ", " + totalByDay2
                 console.log(text)
             }
@@ -46397,7 +46397,7 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
         let iconsCell = newCell('td', '')
         line.appendChild(iconsCell)
         icons = groupBy_default()(icons, "person")
-        let tetra = Events.compute_tetragraph(userListEvents.id)
+        let tetra = Event_Events.compute_tetragraph(userListEvents.id)
         if (icons[tetra] != undefined)
             setTitleWithIcons(iconsCell, icons[tetra], true)
     }
@@ -46478,16 +46478,6 @@ function newTableHR(dataSent, response) {
 
 
 
-function setDateLastSeen() {
-    const toDay = new Date()
-    if (document.getElementById('seen') === null) {
-        toDay.setDate(toDay.getDate())
-        document.getElementById('dtEnd').valueAsDate = toDay
-        toDay.setDate(toDay.getDate() - 35)
-        document.getElementById('dtStart').valueAsDate = toDay
-    }
-}
-
 function setDateSummary() {
     const toDay = new Date()
     if (document.getElementById('HRsummary') === null) {
@@ -46500,12 +46490,7 @@ function setDateSummary() {
 
 window.addEventListener('click', e => {
 
-    if (e.target.className.includes('lastSeen')) {
-        setDateLastSeen()
-        document.getElementById('myapp').innerHTML = ''
-        document.getElementById('myapp').appendChild(getLoader())
-        lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
-    } else if (e.target.className.includes('showHRsummary')) {
+    if (e.target.className.includes('showHRsummary')) {
         setDateSummary()
         document.getElementById('myapp').innerHTML = ''
         document.getElementById('myapp').appendChild(getLoader())

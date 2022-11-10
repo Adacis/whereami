@@ -12,7 +12,7 @@
         </div>
     </div>
     <h2>
-        <center><?php p($l->t('Employees working places summary')); ?></center>
+        <center><?php p($l->t('Where am I ?')); ?></center>
     </h2>
     <p>
         <?php p($l->t('From')); ?>
@@ -20,10 +20,7 @@
         <?php p($l->t('To')); ?>
         <input style="width: 200px;" id="dtEnd" type="date" />
         <button style="width: 200px;" class="showbyemployees">
-            <?php p($l->t('By employees')); ?>
-        </button>
-        <button style="width: 200px;" class="showbylocation">
-            <?php p($l->t('By location')); ?>
+            <?php p($l->t('Set Dates')); ?>
         </button>
 
     </p>

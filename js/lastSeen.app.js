@@ -45539,15 +45539,16 @@ var update = injectStylesIntoStyleTag_default()(css_dataTables_bootstrap_min/* d
        /* harmony default export */ const datatables_net_bs_css_dataTables_bootstrap_min = (css_dataTables_bootstrap_min/* default */.Z && css_dataTables_bootstrap_min/* default.locals */.Z.locals ? css_dataTables_bootstrap_min/* default.locals */.Z.locals : undefined);
 
 // EXTERNAL MODULE: ./node_modules/lodash/groupBy.js
-var lodash_groupBy = __webpack_require__(7739);
-var groupBy_default = /*#__PURE__*/__webpack_require__.n(lodash_groupBy);
+var groupBy = __webpack_require__(7739);
+var groupBy_default = /*#__PURE__*/__webpack_require__.n(groupBy);
 // EXTERNAL MODULE: ./node_modules/lodash/toInteger.js
-var lodash_toInteger = __webpack_require__(554);
+var toInteger = __webpack_require__(554);
+var toInteger_default = /*#__PURE__*/__webpack_require__.n(toInteger);
 ;// CONCATENATED MODULE: ./src/js/class/Event.js
 /**
  *
  */
-class Event_Events {
+class Events {
   constructor(obj) {
     obj && Object.assign(this, obj)
   }
@@ -45633,7 +45634,7 @@ class ListEvents_ListEvents {
     let title = ''
 
     this.ListEvents.forEach(events => {
-      const e = new Event_Events(events)
+      const e = new Events(events)
       if (e.inInterval(from)) {
         const filter = e.getSummary()
         //res += filter.includes(',') ? filter.split(',')[0] + '<br/>' : filter + '<br/>'
@@ -45700,9 +45701,9 @@ class ListEvents_ListEvents {
     let isSomeoneThere2 = false
     let groupedIcons = (0,collection.groupBy)(icons, 'person')
     this.ListEvents.forEach(events => {
-      const e = new Event_Events(events)
+      const e = new Events(events)
       if (e.inInterval(from)) {
-        let userTetra = Event_Events.compute_tetragraph(e.nextcloud_users)
+        let userTetra = Events.compute_tetragraph(e.nextcloud_users)
         if (e.place2 === '') {
           e.place2 = e.place
         }
@@ -45777,7 +45778,7 @@ class ListEvents_ListEvents {
     let res = 0
     let title = ''
     this.ListEvents.forEach(event => {
-      const e = new Event_Events(event)
+      const e = new Events(event)
       let fullDay = false
       if (e.place2 === '') {
         e.place2 = e.place
@@ -45825,7 +45826,7 @@ class ListEvents_ListEvents {
 
 
 
-const FRACTION_FOR_ORANGE = (/* unused pure expression or super */ null && (2 / 3))
+const FRACTION_FOR_ORANGE = 2 / 3
 const FRACTION_FOR_RED = 0.90
 
 /**
@@ -45859,11 +45860,11 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
 }
 
 
-function datatables_newTableSeen(response, dtStart, dtEnd) {
+function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
     var totalPeople = 1
     const today = new Date()
-    const periodLength = toInteger((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
+    const periodLength = toInteger_default()((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
 
     const table = document.createElement('table')
     table.setAttribute('id', 'seen')
@@ -45892,7 +45893,7 @@ function datatables_newTableSeen(response, dtStart, dtEnd) {
     table.appendChild(tbody);
 
     let icons = getAllIcons().onload();
-    let groupedIcons = groupBy(icons, 'person');
+    let groupedIcons = groupBy_default()(icons, 'person');
     let rows = 0;
     table.rows.forEach(r => {
         if (rows > 0) {
@@ -45914,7 +45915,7 @@ function datatables_newTableSeen(response, dtStart, dtEnd) {
                     title = res[peoplerow][peoplecolumn].place;
                     msg = res[peoplerow][peoplecolumn].seen;
                     const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
-                    daysLastSeen = toInteger(timeLastSeen / (1000 * 3600 * 24))
+                    daysLastSeen = toInteger_default()(timeLastSeen / (1000 * 3600 * 24))
                     if (daysLastSeen == 0)
                         title = title + " today"
                     else
@@ -45928,10 +45929,10 @@ function datatables_newTableSeen(response, dtStart, dtEnd) {
                 newCell.setAttribute('title', title)
                 newCell.appendChild(newText)
 
-                if (daysLastSeen >= toInteger(FRACTION_FOR_ORANGE * periodLength)) {
+                if (daysLastSeen >= toInteger_default()(FRACTION_FOR_ORANGE * periodLength)) {
                     newCell.style = "background-color: orange;"
                 }
-                if (daysLastSeen == -1 || daysLastSeen >= toInteger(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
+                if (daysLastSeen == -1 || daysLastSeen >= toInteger_default()(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
                     newCell.style = "background-color: red;"
                     newCell.title = "Not seend in the last " + periodLength + " days"
                 }
@@ -45975,7 +45976,7 @@ function newTablePersonne(response, dtStart, dtEnd, tablename) {
 
     const to = new Date(dtEnd)
     const res = JSON.parse(response)
-    let icons = xhr_getAllIcons().onload()
+    let icons = getAllIcons().onload()
     let whitelistKeys
     if (tablename === 'byLocation')
         whitelistKeys = getTags("accounted_for_keys").onload().map(element => element.word.toLowerCase())
@@ -46103,7 +46104,7 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
         let iconsCell = newCell('td', '')
         line.appendChild(iconsCell)
         icons = groupBy_default()(icons, "person")
-        let tetra = Event_Events.compute_tetragraph(userListEvents.id)
+        let tetra = Events.compute_tetragraph(userListEvents.id)
         if (icons[tetra] != undefined)
             setTitleWithIcons(iconsCell, icons[tetra], true)
     }
@@ -46298,9 +46299,9 @@ function lastSeen(dtStart, dtEnd) {
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTableSeen(this.response, dtStart, dtEnd);
-      new DataTable('#seen', xhr_optionDatatable);
+      new (dataTables_bootstrap_min_default())('#seen', xhr_optionDatatable);
     } else {
-      showError(this.response);
+      index_es_showError(this.response);
     }
   }
   oReq.send(JSON.stringify(data));
@@ -46455,7 +46456,7 @@ function deleteIcon(person, prefix, label) {
 }
 
 
-function xhr_getAllIcons() {
+function getAllIcons() {
   const oReq = new XMLHttpRequest()
   oReq.open('POST', baseUrl + '/getAllIcons', false)
   oReq.setRequestHeader('Content-Type', 'application/json')
@@ -46472,7 +46473,7 @@ function xhr_getAllIcons() {
   oReq.send();
   return oReq;
 }
-;// CONCATENATED MODULE: ./src/js/index/main.js
+;// CONCATENATED MODULE: ./src/js/index/lastSeen.js
 
 
 
@@ -46488,22 +46489,13 @@ function setDateLastSeen() {
   }
 }
 
-function setDateUsual() {
-  const toDay = new Date()
-  if (document.getElementById('byEmployee') === null) {
-    document.getElementById('dtStart').valueAsDate = toDay
-    toDay.setDate(toDay.getDate() + 14)
-    document.getElementById('dtEnd').valueAsDate = toDay
-  }
-}
-
-
 window.addEventListener('click', e => {
 
-  if (e.target.className.includes('showbyemployees')) {
+  if (e.target.className.includes('lastSeen')) {
+    setDateLastSeen()
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', 'byEmployee')
+    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
@@ -46513,14 +46505,11 @@ window.addEventListener('click', e => {
 })
 
 window.addEventListener('DOMContentLoaded', function () {
-  setDateUsual()
+  setDateLastSeen()
 
   document.getElementById('myapp').appendChild(getLoader())
-  getData(document.getElementById('dtStart').value,
-    document.getElementById('dtEnd').value,
-    'nextcloud_users',
-    'byEmployee'
-  )
+  lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+
 })
 
 

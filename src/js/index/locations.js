@@ -3,19 +3,9 @@ import { getLoader } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 
-function setDateLastSeen() {
-  const toDay = new Date()
-  if (document.getElementById('seen') === null) {
-    toDay.setDate(toDay.getDate())
-    document.getElementById('dtEnd').valueAsDate = toDay
-    toDay.setDate(toDay.getDate() - 35)
-    document.getElementById('dtStart').valueAsDate = toDay
-  }
-}
-
 function setDateUsual() {
   const toDay = new Date()
-  if (document.getElementById('byEmployee') === null) {
+  if (document.getElementById('byLocation') === null) {
     document.getElementById('dtStart').valueAsDate = toDay
     toDay.setDate(toDay.getDate() + 14)
     document.getElementById('dtEnd').valueAsDate = toDay
@@ -25,10 +15,10 @@ function setDateUsual() {
 
 window.addEventListener('click', e => {
 
-  if (e.target.className.includes('showbyemployees')) {
+  if (e.target.className.includes('showbylocation')) {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', 'byEmployee')
+    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation')
   }
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
@@ -43,8 +33,8 @@ window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('myapp').appendChild(getLoader())
   getData(document.getElementById('dtStart').value,
     document.getElementById('dtEnd').value,
-    'nextcloud_users',
-    'byEmployee'
+    'place',
+    'byLocation'
   )
 })
 

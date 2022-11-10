@@ -46022,14 +46022,15 @@ function getTotal(tbody) {
         tbody.getElementsByTagName('tr').forEach(element => {
             let mainDiv = element.getElementsByTagName('td')[i].children[0]
             totalByDay += parseInt(mainDiv.firstChild.innerText)
-            if (mainDiv.children.length === 2) {
+            if (mainDiv.children.length === 2)
                 totalByDay2 += parseInt(mainDiv.children[1].innerText)
-            }
+            else
+                totalByDay2 += parseInt(mainDiv.firstChild.innerText)
         })
         let text = ''
         if (!isNaN(totalByDay)) {
             text += totalByDay
-            if (totalByDay2 != 0) {
+            if (totalByDay2 != totalByDay) {
                 text += ", " + totalByDay2
                 console.log(text)
             }

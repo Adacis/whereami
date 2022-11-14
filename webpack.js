@@ -7,10 +7,7 @@ module.exports =
       performance: { hints: false },
       entry: {
         main: './src/js/index/main.js',
-        adminSection: './src/js/admin/adminSection.js',
-        hr: './src/js/index/hr.js',
-        locations: './src/js/index/locations.js',
-        lastSeen: './src/js/index/lastSeen.js'
+        adminSection: './src/js/admin/adminSection.js'
       },
       output: {
         filename: '../js/[name].app.js',

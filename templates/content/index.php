@@ -1,14 +1,11 @@
 <div id="contentTable">
     <div class="breadcrumb">
         <div class="crumb svg crumbhome">
-            <a href="#" class="icon-home"></a>
+            <a href="" class="icon-home"></a>
             <span style="display: none;"></span>
         </div>
         <div class="crumb svg crumbhome">
-            <span><?php p($l->t('Home')); ?></span>
-        </div>
-        <div class="crumb svg crumbhome">
-            <span><?php p($l->t('Employees')); ?></span>
+            <span id="finalPath"><?php p($l->t('Employees')); ?></span>
         </div>
     </div>
     <h2>
@@ -19,7 +16,7 @@
         <input style="width: 200px;" id="dtStart" type="date" />
         <?php p($l->t('To')); ?>
         <input style="width: 200px;" id="dtEnd" type="date" />
-        <button style="width: 200px;" class="showbyemployees">
+        <button style="width: 200px;" class="setDates">
             <?php p($l->t('Set Dates')); ?>
         </button>
 

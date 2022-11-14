@@ -28,7 +28,12 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
         if (tablePersonne) {
             let a = document.createElement('a')
             a.innerText = dic.prefix + "(" + dic.label + ")\n"
-            a.href = location.href + "locations?filter=" + dic.label
+            a.addEventListener('click', () => {
+                document.getElementById('finalPath').innerText = "Locations"
+                document.getElementById('myapp').innerHTML = ''
+                document.getElementById('myapp').appendChild(getLoader())
+                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation')
+            })
             element.appendChild(a)
         }
         else

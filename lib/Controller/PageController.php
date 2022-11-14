@@ -74,42 +74,11 @@ class PageController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function hr()
-	{
-		return new TemplateResponse('whereami', 'hr', array('url' => $this->getNavigationLink()));
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function locations()
-	{
-		return new TemplateResponse('whereami', 'locations', array('url' => $this->getNavigationLink()));
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function lastSeen()
-	{
-		return new TemplateResponse('whereami', 'lastSeen', array('url' => $this->getNavigationLink()));
-	}
-
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
 	public function getNavigationLink()
 	{
 		return array(
 			"index" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.index"),
-			"quotes" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.quotes"),
-			"locations" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.locations"),
-			"lastSeen" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.lastSeen"),
-			"hr" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.hr")
+			"quotes" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.quotes")
 		);
 	}
 

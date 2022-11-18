@@ -1,5 +1,5 @@
-import { TagsInput, initEventsBase } from '../module/tagsInput';
-import { IconsToPerson } from '../module/iconsToPerson';
+import { TagsInput, initEventsBase } from '../class/tagsInput';
+import { IconsToPerson } from '../class/iconsToPerson';
 import { getAllIcons } from '../module/xhr';
 import { groupBy } from 'lodash/collection';
 

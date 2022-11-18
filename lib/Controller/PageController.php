@@ -28,7 +28,7 @@ class PageController extends Controller
 	private $calendarManager;
 	private $myDb;
 	private $urlGenerator;
-	public $logger;
+	public LoggerInterface $logger;
 
 	/**
 	 * 
@@ -70,7 +70,6 @@ class PageController extends Controller
 		return new TemplateResponse('whereami', 'quotes', array('url' => $this->getNavigationLink()));
 	}
 
-
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
@@ -98,16 +97,14 @@ class PageController extends Controller
 
 		//Récupération de la liste des événements sur la période
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
-			$e = new MyEvent($c, $this->myDb);
+			$e = new MyEvent($c, $this->myDb, $this->logger);
 
 			$cls = strtolower($e->{"nextcloud_users"});
 			$cls = trim(str_replace($charReplace, "", $cls));
 			$cls = explode(",", $cls)[0];
 			$cls = trim($cls);
 
-			if (!in_array($e->place, $toExclude)) {
-				array_push($events, $e);
-			}
+			array_push($events, $e);
 		}
 
 		//Récupération de la liste des événements croisées sur la période
@@ -118,7 +115,7 @@ class PageController extends Controller
 				$listSeen[$user] = [];
 			}
 
-			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user]);
+			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user], $toExclude);
 		}
 		ksort($listSeen, SORT_STRING);
 		return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);
@@ -128,8 +125,8 @@ class PageController extends Controller
 	{
 		$from = new DateTime($dtStart);
 		$to = new DateTime($dtEnd);
-		// It looks like search does not include the upper bound
-		$to->modify('+1 day');
+		// It looks like search does not include the upper bound (end of day at 00H00)
+		$to->modify('+1 minute');
 		$searchResults = $this->calendarManager->search("@", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
 
 		return $searchResults;
@@ -157,22 +154,25 @@ class PageController extends Controller
 		$toInclude = $this->myDb->getWordInWordList('allowed_events');
 		$toInclude = $this->arrayFromWordQuery($toInclude);
 
+		$this->logger->error('test');
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
-			$e = new MyEvent($c, $this->myDb);
+			$e = new MyEvent($c, $this->myDb, $this->logger);
 			// if(preg_match("/^".$charReplace."/", $e->summary)){
 
-			$cls = strtolower($e->{$classement});
-			$cls = trim(str_replace($charReplace, "", $cls));
-			$cls = explode(",", $cls)[0];
-			$cls = trim($cls);
-
+			$cls = trim(strtolower($e->{$classement}));
 
 			# selectionner tout ceux qui sont dans la db
-			if (in_array($e->place, $toInclude)) {
+			if (in_array($e->place, $toInclude) && ($e->place2 === "" || in_array($e->place2, $toInclude))) {
 				if (!array_key_exists($cls, $events)) {
 					$events[$cls] = [];
 				}
 				array_push($events[$cls], $e);
+				if ($classement === 'place' && $e->place2 !== '') {
+					if (!array_key_exists($e->place2, $events)) {
+						$events[$e->place2] = [];
+					}
+					array_push($events[$e->place2], $e);
+				}
 			}
 		}
 

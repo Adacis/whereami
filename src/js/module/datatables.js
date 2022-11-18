@@ -2,7 +2,13 @@ import groupBy from "lodash/groupBy"
 import toInteger from "lodash/toInteger"
 import { Events } from "../class/Event"
 import { daysFr, ListEvents } from "../class/ListEvents"
-import { getAllIcons, getData, getTags } from "./xhr"
+import { getAllIcons, getData, getTags, optionDatatable } from "./xhr"
+import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
+import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
+import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
+
+const FRACTION_FOR_ORANGE = 2 / 3
+const FRACTION_FOR_RED = 0.90
 
 /**
  *
@@ -16,6 +22,14 @@ export function getLoader() {
     return center
 }
 
+
+/**
+ * Fills the title and inner with the icons. For table byEmployee, adds an event 
+ * listenner to redirect to byLocation on click on the key's place
+ * @param {HTMLBaseElement} element 
+ * @param {Array} icons 
+ * @param {boolean} tablePersonne 
+ */
 function setTitleWithIcons(element, icons, tablePersonne = false) {
     for (let dic of icons) {
         element.title = dic.prefix + "(" + dic.label + ")\n" + element.title
@@ -23,12 +37,12 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
             let a = document.createElement('a')
             a.innerText = dic.prefix + "(" + dic.label + ")\n"
             a.addEventListener('click', () => {
+                document.getElementById('finalPath').innerText = "Locations"
                 document.getElementById('myapp').innerHTML = ''
                 document.getElementById('myapp').appendChild(getLoader())
-                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'summary', dic.label)
+                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation', dic.prefix)
             })
             element.appendChild(a)
-
         }
         else
             element.innerText = element.innerText + dic.prefix
@@ -36,10 +50,11 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
 }
 
 
-export function newTableSeen(response) {
+export function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
     var totalPeople = 1
     const today = new Date()
+    const periodLength = toInteger((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
 
     const table = document.createElement('table')
     table.setAttribute('id', 'seen')
@@ -91,23 +106,25 @@ export function newTableSeen(response) {
                     msg = res[peoplerow][peoplecolumn].seen;
                     const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
                     daysLastSeen = toInteger(timeLastSeen / (1000 * 3600 * 24))
-                    msg = msg + " (" + res[peoplerow][peoplecolumn].count + ' times)'
                     if (daysLastSeen == 0)
                         title = title + " today"
                     else
                         title = title + ' ' + daysLastSeen + ' day(s) ago'
+                    title = title + " (" + res[peoplerow][peoplecolumn].count + ' time(s))'
                 }
 
 
-                let newCell = r.insertCell(cellPosition);
-                let newText = document.createTextNode(msg);
-                newCell.setAttribute('title', title);
-                newCell.appendChild(newText);
-                if (daysLastSeen >= 20) {
+                let newCell = r.insertCell(cellPosition)
+                let newText = document.createTextNode(msg)
+                newCell.setAttribute('title', title)
+                newCell.appendChild(newText)
+
+                if (daysLastSeen >= toInteger(FRACTION_FOR_ORANGE * periodLength)) {
                     newCell.style = "background-color: orange;"
                 }
-                if (daysLastSeen == -1 || daysLastSeen >= 30) {
+                if (daysLastSeen == -1 || daysLastSeen >= toInteger(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
                     newCell.style = "background-color: red;"
+                    newCell.title = "Not seend in the last " + periodLength + " days"
                 }
 
                 //setTitleWithIcons(table.rows[0].cells[cellPosition], groupedIcons[peoplecolumn])
@@ -121,7 +138,6 @@ export function newTableSeen(response) {
 
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(table)
-
 }
 
 
@@ -144,30 +160,31 @@ export function newTablePersonne(response, dtStart, dtEnd, tablename) {
     // var retHead = getHeader(from,to);
     // var from = new Date(dtStart)
     // var to = new Date(dtEnd)
-    thead.appendChild(getHeader(new Date(dtStart), new Date(dtEnd), tablename != 'summary'))
+    const head = getHeader(new Date(dtStart), new Date(dtEnd), tablename == 'byEmployee')
+    thead.appendChild(head)
 
     const to = new Date(dtEnd)
     const res = JSON.parse(response)
     let icons = getAllIcons().onload()
     let whitelistKeys
-    if (tablename === 'summary')
+    if (tablename === 'byLocation')
         whitelistKeys = getTags("accounted_for_keys").onload().map(element => element.word.toLowerCase())
 
     Object.keys(res).forEach(element => {
         let from = new Date(dtStart)
         const userListEvents = new ListEvents(element, res[element])
-        if (tablename === 'summary') {
-            tbody = getContent(tbody, from, to, userListEvents, icons, whitelistKeys, true)
+        if (tablename === 'byLocation') {
+            tbody = getContent(tbody, head, 1, userListEvents, 'byLocation', icons, whitelistKeys)
         } else {
-            tbody = getContent(tbody, from, to, userListEvents, icons)
+            tbody = getContent(tbody, head, 2, userListEvents, 'byEmployee', icons)
         }
     })
 
-    if (tablename === 'summary') {
+    if (tablename === 'byLocation') {
         tfoot.appendChild(getTotal(tbody))
     }
 
-    tfoot.appendChild(getHeader(new Date(dtStart), to, tablename != 'summary'))
+    tfoot.appendChild(getHeader(new Date(dtStart), to, tablename == 'byEmployee'))
 
     table.appendChild(thead)
     table.appendChild(tbody)
@@ -193,12 +210,24 @@ function getTotal(tbody) {
     }
     for (let i = 1; i < totalColumn; i++) {
         let totalByDay = 0
+        let totalByDay2 = 0
         tbody.getElementsByTagName('tr').forEach(element => {
-            totalByDay += parseInt(element.getElementsByTagName('td')[i].innerText)
+            let mainDiv = element.getElementsByTagName('td')[i].children[0]
+            totalByDay += parseInt(mainDiv.firstChild.innerText)
+            if (mainDiv.children.length === 2)
+                totalByDay2 += parseInt(mainDiv.children[1].innerText)
+            else
+                totalByDay2 += parseInt(mainDiv.firstChild.innerText)
         })
-        line.appendChild(newCell('td',
-            isNaN(totalByDay) ? '' : totalByDay,
-            'text-align:center;'))
+        let text = ''
+        if (!isNaN(totalByDay)) {
+            text += totalByDay
+            if (totalByDay2 != totalByDay) {
+                text += ", " + totalByDay2
+                console.log(text)
+            }
+        }
+        line.appendChild(newCell('td', text, 'text-align: center;'))
     }
     return line
 }
@@ -225,7 +254,8 @@ function newCell(type, data, style = '') {
  */
 function getHeader(from, to, tablePersonne = false) {
     const line = document.createElement('tr')
-    line.appendChild(newCell('th', 'Date'))
+    let titre = (tablePersonne) ? 'Personne' : 'Lieu'
+    line.appendChild(newCell('th', titre))
     if (tablePersonne)
         line.appendChild(newCell('th', 'Clés'))
     while (from <= to) {
@@ -235,22 +265,36 @@ function getHeader(from, to, tablePersonne = false) {
     return line
 }
 
+
 /**
- *
+ * Creates an 'tr' element with given values
+ * @param {Array} values 
+ * @returns 
+ */
+function getHeaderWithValues(values) {
+    const line = document.createElement('tr')
+    values.forEach(value => {
+        line.appendChild(newCell('th', value))
+    })
+    return line
+}
+
+/**
+ * Fills the content of the table from the values of the header starting at index "startIndex"
  * @param {*} tbody
- * @param {*} from
- * @param {*} to
+ * @param {*} headerLine
+ * @param {*} startIndex
  * @param {*} userListEvents
  * @param {*} icons
  * @param {*} count
  * @returns
  */
-function getContent(tbody, from, to, userListEvents, icons, whitelistKeys = null, count = false) {
+function getContent(tbody, headerLine, startIndex, userListEvents, type, icons = null, whitelistKeys = null) {
     const line = document.createElement('tr')
     let td = newCell('td', userListEvents.id)
     line.appendChild(td)
     let placeIsExcluded
-    if (!count) {
+    if (type === "byEmployee") {
         let iconsCell = newCell('td', '')
         line.appendChild(iconsCell)
         icons = groupBy(icons, "person")
@@ -258,18 +302,78 @@ function getContent(tbody, from, to, userListEvents, icons, whitelistKeys = null
         if (icons[tetra] != undefined)
             setTitleWithIcons(iconsCell, icons[tetra], true)
     }
-    else
+    else if (type === 'byLocation')
         placeIsExcluded = !whitelistKeys.includes(userListEvents.id)
 
-    while (from <= to) {
-        if (!count) {
-            line.appendChild(userListEvents.eventsAtDay(from))
-        } else {
-            line.appendChild(userListEvents.eventsAtDayCount(from, icons, placeIsExcluded))
+    let counter = 0
+    headerLine.children.forEach(elem => {
+        if (counter >= startIndex) {
+            let value
+            if (type === 'byEmployee' || type === 'byLocation') {
+                const innerDate = elem.innerHTML.split('<br>')[1]
+                value = new Date(innerDate.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/, "$3-$1-$2"))
+            }
+            else if (type === 'HRsummary') {
+                value = elem.innerText
+            }
+
+
+            if (type === "byEmployee") {
+                line.appendChild(userListEvents.eventsAtDay(value))
+            } else if (type === 'byLocation') {
+                line.appendChild(userListEvents.eventsAtDayCount(value, icons, placeIsExcluded))
+            } else if (type === 'HRsummary') {
+                line.appendChild(userListEvents.countTypeForUser(value))
+            }
         }
 
-        from.setDate(from.getDate() + 1)
-    }
+        counter += 1
+    })
     tbody.appendChild(line)
     return tbody
+}
+
+
+/**
+ * 
+ * @param {Array} dataSent 
+ * @param {*} response 
+ */
+export function newTableHR(dataSent, response) {
+    const tableName = 'HRsummary'
+    const table = document.createElement('table')
+    const thead = document.createElement('thead')
+    let tbody = document.createElement('tbody')
+    const tfoot = document.createElement('tfoot')
+
+    table.setAttribute('id', tableName)
+    table.setAttribute('class', 'table table-striped')
+
+    const headerValues = [
+        'Personne',
+        'RTT',
+        'Congés',
+        'Astreinte',
+        'Férié',
+        'Total'
+    ]
+    const head = getHeaderWithValues(headerValues)
+    thead.appendChild(head)
+
+    const res = JSON.parse(response)
+    console.log(res)
+    Object.keys(res).forEach(element => {
+        const userListEvents = new ListEvents(element, res[element])
+        tbody = getContent(tbody, head, 1, userListEvents, tableName)
+
+    })
+
+    tfoot.appendChild(getHeaderWithValues(headerValues))
+
+    table.appendChild(thead)
+    table.appendChild(tbody)
+    table.appendChild(tfoot)
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(table)
+    new DataTable('#' + tableName, optionDatatable)
 }

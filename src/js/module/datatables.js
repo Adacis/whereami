@@ -22,6 +22,14 @@ export function getLoader() {
     return center
 }
 
+
+/**
+ * Fills the title and inner with the icons. For table byEmployee, adds an event 
+ * listenner to redirect to byLocation on click on the key's place
+ * @param {HTMLBaseElement} element 
+ * @param {Array} icons 
+ * @param {boolean} tablePersonne 
+ */
 function setTitleWithIcons(element, icons, tablePersonne = false) {
     for (let dic of icons) {
         element.title = dic.prefix + "(" + dic.label + ")\n" + element.title
@@ -32,7 +40,7 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
                 document.getElementById('finalPath').innerText = "Locations"
                 document.getElementById('myapp').innerHTML = ''
                 document.getElementById('myapp').appendChild(getLoader())
-                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation')
+                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation', dic.prefix)
             })
             element.appendChild(a)
         }
@@ -258,7 +266,11 @@ function getHeader(from, to, tablePersonne = false) {
 }
 
 
-
+/**
+ * Creates an 'tr' element with given values
+ * @param {Array} values 
+ * @returns 
+ */
 function getHeaderWithValues(values) {
     const line = document.createElement('tr')
     values.forEach(value => {
@@ -268,7 +280,7 @@ function getHeaderWithValues(values) {
 }
 
 /**
- *
+ * Fills the content of the table from the values of the header starting at index "startIndex"
  * @param {*} tbody
  * @param {*} headerLine
  * @param {*} startIndex
@@ -322,7 +334,11 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
 }
 
 
-
+/**
+ * 
+ * @param {Array} dataSent 
+ * @param {*} response 
+ */
 export function newTableHR(dataSent, response) {
     const tableName = 'HRsummary'
     const table = document.createElement('table')

@@ -145,13 +145,16 @@ class MyEvent
         }
     }
 
+    /**
+     * Gets the place in common between 2 events, return empty string if nothing in common
+     */
     function getPlaceCommon($e): String
     {
         if (strtoupper($e->place) === strtoupper($this->place)) {
             return $e->place;
-        } else if (strtoupper($this->place2) === strtoupper($e->place)) {
+        } else if (strtoupper($this->place2) === strtoupper($e->place) && $e->place2 == '') {
             return $e->place;
-        } else if (strtoupper($e->place2) === strtoupper($this->place)) {
+        } else if (strtoupper($e->place2) === strtoupper($this->place) && $this->place2 == '') {
             return $e->place2;
         } else if (strtoupper($this->place2) === strtoupper($e->place2)) {
             return $this->place2;

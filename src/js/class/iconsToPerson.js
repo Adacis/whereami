@@ -1,4 +1,4 @@
-import { sendIcon, deleteIcon } from './xhr';
+import { sendIcon, deleteIcon } from '../module/xhr';
 import { TagsInput } from './tagsInput';
 
 
@@ -41,6 +41,11 @@ function initEventTagsIcons(mainClass, tags) {
                     return;
                 if (!mainClass.iconValueFinalised || !mainClass.labelValueFinalised) {
                     alert("Veuillez finaliser la valeur du label et du préfixe.");
+                    return;
+                }
+                if (str.length !== 4) {
+                    alert("Assurez vous d'entrer le quadrigramme de la personne");
+                    tags.input.value = str;
                     return;
                 }
                 tags.addTag(str);

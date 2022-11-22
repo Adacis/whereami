@@ -9,7 +9,40 @@ import { newTablePersonne, newTableSeen } from "./datatables.js"
 
 export const baseUrl = generateUrl('/apps/whereami')
 
-export const optionDatatable = {
+export const optionDatatable2 = {
+  scrollY: true,
+  scrollX: true,
+  scrollCollapse: true,
+  autoWidth: false,
+  stateSave: true,
+  paging: false,
+  fixedColumns: {
+    left: 2
+  },
+  language: {
+    search: t('gestion', 'Search'),
+    emptyTable: t('gestion', 'No data available in table'),
+    info: t('gestion', 'Showing {start} to {end} of {total} entries', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+    infoEmpty: t('gestion', 'Showing 0 to 0 of 0 entries'),
+    loadingRecords: t('gestion', 'Loading records …'),
+    processing: t('gestion', 'Processing …'),
+    infoFiltered: t('gestion', '{max} entries filtered', { max: '_MAX_' }),
+    lengthMenu: t('gestion', 'Show {menu} entries', { menu: '_MENU_' }),
+    zeroRecords: t('gestion', 'No corresponding entry'),
+    paginate: {
+      first: t('gestion', 'First'),
+      last: t('gestion', 'Last'),
+      next: t('gestion', 'Next'),
+      previous: t('gestion', 'Previous')
+    },
+    fixedHeader: {
+      header: true,
+      footer: true
+    }
+  }
+}
+
+export const optionDatatable1 = {
   scrollY: true,
   scrollX: true,
   scrollCollapse: true,
@@ -67,9 +100,12 @@ export function getData(dtStart, dtEnd, classement, tableName, filter = null) {
       console.log(JSON.parse(this.response))
 
       newTablePersonne(this.response, dtStart, dtEnd, tableName)
-      let dt = new DataTable('#' + tableName, optionDatatable)
+      if (tableName == 'byEmployee')
+        var dt = new DataTable('#' + tableName, optionDatatable2)
+      else
+        var dt = new DataTable('#' + tableName, optionDatatable1)
 
-      if (filter !== null)
+      if (filter != null)
         dt.search(filter).draw()
       else
         dt.search('').draw()
@@ -117,7 +153,7 @@ export function lastSeen(dtStart, dtEnd) {
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTableSeen(this.response, dtStart, dtEnd);
-      new DataTable('#seen', optionDatatable);
+      new DataTable('#seen', optionDatatable1);
     } else {
       showError(this.response);
     }

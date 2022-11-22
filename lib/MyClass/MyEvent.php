@@ -17,6 +17,8 @@ class MyEvent
     public String $nextcloud_users;
     public $quote;
 
+    public bool $valid;
+
     private LoggerInterface $log;
 
     private Bdd $myDb;
@@ -35,11 +37,16 @@ class MyEvent
         $this->summary          = str_replace("@", "", $e["objects"][0]["SUMMARY"][0]);
 
         $tmp                    = $this->extractData(",", 0, $e["objects"][0]["SUMMARY"][0]);
-        $this->place = $tmp[0];
-        if (count($tmp) >= 2) {
-            $this->place2 = $tmp[1];
+        if (count($tmp) > 0) {
+            $this->place = $tmp[0];
+            if (count($tmp) >= 2) {
+                $this->place2 = $tmp[1];
+            } else {
+                $this->place2 = '';
+            }
+            $this->valid = true;
         } else {
-            $this->place2 = '';
+            $this->valid = false;
         }
 
 
@@ -97,14 +104,20 @@ class MyEvent
      */
     public function extractData($separator, $position, $data): array
     {
-        $re = '/@([^' . $separator . '\s]+)(' . $separator . '\s?@([^' . $separator . '\s]+))?.*/m';
+        $re = '/^@\s*([^' . $separator . '\s]+)(' . $separator . '\s?@\s*([^' . $separator . '\s]+))?.*/m';
 
         preg_match_all($re, strtolower($data), $matches, PREG_SET_ORDER, 0);
 
-        $cls = [$matches[0][1]];
-        if (count($matches[0]) >= 4) {
-            array_push($cls, $matches[0][3]);
+        try {
+            $cls = [$matches[0][1]];
+            if (count($matches[0]) >= 4) {
+                array_push($cls, $matches[0][3]);
+            }
+        } catch (\Throwable $th) {
+            $cls = [];
         }
+
+
         return $cls;
     }
 

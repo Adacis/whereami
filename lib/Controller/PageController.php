@@ -99,6 +99,10 @@ class PageController extends Controller
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
 			$e = new MyEvent($c, $this->myDb, $this->logger);
 
+			if (!$e->valid) {
+				continue;
+			}
+
 			$cls = strtolower($e->{"nextcloud_users"});
 			$cls = trim(str_replace($charReplace, "", $cls));
 			$cls = explode(",", $cls)[0];
@@ -158,6 +162,10 @@ class PageController extends Controller
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
 			$e = new MyEvent($c, $this->myDb, $this->logger);
 			// if(preg_match("/^".$charReplace."/", $e->summary)){
+
+			if (!$e->valid) {
+				continue;
+			}
 
 			$cls = trim(strtolower($e->{$classement}));
 

@@ -108,6 +108,10 @@ table.dataTable.table-striped>tbody>tr.odd:hover>* {
   box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.250);
 }
 
+th.dtfc-fixed-left {
+  z-index: 2;
+}
+
 /* loading */
 .lds-dual-ring {
   display: inline-block;

@@ -2,7 +2,7 @@ import groupBy from "lodash/groupBy"
 import toInteger from "lodash/toInteger"
 import { Events } from "../class/Event"
 import { daysFr, ListEvents } from "../class/ListEvents"
-import { getAllIcons, getData, getTags, optionDatatable } from "./xhr"
+import { getAllIcons, getData, getTags, optionDatatable1 } from "./xhr"
 import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
@@ -375,5 +375,5 @@ export function newTableHR(dataSent, response) {
     table.appendChild(tfoot)
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(table)
-    new DataTable('#' + tableName, optionDatatable)
+    new DataTable('#' + tableName, optionDatatable1)
 }

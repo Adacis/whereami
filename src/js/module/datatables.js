@@ -107,8 +107,6 @@ export function newTableSeen(response, dtStart, dtEnd) {
 
                     const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
                     daysLastSeen = timeLastSeen / (1000 * 3600 * 24)
-                    console.log(daysLastSeen)
-                    console.log(timeLastSeen / (1000 * 3600 * 24))
                     if (daysLastSeen < 0) {
                         res[peoplerow][peoplecolumn].count += daysLastSeen
                         res[peoplerow][peoplecolumn].count = toInteger(res[peoplerow][peoplecolumn].count)
@@ -234,7 +232,6 @@ function getTotal(tbody) {
             text += totalByDay
             if (totalByDay2 != totalByDay) {
                 text += ", " + totalByDay2
-                console.log(text)
             }
         }
         line.appendChild(newCell('td', text, 'text-align: center;'))

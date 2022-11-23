@@ -97,8 +97,6 @@ export function getData(dtStart, dtEnd, classement, tableName, filter = null) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(JSON.parse(this.response))
-
       newTablePersonne(this.response, dtStart, dtEnd, tableName)
       if (tableName == 'byEmployee')
         var dt = new DataTable('#' + tableName, optionDatatable2)

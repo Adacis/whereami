@@ -14,9 +14,9 @@
 			<li class="app-navigation-entry"><span class="navmarg icon-category-office"></span><a id="showHRSummary"><?php p($l->t('Summary')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
-			<li class="app-navigation-entry"><span class="navmarg icon-template-add"></span><a href="<?php echo ($_['url']['quotes']); ?>"><?php p($l->t('Quotes')); ?></a>
+			<!-- <li class="app-navigation-entry"><span class="navmarg icon-template-add"></span><a href="<?php echo ($_['url']['quotes']); ?>"><?php p($l->t('Quotes')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
-			</li>
+			</li> -->
 		</ul>
 	</li>
 </ul>

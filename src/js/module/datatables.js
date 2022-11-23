@@ -104,8 +104,18 @@ export function newTableSeen(response, dtStart, dtEnd) {
                 if (res[peoplerow] != null && res[peoplerow][peoplecolumn] != null) {
                     title = res[peoplerow][peoplecolumn].place;
                     msg = res[peoplerow][peoplecolumn].seen;
+
                     const timeLastSeen = new Date(today - new Date(msg.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")))
-                    daysLastSeen = toInteger(timeLastSeen / (1000 * 3600 * 24))
+                    daysLastSeen = timeLastSeen / (1000 * 3600 * 24)
+                    console.log(daysLastSeen)
+                    console.log(timeLastSeen / (1000 * 3600 * 24))
+                    if (daysLastSeen < 0) {
+                        res[peoplerow][peoplecolumn].count += daysLastSeen
+                        res[peoplerow][peoplecolumn].count = toInteger(res[peoplerow][peoplecolumn].count)
+                        daysLastSeen = 0
+                    }
+                    else
+                        daysLastSeen = toInteger(daysLastSeen)
                     if (daysLastSeen == 0)
                         title = title + " today"
                     else
@@ -124,7 +134,7 @@ export function newTableSeen(response, dtStart, dtEnd) {
                 }
                 if (daysLastSeen == -1 || daysLastSeen >= toInteger(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
                     newCell.style = "background-color: red;"
-                    newCell.title = "Not seend in the last " + periodLength + " days"
+                    newCell.title = "Not seen in the last " + periodLength + " days"
                 }
 
                 //setTitleWithIcons(table.rows[0].cells[cellPosition], groupedIcons[peoplecolumn])
@@ -310,8 +320,9 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
         if (counter >= startIndex) {
             let value
             if (type === 'byEmployee' || type === 'byLocation') {
-                const innerDate = elem.innerHTML.split('<br>')[1]
-                value = new Date(innerDate.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/, "$3-$1-$2"))
+                let today = new Date(document.getElementById('dtStart').valueAsDate)
+                today.setDate(today.getDate() + counter - startIndex)
+                value = today
             }
             else if (type === 'HRsummary') {
                 value = elem.innerText

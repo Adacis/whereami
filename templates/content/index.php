@@ -19,6 +19,12 @@
         <button style="width: 200px;" class="setDates">
             <?php p($l->t('Set Dates')); ?>
         </button>
+        <button style="width: 200px;" id="removeOneMonth" hidden="true">
+            <?php p($l->t('Previous month')); ?>
+        </button>
+        <button style="width: 200px;" id="addOneMonth" hidden="true">
+            <?php p($l->t('Next month')); ?>
+        </button>
 
     </p>
     <div id="myapp">

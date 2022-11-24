@@ -4,7 +4,22 @@ import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 import { getDateFirstOfMonth } from '../module/utils'
 
+function setButtonsMonths(bool) {
+  if (bool) {
+    document.getElementById('addOneMonth').removeAttribute('hidden')
+    document.getElementById('removeOneMonth').removeAttribute('hidden')
+    document.getElementsByClassName('setDates')[0].setAttribute('hidden', true)
+  }
+  else {
+    document.getElementById('addOneMonth').setAttribute('hidden', true)
+    document.getElementById('removeOneMonth').setAttribute('hidden', true)
+    document.getElementsByClassName('setDates')[0].removeAttribute('hidden')
+  }
+}
+
 function setDateUsual() {
+  setButtonsMonths(false)
+
   const toDay = new Date()
   if (document.getElementById('HRsummary') != null || document.getElementById('seen') != null) {
     document.getElementById('dtStart').valueAsDate = toDay
@@ -13,16 +28,19 @@ function setDateUsual() {
   }
 }
 
-function setDateSummary() {
-  let start = getDateFirstOfMonth(0)
-  let end = new Date(getDateFirstOfMonth(1) - 1 * 60000)
-  if (document.getElementById('HRsummary') === null) {
-    document.getElementById('dtEnd').valueAsDate = end
-    document.getElementById('dtStart').valueAsDate = start
-  }
+function setDateSummary(diff = 0) {
+  setButtonsMonths(true)
+
+  let start = getDateFirstOfMonth(diff)
+  let end = getDateFirstOfMonth(1 + diff)
+  end.setMinutes(end.getMinutes() - 1)
+  document.getElementById('dtEnd').valueAsDate = end
+  document.getElementById('dtStart').valueAsDate = start
 }
 
 function setDateLastSeen() {
+  setButtonsMonths(false)
+
   const toDay = new Date()
   if (document.getElementById('seen') === null) {
     toDay.setDate(toDay.getDate())
@@ -30,6 +48,14 @@ function setDateLastSeen() {
     toDay.setDate(toDay.getDate() - 35)
     document.getElementById('dtStart').valueAsDate = toDay
   }
+}
+
+function initiateTableHRSummary(diff = 0) {
+  setDateSummary(diff)
+  document.getElementById('finalPath').innerText = "Summary"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  retrieveData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', newTableHR)
 }
 
 
@@ -60,11 +86,19 @@ window.addEventListener('click', e => {
   }
 
   else if (e.target.id === 'showHRSummary' || (document.getElementById('HRsummary') != null && e.target.className.includes('setDates'))) {
-    setDateSummary()
-    document.getElementById('finalPath').innerText = "Summary"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    retrieveData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', newTableHR)
+    initiateTableHRSummary()
+  }
+
+  else if (e.target.id === 'addOneMonth') {
+    let realMonth = (new Date()).getMonth()
+    let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
+    initiateTableHRSummary(currentMonth - realMonth + 1)
+  }
+
+  else if (e.target.id === 'removeOneMonth') {
+    let realMonth = (new Date()).getMonth()
+    let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
+    initiateTableHRSummary(currentMonth - realMonth - 1)
   }
 
   else if (e.target.className.includes('helper')) {
@@ -75,6 +109,7 @@ window.addEventListener('click', e => {
 })
 
 window.addEventListener('DOMContentLoaded', function () {
+  setButtonsMonths(false)
   const toDay = new Date()
   document.getElementById('dtStart').valueAsDate = toDay
   toDay.setDate(toDay.getDate() + 14)

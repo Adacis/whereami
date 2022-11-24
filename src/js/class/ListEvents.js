@@ -162,8 +162,8 @@ export class ListEvents {
    * @return {String}
    */
   getDateString(dtStart, dtEnd) {
-    let str1 = dtStart.toLocaleDateString('fr')
-    let str2 = dtEnd.toLocaleDateString('fr')
+    let str1 = dtStart.toLocaleDateString()
+    let str2 = dtEnd.toLocaleDateString()
     if (str1 === str2)
       return str1
     else

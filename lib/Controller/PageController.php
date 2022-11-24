@@ -158,7 +158,6 @@ class PageController extends Controller
 		$toInclude = $this->myDb->getWordInWordList('allowed_events');
 		$toInclude = $this->arrayFromWordQuery($toInclude);
 
-		$this->logger->error('test');
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
 			$e = new MyEvent($c, $this->myDb, $this->logger);
 			// if(preg_match("/^".$charReplace."/", $e->summary)){

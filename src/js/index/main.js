@@ -2,6 +2,7 @@ import { getData, lastSeen, retrieveData } from '../module/xhr'
 import { getLoader, newTableHR } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
+import { getDateFirstOfMonth } from '../module/utils'
 
 function setDateUsual() {
   const toDay = new Date()
@@ -13,11 +14,11 @@ function setDateUsual() {
 }
 
 function setDateSummary() {
-  const toDay = new Date()
+  let start = getDateFirstOfMonth(0)
+  let end = new Date(getDateFirstOfMonth(1) - 1 * 60000)
   if (document.getElementById('HRsummary') === null) {
-    document.getElementById('dtEnd').valueAsDate = toDay
-    toDay.setDate(toDay.getDate() - 30)
-    document.getElementById('dtStart').valueAsDate = toDay
+    document.getElementById('dtEnd').valueAsDate = end
+    document.getElementById('dtStart').valueAsDate = start
   }
 }
 

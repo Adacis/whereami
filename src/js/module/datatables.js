@@ -331,7 +331,9 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
             } else if (type === 'byLocation') {
                 line.appendChild(userListEvents.eventsAtDayCount(value, icons, placeIsExcluded))
             } else if (type === 'HRsummary') {
-                line.appendChild(userListEvents.countTypeForUser(value))
+                let dtStart = new Date(document.getElementById('dtStart').valueAsDate)
+                let dtEnd = new Date(document.getElementById('dtEnd').valueAsDate)
+                line.appendChild(userListEvents.countTypeForUser(value, dtStart, dtEnd))
             }
         }
 

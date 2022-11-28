@@ -2,11 +2,12 @@ import { TagsInput, initEventsBase } from '../class/tagsInput';
 import { IconsToPerson } from '../class/iconsToPerson';
 import { getAllIcons } from '../module/xhr';
 import { groupBy } from 'lodash/collection';
+import { ACCOUNTED_FOR_KEYS, ALLOWED_PLACES, EXCLUDED_PLACES } from '../config/config';
 
 
 // Setup for selector allowed event in places
 var opts1 = {
-    selector: 'allowed_events',
+    selector: ALLOWED_PLACES,
     duplicate: false,
     wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
@@ -20,7 +21,7 @@ initEventsBase(tagInput1);
 
 // setup for selector of excluded places in last seen
 var opts2 = {
-    selector: 'excluded_places',
+    selector: EXCLUDED_PLACES,
     wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,
@@ -32,7 +33,7 @@ initEventsBase(tagInput2);
 
 // setup for selector of excluded places for the keys
 var opts3 = {
-    selector: 'accounted_for_keys',
+    selector: ACCOUNTED_FOR_KEYS,
     wrapperClass: 'tags-input-wrapper',
     tagClass: 'tag',
     max: null,

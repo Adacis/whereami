@@ -6,7 +6,7 @@ import { getAllIcons, getData, getTags, optionDatatable1 } from "./xhr"
 import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
-import { BY_LOCATION, BY_EMPLOYEE, FRACTION_FOR_ORANGE, FRACTION_FOR_RED, ACCOUNTED_FOR_KEYS, HR_SUMMARY } from "../config/config"
+import { BY_LOCATION, BY_EMPLOYEE, FRACTION_FOR_ORANGE, FRACTION_FOR_RED, ACCOUNTED_FOR_KEYS, HR_SUMMARY, ALLOWED_PLACES } from "../config/config"
 
 /**
  *
@@ -357,19 +357,11 @@ export function newTableHR(dataSent, response) {
     table.setAttribute('id', tableName)
     table.setAttribute('class', 'table table-striped')
 
-    const headerValues = [
-        'Personne',
-        'RTT',
-        'Congés',
-        'Astreinte',
-        'Férié',
-        'Total'
-    ]
+    var headerValues = ['Personne'].concat(getTags(ALLOWED_PLACES).onload().map((elem) => elem.word), ['Total'])
     const head = getHeaderWithValues(headerValues)
     thead.appendChild(head)
 
     const res = JSON.parse(response)
-    console.log(res)
     Object.keys(res).forEach(element => {
         const userListEvents = new ListEvents(element, res[element])
         tbody = getContent(tbody, head, 1, userListEvents, tableName)

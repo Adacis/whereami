@@ -5,9 +5,12 @@ import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 import { newTablePersonne, newTableSeen } from "./datatables.js"
+import { makeIcsString } from './ics.js'
+import { makeid, toFloatingString } from './utils.js'
 
 
 export const baseUrl = generateUrl('/apps/whereami')
+export const homeUrl = generateUrl('/')
 
 export const optionDatatable2 = {
   scrollY: true,
@@ -137,6 +140,7 @@ export function retrieveData(dtStart, dtEnd, classement, callback) {
   }
   oReq.send(JSON.stringify(data))
 }
+
 
 export function lastSeen(dtStart, dtEnd) {
   const data = {
@@ -310,7 +314,7 @@ export function deleteIcon(person, prefix, label) {
 
 export function getAllIcons() {
   const oReq = new XMLHttpRequest()
-  oReq.open('POST', baseUrl + '/getAllIcons', false)
+  oReq.open('GET', baseUrl + '/getAllIcons', false)
   oReq.setRequestHeader('Content-Type', 'application/json')
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
@@ -323,5 +327,79 @@ export function getAllIcons() {
     }
   }
   oReq.send();
+  return oReq;
+}
+
+
+export function getCalendars() {
+  const oReq = new XMLHttpRequest()
+  oReq.open('GET', baseUrl + '/getCalendars', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log("Received calendars");
+      return JSON.parse(this.response);
+    } else {
+      console.log('Controller error');
+      showError(this.response);
+    }
+  }
+  oReq.send();
+  return oReq;
+}
+
+/**
+ * 
+ * @param {Date} dtStart 
+ * @param {Date} dtEnd 
+ */
+export function isTimeSlotAvailable(dtStart, dtEnd) {
+  const data = {
+    dtStart,
+    dtEnd
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/isTimeSlotAvailable', false)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      return JSON.parse(this.response)
+    } else if (this.status === 204) {
+      return true
+    }
+    else {
+      showError(this.response)
+    }
+  }
+  oReq.send(JSON.stringify(data))
+  return oReq
+}
+
+
+export function registerNewEvent(event, calendar) {
+  const uid = makeid(16)
+  const data = makeIcsString(event.dateStart, event.dateEnd, event.summary, "", uid)
+
+  const userID = calendar.principaluri.split('/').at(-1)
+  const uri = calendar.uri
+  const filename = userID + '/' + uri + '/' + uid + '.ics'
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('PUT', homeUrl + 'remote.php/dav/calendars/' + filename, true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 201) {
+      showSuccess('Event created')
+    } else if (this.status == 204) {
+      showSuccess('Event modified')
+    } else {
+      showError(this.response)
+    }
+  }
+  oReq.send(data)
   return oReq;
 }

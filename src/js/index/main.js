@@ -4,6 +4,7 @@ import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 import { getDateFirstOfMonth } from '../module/utils'
 import { BY_EMPLOYEE, BY_LOCATION, HR_SUMMARY, LAST_SEEN } from '../config/config'
+import { NewEventForm } from '../class/NewEventForm'
 
 function setButtonsMonths(bool) {
   if (bool) {
@@ -59,7 +60,7 @@ function initiateTableHRSummary(diff = 0) {
   retrieveData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', newTableHR)
 }
 
-
+var form
 window.addEventListener('click', e => {
 
   if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
@@ -102,10 +103,19 @@ window.addEventListener('click', e => {
     initiateTableHRSummary(currentMonth - realMonth - 1)
   }
 
+  else if (e.target.id === 'showNewEventForm') {
+    form = new NewEventForm()
+
+    document.getElementById('newEvent').style.display = 'block'
+    document.getElementById('modal-content-NewEvent').innerHTML = ''
+    document.getElementById('modal-content-NewEvent').appendChild(form.form)
+  }
+
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
   } else if (e.target.className.includes('modalClose')) {
     e.target.parentElement.parentElement.style.display = 'none'
+    form = undefined
   }
 })
 

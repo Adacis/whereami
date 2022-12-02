@@ -44,15 +44,15 @@
 		"file-loader": ">=6.2.0",
 		"less": ">=4.1.1",
 		"less-loader": ">=8.0.0",
+		"lodash": "^4.17.21",
+		"moment": "^2.29.4",
 		"postcss-loader": ">=5.0.0",
 		"sass": ">=1.32.8",
 		"sass-loader": ">=11.0.1",
 		"style": ">=0.0.3",
 		"style-loader": ">=2.0.0",
 		"webpack": ">=5.61.1",
-		"webpack-cli": ">=4.5.0",
-		"lodash": "^4.17.21",
-		"moment": "^2.29.4"
+		"webpack-cli": ">=4.5.0"
 	},
 	"dependencies": {}
 }

@@ -11,7 +11,7 @@
     <h2>
         <center><?php p($l->t('Where am I ?')); ?></center>
     </h2>
-    <p>
+    <p id='datesHeader'>
         <?php p($l->t('From')); ?>
         <input style="width: 200px;" id="dtStart" type="date" />
         <?php p($l->t('To')); ?>

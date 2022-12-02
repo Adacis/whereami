@@ -43,6 +43,13 @@ class Bdd
         return $this->execSQLNoJsonReturn($sql, array($id));
     }
 
+    public function getCalendarsFromUID($uid)
+    {
+        $principalUri = "principals/users/" . $uid;
+        $sql = 'SELECT * FROM `*PREFIX*calendars` WHERE `*PREFIX*calendars`.principaluri = ?';
+        return $this->execSQLNoJsonReturn($sql, array($principalUri));
+    }
+
     /**
      * Insert a word in table wordlist
      * @word 

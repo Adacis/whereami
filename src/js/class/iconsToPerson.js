@@ -1,22 +1,6 @@
 import { sendIcon, deleteIcon } from '../module/xhr';
 import { TagsInput } from './tagsInput';
-
-
-/**
- * Creates a random string Id (taken from : https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript)
- * @param {int} length 
- * @returns {string}
- */
-function makeid(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() *
-            charactersLength));
-    }
-    return result;
-}
+import { makeid } from '../module/utils'
 
 
 /**

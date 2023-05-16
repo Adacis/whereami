@@ -11,6 +11,17 @@
   margin-left: 0px;
 }
 
+.button:not(:disabled):not(.primary).active:hover {
+  border-color: var(--color-primary-element);
+}
+
+.button:not(:disabled):not(.primary).active {
+  border-color: var(--color-border-dark);
+  outline: none;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 /* #content {
 } */
 
@@ -160,6 +171,7 @@ table.dataTable.table-striped>tbody>tr.odd:hover>* {
   padding: 20px;
   border: 1px solid #888;
   width: 50%;
+  border-radius: var(--body-container-radius);
 }
 
 .modal-content a {

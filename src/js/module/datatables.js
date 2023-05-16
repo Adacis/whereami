@@ -6,9 +6,7 @@ import { getAllIcons, getData, getTags, optionDatatable1 } from "./xhr"
 import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
-
-const FRACTION_FOR_ORANGE = 2 / 3
-const FRACTION_FOR_RED = 0.90
+import { BY_LOCATION, BY_EMPLOYEE, FRACTION_FOR_ORANGE, FRACTION_FOR_RED, ACCOUNTED_FOR_KEYS, HR_SUMMARY, ALLOWED_PLACES } from "../config/config"
 
 /**
  *
@@ -40,7 +38,7 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
                 document.getElementById('finalPath').innerText = "Locations"
                 document.getElementById('myapp').innerHTML = ''
                 document.getElementById('myapp').appendChild(getLoader())
-                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation', dic.prefix)
+                getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', BY_LOCATION, dic.prefix)
             })
             element.appendChild(a)
         }
@@ -168,31 +166,31 @@ export function newTablePersonne(response, dtStart, dtEnd, tablename) {
     // var retHead = getHeader(from,to);
     // var from = new Date(dtStart)
     // var to = new Date(dtEnd)
-    const head = getHeader(new Date(dtStart), new Date(dtEnd), tablename == 'byEmployee')
+    const head = getHeader(new Date(dtStart), new Date(dtEnd), tablename == BY_EMPLOYEE)
     thead.appendChild(head)
 
     const to = new Date(dtEnd)
     const res = JSON.parse(response)
     let icons = getAllIcons().onload()
     let whitelistKeys
-    if (tablename === 'byLocation')
-        whitelistKeys = getTags("accounted_for_keys").onload().map(element => element.word.toLowerCase())
+    if (tablename === BY_LOCATION)
+        whitelistKeys = getTags(ACCOUNTED_FOR_KEYS).onload().map(element => element.word.toLowerCase())
 
     Object.keys(res).forEach(element => {
         let from = new Date(dtStart)
         const userListEvents = new ListEvents(element, res[element])
-        if (tablename === 'byLocation') {
-            tbody = getContent(tbody, head, 1, userListEvents, 'byLocation', icons, whitelistKeys)
+        if (tablename === BY_LOCATION) {
+            tbody = getContent(tbody, head, 1, userListEvents, BY_LOCATION, icons, whitelistKeys)
         } else {
-            tbody = getContent(tbody, head, 2, userListEvents, 'byEmployee', icons)
+            tbody = getContent(tbody, head, 2, userListEvents, BY_EMPLOYEE, icons)
         }
     })
 
-    if (tablename === 'byLocation') {
+    if (tablename === BY_LOCATION) {
         tfoot.appendChild(getTotal(tbody))
     }
 
-    tfoot.appendChild(getHeader(new Date(dtStart), to, tablename == 'byEmployee'))
+    tfoot.appendChild(getHeader(new Date(dtStart), to, tablename == BY_EMPLOYEE))
 
     table.appendChild(thead)
     table.appendChild(tbody)
@@ -301,7 +299,7 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
     let td = newCell('td', userListEvents.id)
     line.appendChild(td)
     let placeIsExcluded
-    if (type === "byEmployee") {
+    if (type === BY_EMPLOYEE) {
         let iconsCell = newCell('td', '')
         line.appendChild(iconsCell)
         icons = groupBy(icons, "person")
@@ -309,29 +307,31 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
         if (icons[tetra] != undefined)
             setTitleWithIcons(iconsCell, icons[tetra], true)
     }
-    else if (type === 'byLocation')
+    else if (type === BY_LOCATION)
         placeIsExcluded = !whitelistKeys.includes(userListEvents.id)
 
     let counter = 0
     headerLine.children.forEach(elem => {
         if (counter >= startIndex) {
             let value
-            if (type === 'byEmployee' || type === 'byLocation') {
+            if (type === BY_EMPLOYEE || type === BY_LOCATION) {
                 let today = new Date(document.getElementById('dtStart').valueAsDate)
                 today.setDate(today.getDate() + counter - startIndex)
                 value = today
             }
-            else if (type === 'HRsummary') {
+            else if (type === HR_SUMMARY) {
                 value = elem.innerText
             }
 
 
-            if (type === "byEmployee") {
+            if (type === BY_EMPLOYEE) {
                 line.appendChild(userListEvents.eventsAtDay(value))
-            } else if (type === 'byLocation') {
+            } else if (type === BY_LOCATION) {
                 line.appendChild(userListEvents.eventsAtDayCount(value, icons, placeIsExcluded))
-            } else if (type === 'HRsummary') {
-                line.appendChild(userListEvents.countTypeForUser(value))
+            } else if (type === HR_SUMMARY) {
+                let dtStart = new Date(`${document.getElementById('dtStart').value}T00:00`)
+                let dtEnd = new Date(`${document.getElementById('dtEnd').value}T23:59`)
+                line.appendChild(userListEvents.countTypeForUser(value, dtStart, dtEnd))
             }
         }
 
@@ -348,7 +348,7 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
  * @param {*} response 
  */
 export function newTableHR(dataSent, response) {
-    const tableName = 'HRsummary'
+    const tableName = HR_SUMMARY
     const table = document.createElement('table')
     const thead = document.createElement('thead')
     let tbody = document.createElement('tbody')
@@ -357,19 +357,11 @@ export function newTableHR(dataSent, response) {
     table.setAttribute('id', tableName)
     table.setAttribute('class', 'table table-striped')
 
-    const headerValues = [
-        'Personne',
-        'RTT',
-        'Congés',
-        'Astreinte',
-        'Férié',
-        'Total'
-    ]
+    var headerValues = ['Personne'].concat(getTags(ALLOWED_PLACES).onload().map((elem) => elem.word), ['Total'])
     const head = getHeaderWithValues(headerValues)
     thead.appendChild(head)
 
     const res = JSON.parse(response)
-    console.log(res)
     Object.keys(res).forEach(element => {
         const userListEvents = new ListEvents(element, res[element])
         tbody = getContent(tbody, head, 1, userListEvents, tableName)

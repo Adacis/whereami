@@ -11,12 +11,9 @@ use OCP\AppFramework\Http\DataResponse;
 
 use OCP\AppFramework\Controller;
 use OCP\Calendar\IManager;
-use Sabre\VObject;
-use OCA\Polls\Model\CalendarEvent;
 use OCP\IURLGenerator;
-use DateTimeImmutable;
 use DateTime;
-use Exception;
+use OCP\AppFramework\Http;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -158,7 +155,6 @@ class PageController extends Controller
 		$toInclude = $this->myDb->getWordInWordList('allowed_events');
 		$toInclude = $this->arrayFromWordQuery($toInclude);
 
-		$this->logger->error('test');
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
 			$e = new MyEvent($c, $this->myDb, $this->logger);
 			// if(preg_match("/^".$charReplace."/", $e->summary)){
@@ -197,6 +193,35 @@ class PageController extends Controller
 		return new DataResponse($res, 200, ['Content-Type' => 'application/json']);
 	}
 
+	/**
+	 * @NoAdminRequired
+	 */
+	public function getCalendarsForUser()
+	{
+		$res = $this->myDb->getCalendarsFromUID($this->userId);
+		return new DataResponse($res, 200, ['Content-Type' => 'application/json']);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param string dtStart
+	 * @param string dtEnd
+	 */
+	public function isTimeSlotAvailable($dtStart, $dtEnd)
+	{
+		$collisions = [];
+		$status = Http::STATUS_NO_CONTENT;
+		foreach ($this->search($dtStart, $dtEnd) as $e) {
+			$event = new MyEvent($e, $this->myDb, $this->logger);
+
+			if ($event->nextcloud_users === $this->userId) {
+				array_push($collisions, $event);
+				$status = Http::STATUS_OK;
+			}
+		}
+
+		return new DataResponse($collisions, $status, ['Content-Type' => 'application/json']);
+	}
 
 	/**
 	 * @NoAdminRequired

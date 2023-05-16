@@ -4,7 +4,7 @@ script('whereami', array('adminSection.app'));
 
 <div class="section">
     <div class="div-main">
-        <h2 class="header2">Evènements autorisés:</h2>
+        <h2 class="header2">Lieux autorisés:</h2>
         <input type="text" id="allowed_events">
     </div>
     <div class="div-main">

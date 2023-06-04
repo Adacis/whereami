@@ -4,7 +4,7 @@ import { translate as t } from '@nextcloud/l10n'
 import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
-import { newTablePersonne, newTableSeen } from "./datatables.js"
+import { newTablePersonne, newTableSeen, newTableContracts } from "./datatables.js"
 
 
 export const baseUrl = generateUrl('/apps/whereami')
@@ -138,6 +138,28 @@ export function retrieveData(dtStart, dtEnd, classement, callback) {
   oReq.send(JSON.stringify(data))
 }
 
+export function getContracts(dtStart, dtEnd) {
+  const data = {
+    dtStart,
+    dtEnd
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getContracts', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      console.log(this.response);
+      newTableContracts(this.response);
+      new DataTable('#contracts', optionDatatable1);
+    } else {
+      showError(this.response);
+    }
+  }
+  oReq.send(JSON.stringify(data));
+}
+
 export function lastSeen(dtStart, dtEnd) {
   const data = {
     dtStart,
@@ -150,6 +172,7 @@ export function lastSeen(dtStart, dtEnd) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
+      console.log(this.response);
       newTableSeen(this.response, dtStart, dtEnd);
       new DataTable('#seen', optionDatatable1);
     } else {

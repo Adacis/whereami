@@ -117,7 +117,6 @@ class MyEvent
             $cls = [];
         }
 
-
         return $cls;
     }
 
@@ -211,5 +210,22 @@ class MyEvent
             }
         }
         return $listSeen; // Retour 
+    }
+
+    public function parseListContracts($contracts, $userContracts, $allEvents, $userId)
+    {
+        foreach($contracts as $c) {
+            $daysWorkedOnThisContractForThisUser = 0;
+            foreach($allEvents as $e){
+                if(strtolower($e->nextcloud_users) == $userId){
+                    $daysWorkedOnThisContractForThisUser++;
+                }
+            }
+            if (!array_key_exists($c, $userContracts)) {
+				$userContracts[$c] = [];
+			}
+            $userContracts[$c] = $daysWorkedOnThisContractForThisUser;
+        }
+        return $userContracts;
     }
 }

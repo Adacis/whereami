@@ -1,4 +1,4 @@
-import { getData, lastSeen, retrieveData } from '../module/xhr'
+import { getData, lastSeen, retrieveData, getContracts } from '../module/xhr'
 import { getLoader, newTableHR } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
@@ -31,10 +31,18 @@ function setDateLastSeen() {
   }
 }
 
+function setDateContracts() {
+  const toDay = new Date()
+  if (document.getElementById('contracts') === null) {
+    document.getElementById('dtEnd').valueAsDate = toDay
+    toDay.setDate(toDay.getDate() - 30)
+    document.getElementById('dtStart').valueAsDate = toDay
+  }
+}
 
 window.addEventListener('click', e => {
 
-  if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById('byEmployee') != null)) {
+  if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates')) && document.getElementById('byEmployee') != null) {
     setDateUsual()
     document.getElementById('finalPath').innerText = "Employees"
     document.getElementById('myapp').innerHTML = ''
@@ -64,6 +72,14 @@ window.addEventListener('click', e => {
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(getLoader())
     retrieveData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', newTableHR)
+  }
+
+  else if(e.target.id === 'contracts' || (document.getElementById('Contracts') != null && e.target.className.includes('setDates'))) {
+    setDateContracts()
+    document.getElementById('finalPath').innerText = "Contracts"
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getContracts(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
 
   else if (e.target.className.includes('helper')) {

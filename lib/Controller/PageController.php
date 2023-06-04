@@ -47,7 +47,6 @@ class PageController extends Controller
 		$this->userId = $UserId;
 		$this->myDb = $myDb;
 		$this->calendarManager = $calendarManager;
-		$this->calendars = $this->calendarManager->getCalendars();
 		$this->urlGenerator = $urlGenerator;
 		$this->logger = $log;
 	}
@@ -80,6 +79,47 @@ class PageController extends Controller
 			"index" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.index"),
 			"quotes" => $this->urlGenerator->linkToRouteAbsolute("whereami.page.quotes")
 		);
+	}
+
+	public function getContracts(String $dtStart, String $dtEnd)
+	{
+		$events = [];
+		$contracts = [];
+		$charReplace = "@";
+
+		$toExclude = $this->myDb->getWordInWordList("excluded_places");
+		$toExclude = $this->arrayFromWordQuery($toExclude);
+
+		//Récupération de la liste des événements sur la période
+		foreach ($this->search($dtStart, $dtEnd) as $c) {
+			$e = new MyEvent($c, $this->myDb, $this->logger);
+
+			if (!$e->valid) {
+				continue;
+			}
+
+			$cls = strtolower($e->{"nextcloud_users"});
+			$cls = trim(str_replace($charReplace, "", $cls));
+			$cls = explode(",", $cls)[0];
+			$cls = trim($cls);
+
+			if(isset($e->quote))
+			{
+				array_push($events, $e);
+				array_push($contracts, $e->quote);
+			}
+		}
+		$listContracts = [];
+		foreach ($events as $e) {
+			$user = strtolower($e->nextcloud_users);
+			if (!array_key_exists($user, $listContracts)) {
+				$listContracts[$user] = [];
+			}
+
+			$listContracts[$user] = $e->parseListContracts($contracts, $listContracts[$user], $events, $user);
+		}
+		ksort($listContracts, SORT_STRING);
+		return new DataResponse(['contracts' => $contracts, 'userByContract' => $listContracts], 200, ['Content-Type' => 'application/json']);
 	}
 
 	/**

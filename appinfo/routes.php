@@ -7,6 +7,7 @@ return [
         ['name' => 'page#getLastSeen', 'url' => '/getLastSeen', 'verb' => 'POST'],
         ['name' => 'page#getEvents', 'url' => '/getEvents', 'verb' => 'POST'],
         ['name' => 'page#getIcons', 'url' => '/getIcons', 'verb' => 'POST'],
+        ['name' => 'page#getContracts', 'url' => '/getContracts', 'verb' => 'POST'],
 
         ['name' => 'admin#setTags', 'url' => '/setTags', 'verb' => 'POST'],
         ['name' => 'admin#deleteTag', 'url' => '/deleteTag', 'verb' => 'POST'],

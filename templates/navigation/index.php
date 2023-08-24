@@ -1,5 +1,5 @@
 <ul class="app-navigation">
-	<li class="app-navigation-entry"><span class="navmarg"></span><b>Where am I V 0.0.27</b></li>
+	<li class="app-navigation-entry"><span class="navmarg"></span><b>Where am I V 0.0.29</b></li>
 	<li class="app-navigation-entry">
 		<ul class="app-navigation">
 			<li class="active app-navigation-entry button new"><span class="navmarg icon-add"></span><a id="showNewEventForm"><?php p($l->t('New event')); ?></a>

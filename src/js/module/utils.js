@@ -55,11 +55,11 @@ export function appendChildren(element, children) {
  * @returns Floating date string as per RFC5545
  */
 export function toFloatingString(date) {
-    // let time = date.toLocaleTimeString().replaceAll(':', '')
-    let day = date.getDate().toString()
-    if (day.length === 1)
-        day = '0' + day
-    let res = date.getFullYear().toString() + (date.getMonth() + 1).toString() + day
+    let day   = date.getDate().toString().padStart(2, "0")
+    let month = (date.getMonth() + 1).toString().padStart(2, "0")
+    let year  = date.getFullYear().toString()
+
+    let res = year + month + day
     return res
 }
 

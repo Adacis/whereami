@@ -58,33 +58,56 @@ function initiateTableHRSummary(diff = 0) {
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(getLoader())
   retrieveData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', newTableHR)
+  setHash(HR_SUMMARY)
+}
+
+function showByEmployees() {
+  setDateUsual()
+  document.getElementById('finalPath').innerText = "Employees"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', BY_EMPLOYEE)
+  setHash(BY_EMPLOYEE)
+}
+
+/**
+ * Sets the hash part of the URL to allow staying on the same "page" when reloading.
+ */
+function setHash(hash) {
+  window.location.hash = hash
+}
+
+function showByLocations() {
+  setDateUsual()
+  document.getElementById('finalPath').innerText = "Locations"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', BY_LOCATION)
+  setHash(BY_LOCATION)
+}
+
+function showLastSeen() {
+  setDateLastSeen()
+  document.getElementById('finalPath').innerText = "Last Seen"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+  setHash(LAST_SEEN)
 }
 
 var form
 window.addEventListener('click', e => {
 
   if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
-    setDateUsual()
-    document.getElementById('finalPath').innerText = "Employees"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', BY_EMPLOYEE)
+      showByEmployees();
   }
 
   else if (e.target.id === 'showByLocations' || (document.getElementById(BY_LOCATION) != null && e.target.className.includes('setDates'))) {
-    setDateUsual()
-    document.getElementById('finalPath').innerText = "Locations"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', BY_LOCATION)
+      showByLocations();
   }
 
   else if (e.target.id === 'showLastSeen' || (document.getElementById('seen') != null && e.target.className.includes('setDates'))) {
-    setDateLastSeen()
-    document.getElementById('finalPath').innerText = "Last Seen"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+      showLastSeen();
   }
 
   else if (e.target.id === 'showHRSummary' || (document.getElementById(HR_SUMMARY) != null && e.target.className.includes('setDates'))) {
@@ -127,11 +150,18 @@ window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('dtEnd').valueAsDate = toDay
 
   document.getElementById('myapp').appendChild(getLoader())
-  getData(document.getElementById('dtStart').value,
-    document.getElementById('dtEnd').value,
-    'nextcloud_users',
-    BY_EMPLOYEE
-  )
+  let toShow = showByEmployees;
+  if (window.location.hash) {
+    let loc = window.location.hash.substring(1);
+    if (loc == BY_LOCATION) {
+      toShow = showByLocations;
+    } else if (loc == HR_SUMMARY) {
+      toShow = showHRSummary;
+    } else if (loc == LAST_SEEN) {
+      toShow = showLastSeen;
+    }
+  }
+  toShow();
 })
 
 

@@ -18,8 +18,8 @@
 	"scripts": {
 		"webpack": "webpack",
 		"build": "NODE_ENV=production webpack --config webpack.js",
-		"dev": "NODE_ENV=production webpack --config webpack.js",
-		"watch": "NODE_ENV=production webpack --watch --config webpack.js"
+		"dev": "NODE_ENV=dev webpack --config webpack.js",
+		"watch": "NODE_ENV=dev webpack --watch --config webpack.js"
 	},
 	"engines": {
 		"node": ">=10.0.0"
@@ -54,5 +54,7 @@
 		"webpack": ">=5.61.1",
 		"webpack-cli": ">=4.5.0"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"path-browserify": "^1.0.1"
+	}
 }

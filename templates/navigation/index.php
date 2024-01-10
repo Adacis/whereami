@@ -1,7 +1,10 @@
 <ul class="app-navigation">
-	<li class="app-navigation-entry"><span class="navmarg"></span><b>Where am I V 0.0.26</b></li>
+	<li class="app-navigation-entry"><span class="navmarg"></span><b>Where am I V 0.0.32</b></li>
 	<li class="app-navigation-entry">
 		<ul class="app-navigation">
+			<li class="active app-navigation-entry button new"><span class="navmarg icon-add"></span><a id="showNewEventForm"><?php p($l->t('New event')); ?></a>
+				<div class="app-navigation-entry-utils"></div>
+			</li>
 			<li class="app-navigation-entry"><span class="navmarg icon-contacts-dark"></span><a class="a-entry" id="showByEmployees"><?php p($l->t('Employees')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>

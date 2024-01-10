@@ -31,13 +31,13 @@ class MyEvent
         $this->log = $logger;
         $this->myDb             = $myDb;
         $this->id               = $e['id'];
-        $this->dtStart          = $e["objects"][0]["DTSTART"][0]->modify('+ 1 minute')->format('Y-m-d H:i:s');
-        $this->dtEnd            = $e["objects"][0]["DTEND"][0]->modify('- 1 minute')->format('Y-m-d H:i:s');
+        $this->dtStart          = $e["objects"][0]["DTSTART"][0]?->modify('+ 1 minute')?->format('Y-m-d H:i:s');
+        $this->dtEnd            = $e["objects"][0]["DTEND"][0]?->modify('- 1 minute')?->format('Y-m-d H:i:s') ?? $this->dtStart;
         $this->nextcloud_users  = $this->getNameCalendar($this->id);
         $this->summary          = str_replace("@", "", $e["objects"][0]["SUMMARY"][0]);
 
         $tmp                    = $this->extractData(",", 0, $e["objects"][0]["SUMMARY"][0]);
-        if (count($tmp) > 0) {
+        if (!is_null($this->dtStart) && count($tmp) > 0) {
             $this->place = $tmp[0];
             if (count($tmp) >= 2) {
                 $this->place2 = $tmp[1];
@@ -48,7 +48,6 @@ class MyEvent
         } else {
             $this->valid = false;
         }
-
 
         preg_match_all("/D[0-9]{5}/", $this->summary, $this->quote);
     }
@@ -63,7 +62,7 @@ class MyEvent
         $res = $this->myDb->getCalendars($calendarsUid)[0]["principaluri"];
         $name = $this->myDb->getUID(str_replace("principals/users/", "", $res));
         $myObj = json_decode($name[0]['data']);
-        $parameters = $myObj->{'displayname'}->{'value'};
+        $parameters = $myObj->displayname->value;
         if (empty($parameters))
             $parameters = "Non affecté";
         return $parameters;

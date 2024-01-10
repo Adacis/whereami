@@ -1,0 +1,83 @@
+.form-wrapper {
+    color: var(--color-main-text);
+}
+
+.form-wrapper>div {
+    text-align: center;
+}
+
+.form-wrapper button {
+    background-color: var(--color-primary-default);
+    color: var(--color-primary-text);
+}
+
+.form-wrapper label {
+    margin-inline-end: 4px;
+    cursor: default;
+}
+
+.form-wrapper span {
+    margin-inline-end: 4px;
+}
+
+.form-wrapper input[type=date] {
+    min-width: 147px;
+}
+
+.form-wrapper input[type=checkbox] {
+    vertical-align: top;
+}
+
+select:invalid,
+select option[value=""] {
+    color: var(--color-placeholder-dark);
+}
+
+.form-wrapper span {
+    display: inline-block;
+    width: fit-content;
+}
+
+
+/* Round checkbox taken from internet */
+.round {
+    position: relative;
+}
+
+.round label {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 17px;
+    left: 0;
+    position: absolute;
+    top: 4px;
+    width: 17px;
+}
+
+.round label:after {
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 4px;
+    left: 3px;
+    opacity: 0;
+    position: absolute;
+    top: 3px;
+    transform: rotate(-45deg);
+    width: 7px;
+}
+
+.round input[type="checkbox"] {
+    visibility: hidden;
+}
+
+.round input[type="checkbox"]:checked+label {
+    background-color: var(--color-primary-default);
+}
+
+.round input[type="checkbox"]:checked+label:after {
+    opacity: 1;
+}

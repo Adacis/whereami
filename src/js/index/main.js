@@ -2,34 +2,56 @@ import { getData, lastSeen, retrieveData, getContracts } from '../module/xhr'
 import { getLoader, newTableHR } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
+import { getDateFirstOfMonth } from '../module/utils'
+import { BY_EMPLOYEE, BY_LOCATION, HR_SUMMARY, LAST_SEEN } from '../config/config'
+import { NewEventForm } from '../class/NewEventForm'
+
+function setButtonsMonths(bool) {
+  if (bool) {
+    document.getElementById('addOneMonth').removeAttribute('hidden')
+    document.getElementById('removeOneMonth').removeAttribute('hidden')
+    document.getElementsByClassName('setDates')[0].setAttribute('hidden', true)
+  }
+  else {
+    document.getElementById('addOneMonth').setAttribute('hidden', true)
+    document.getElementById('removeOneMonth').setAttribute('hidden', true)
+    document.getElementsByClassName('setDates')[0].removeAttribute('hidden')
+  }
+}
 
 function setDateUsual() {
+  setButtonsMonths(false)
+
   const toDay = new Date()
-  if (document.getElementById('HRsummary') != null || document.getElementById('seen') != null) {
+  if (document.getElementById(HR_SUMMARY) != null || document.getElementById(LAST_SEEN) != null) {
     document.getElementById('dtStart').valueAsDate = toDay
     toDay.setDate(toDay.getDate() + 14)
     document.getElementById('dtEnd').valueAsDate = toDay
   }
 }
 
-function setDateSummary() {
-  const toDay = new Date()
-  if (document.getElementById('HRsummary') === null) {
-    document.getElementById('dtEnd').valueAsDate = toDay
-    toDay.setDate(toDay.getDate() - 30)
-    document.getElementById('dtStart').valueAsDate = toDay
-  }
+function setDateSummary(diff = 0) {
+  setButtonsMonths(true)
+
+  let start = getDateFirstOfMonth(diff)
+  let end = getDateFirstOfMonth(1 + diff)
+  end.setMinutes(end.getMinutes() - 1)
+  document.getElementById('dtEnd').valueAsDate = end
+  document.getElementById('dtStart').valueAsDate = start
 }
 
 function setDateLastSeen() {
+  setButtonsMonths(false)
+
   const toDay = new Date()
-  if (document.getElementById('seen') === null) {
+  if (document.getElementById(LAST_SEEN) === null) {
     toDay.setDate(toDay.getDate())
     document.getElementById('dtEnd').valueAsDate = toDay
     toDay.setDate(toDay.getDate() - 35)
     document.getElementById('dtStart').valueAsDate = toDay
   }
 }
+
 
 function setDateContracts() {
   const toDay = new Date()
@@ -38,40 +60,86 @@ function setDateContracts() {
     toDay.setDate(toDay.getDate() - 30)
     document.getElementById('dtStart').valueAsDate = toDay
   }
+
+function initiateTableHRSummary(diff = 0) {
+  setDateSummary(diff)
+  document.getElementById('finalPath').innerText = "Summary"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  retrieveData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', newTableHR)
+  setHash(HR_SUMMARY)
 }
 
-window.addEventListener('click', e => {
+function showByEmployees() {
+  setDateUsual()
+  document.getElementById('finalPath').innerText = "Employees"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', BY_EMPLOYEE)
+  setHash(BY_EMPLOYEE)
+}
 
-  if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates')) && document.getElementById('byEmployee') != null) {
-    setDateUsual()
-    document.getElementById('finalPath').innerText = "Employees"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', 'byEmployee')
+/**
+ * Sets the hash part of the URL to allow staying on the same "page" when reloading.
+ */
+function setHash(hash) {
+  window.location.hash = hash
+}
+
+function showByLocations() {
+  setDateUsual()
+  document.getElementById('finalPath').innerText = "Locations"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', BY_LOCATION)
+  setHash(BY_LOCATION)
+}
+
+function showLastSeen() {
+  setDateLastSeen()
+  document.getElementById('finalPath').innerText = "Last Seen"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+  setHash(LAST_SEEN)
+}
+
+var form
+window.addEventListener('click', e => {
+  if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
+      showByEmployees();
   }
 
-  else if (e.target.id === 'showByLocations' || (document.getElementById('byLocation') != null && e.target.className.includes('setDates'))) {
-    setDateUsual()
-    document.getElementById('finalPath').innerText = "Locations"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'place', 'byLocation')
+  else if (e.target.id === 'showByLocations' || (document.getElementById(BY_LOCATION) != null && e.target.className.includes('setDates'))) {
+      showByLocations();
   }
 
   else if (e.target.id === 'showLastSeen' || (document.getElementById('seen') != null && e.target.className.includes('setDates'))) {
-    setDateLastSeen()
-    document.getElementById('finalPath').innerText = "Last Seen"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    lastSeen(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+      showLastSeen();
   }
 
-  else if (e.target.id === 'showHRSummary' || (document.getElementById('HRsummary') != null && e.target.className.includes('setDates'))) {
-    setDateSummary()
-    document.getElementById('finalPath').innerText = "Summary"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    retrieveData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', newTableHR)
+  else if (e.target.id === 'showHRSummary' || (document.getElementById(HR_SUMMARY) != null && e.target.className.includes('setDates'))) {
+    initiateTableHRSummary()
+  }
+
+  else if (e.target.id === 'addOneMonth') {
+    let realMonth = (new Date()).getMonth()
+    let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
+    initiateTableHRSummary(currentMonth - realMonth + 1)
+  }
+
+  else if (e.target.id === 'removeOneMonth') {
+    let realMonth = (new Date()).getMonth()
+    let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
+    initiateTableHRSummary(currentMonth - realMonth - 1)
+  }
+
+  else if (e.target.id === 'showNewEventForm') {
+    form = new NewEventForm()
+
+    document.getElementById('newEvent').style.display = 'block'
+    document.getElementById('modal-content-NewEvent').innerHTML = ''
+    document.getElementById('modal-content-NewEvent').appendChild(form.form)
   }
 
   else if(e.target.id === 'contracts' || (document.getElementById('Contracts') != null && e.target.className.includes('setDates'))) {
@@ -86,21 +154,30 @@ window.addEventListener('click', e => {
     document.getElementById('helper').style.display = 'block'
   } else if (e.target.className.includes('modalClose')) {
     e.target.parentElement.parentElement.style.display = 'none'
+    form = undefined
   }
 })
 
 window.addEventListener('DOMContentLoaded', function () {
+  setButtonsMonths(false)
   const toDay = new Date()
   document.getElementById('dtStart').valueAsDate = toDay
   toDay.setDate(toDay.getDate() + 14)
   document.getElementById('dtEnd').valueAsDate = toDay
 
   document.getElementById('myapp').appendChild(getLoader())
-  getData(document.getElementById('dtStart').value,
-    document.getElementById('dtEnd').value,
-    'nextcloud_users',
-    'byEmployee'
-  )
+  let toShow = showByEmployees;
+  if (window.location.hash) {
+    let loc = window.location.hash.substring(1);
+    if (loc == BY_LOCATION) {
+      toShow = showByLocations;
+    } else if (loc == HR_SUMMARY) {
+      toShow = showHRSummary;
+    } else if (loc == LAST_SEEN) {
+      toShow = showLastSeen;
+    }
+  }
+  toShow();
 })
 
 

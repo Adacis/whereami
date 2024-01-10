@@ -162,15 +162,22 @@ export class ListEvents {
    * @return {String}
    */
   getDateString(dtStart, dtEnd) {
-    let str1 = dtStart.toLocaleDateString('fr')
-    let str2 = dtEnd.toLocaleDateString('fr')
+    let str1 = dtStart.toLocaleDateString()
+    let str2 = dtEnd.toLocaleDateString()
     if (str1 === str2)
       return str1
     else
       return str1 + ' - ' + str2
   }
 
-  countTypeForUser(type) {
+  /**
+   * 
+   * @param {string} type 
+   * @param {Date} periodStart 
+   * @param {Date} periodEnd 
+   * @returns 
+   */
+  countTypeForUser(type, periodStart, periodEnd) {
     const myCell = document.createElement('td')
     let res = 0
     let title = ''
@@ -186,8 +193,16 @@ export class ListEvents {
       var tmp = 0
       ar.forEach(place => {
         if ((place.toLowerCase() === type.toLowerCase() || type.toLowerCase() === 'total')) {
-          const dtStart = new Date(e.dtStart)
-          const dtEnd = new Date(e.dtEnd)
+          let dtStart = new Date(e.dtStart)
+          let dtEnd = new Date(e.dtEnd)
+          // if event overflows, clamp to current period
+          if (dtStart < periodStart)
+            dtStart = periodStart
+
+          if (dtEnd > periodEnd)
+            dtEnd = periodEnd
+
+
           let dateString = this.getDateString(dtStart, dtEnd)
           if (fullDay && tmp == 0) {
             title += dateString + '\n'

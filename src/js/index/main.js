@@ -1,4 +1,4 @@
-import { getData, lastSeen, retrieveData } from '../module/xhr'
+import { getData, lastSeen, retrieveData, getContracts } from '../module/xhr'
 import { getLoader, newTableHR } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
@@ -52,6 +52,15 @@ function setDateLastSeen() {
   }
 }
 
+
+function setDateContracts() {
+  const toDay = new Date()
+  if (document.getElementById('contracts') === null) {
+    document.getElementById('dtEnd').valueAsDate = toDay
+    toDay.setDate(toDay.getDate() - 30)
+    document.getElementById('dtStart').valueAsDate = toDay
+  }
+
 function initiateTableHRSummary(diff = 0) {
   setDateSummary(diff)
   document.getElementById('finalPath').innerText = "Summary"
@@ -97,7 +106,6 @@ function showLastSeen() {
 
 var form
 window.addEventListener('click', e => {
-
   if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
       showByEmployees();
   }
@@ -132,6 +140,14 @@ window.addEventListener('click', e => {
     document.getElementById('newEvent').style.display = 'block'
     document.getElementById('modal-content-NewEvent').innerHTML = ''
     document.getElementById('modal-content-NewEvent').appendChild(form.form)
+  }
+
+  else if(e.target.id === 'contracts' || (document.getElementById('Contracts') != null && e.target.className.includes('setDates'))) {
+    setDateContracts()
+    document.getElementById('finalPath').innerText = "Contracts"
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(getLoader())
+    getContracts(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
 
   else if (e.target.className.includes('helper')) {

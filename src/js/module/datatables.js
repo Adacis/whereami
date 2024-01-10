@@ -47,6 +47,61 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
     }
 }
 
+export function newTableContracts(response) {
+    const res = JSON.parse(response)
+    var totalPeople = 1, totalContracts = 1
+
+    const table = document.createElement('table')
+    table.setAttribute('id', 'contracts')
+    table.setAttribute('class', 'table table-striped')
+
+    let thead = document.createElement('thead')
+    let tbody = document.createElement('tbody')
+
+    const headLine = document.createElement('tr')
+    headLine.appendChild(newCell('th', ""))
+
+    res.contracts.forEach(contract => {
+        let th = newCell('th', contract);
+        headLine.appendChild(th);
+        totalContracts++;
+    })
+    Object.keys(res.userByContract).forEach(user => {
+        var newLine = document.createElement('tr');
+        let tr = newCell('td', user);
+        newLine.appendChild(tr);
+        tbody.appendChild(newLine);
+        totalPeople++;
+    })
+
+    thead.appendChild(headLine);
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    //
+    let rows = 0;
+    table.rows.forEach(r => {
+        if (rows > 0) {
+            let peoplerow = r.cells[0].innerText;
+            for (var cellPosition = 1; cellPosition < totalContracts; cellPosition++) {
+
+                let contractcolumn = table.rows[0].cells[cellPosition].innerText
+
+                let msg = 0;
+                if(res.userByContract[peoplerow][contractcolumn] != null)
+                    msg = res.userByContract[peoplerow][contractcolumn];
+
+                let newCell = r.insertCell(cellPosition)
+                let newText = document.createTextNode(msg)
+                newCell.appendChild(newText)
+            }
+        }
+        rows++;
+    })
+
+    document.getElementById('myapp').innerHTML = ''
+    document.getElementById('myapp').appendChild(table)
+}
 
 export function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
@@ -245,10 +300,10 @@ function getTotal(tbody) {
  * @returns
  */
 function newCell(type, data, style = '') {
-    const myCase = document.createElement(type)
-    myCase.setAttribute('style', style)
-    myCase.innerText = data
-    return myCase
+    const myCell = document.createElement(type)
+    myCell.setAttribute('style', style)
+    myCell.innerText = data
+    return myCell
 }
 
 /**

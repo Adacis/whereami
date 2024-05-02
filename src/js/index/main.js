@@ -60,6 +60,7 @@ function setDateContracts() {
     toDay.setDate(toDay.getDate() - 30)
     document.getElementById('dtStart').valueAsDate = toDay
   }
+}
 
 function initiateTableHRSummary(diff = 0) {
   setDateSummary(diff)

@@ -22,11 +22,11 @@ export function getLoader() {
 
 
 /**
- * Fills the title and inner with the icons. For table byEmployee, adds an event 
+ * Fills the title and inner with the icons. For table byEmployee, adds an event
  * listenner to redirect to byLocation on click on the key's place
- * @param {HTMLBaseElement} element 
- * @param {Array} icons 
- * @param {boolean} tablePersonne 
+ * @param {HTMLBaseElement} element
+ * @param {Array} icons
+ * @param {boolean} tablePersonne
  */
 function setTitleWithIcons(element, icons, tablePersonne = false) {
     for (let dic of icons) {
@@ -61,12 +61,12 @@ export function newTableContracts(response) {
     const headLine = document.createElement('tr')
     headLine.appendChild(newCell('th', ""))
 
-    res.contracts.forEach(contract => {
+    Array.from(res.contracts).forEach(contract => {
         let th = newCell('th', contract);
         headLine.appendChild(th);
         totalContracts++;
     })
-    Object.keys(res.userByContract).forEach(user => {
+    Array.from(Object.keys(res.userByContract)).forEach(user => {
         var newLine = document.createElement('tr');
         let tr = newCell('td', user);
         newLine.appendChild(tr);
@@ -80,7 +80,7 @@ export function newTableContracts(response) {
 
     //
     let rows = 0;
-    table.rows.forEach(r => {
+    Array.from(table.rows).forEach(r => {
         if (rows > 0) {
             let peoplerow = r.cells[0].innerText;
             for (var cellPosition = 1; cellPosition < totalContracts; cellPosition++) {
@@ -119,7 +119,7 @@ export function newTableSeen(response, dtStart, dtEnd) {
     const headLine = document.createElement('tr')
     headLine.appendChild(newCell('th', ""))
 
-    Object.keys(res).forEach(person => {
+    Array.from(Object.keys(res)).forEach(person => {
         let th = newCell('th', person);
         headLine.appendChild(th);
 
@@ -138,7 +138,7 @@ export function newTableSeen(response, dtStart, dtEnd) {
     let icons = getAllIcons().onload();
     let groupedIcons = groupBy(icons, 'person');
     let rows = 0;
-    table.rows.forEach(r => {
+    Array.from(table.rows).forEach(r => {
         if (rows > 0) {
             let peoplerow = r.cells[0].innerText;
             for (var cellPosition = 1; cellPosition < totalPeople; cellPosition++) {
@@ -231,7 +231,7 @@ export function newTablePersonne(response, dtStart, dtEnd, tablename) {
     if (tablename === BY_LOCATION)
         whitelistKeys = getTags(ACCOUNTED_FOR_KEYS).onload().map(element => element.word.toLowerCase())
 
-    Object.keys(res).forEach(element => {
+    Array.from(Object.keys(res)).forEach(element => {
         let from = new Date(dtStart)
         const userListEvents = new ListEvents(element, res[element])
         if (tablename === BY_LOCATION) {
@@ -272,7 +272,7 @@ function getTotal(tbody) {
     for (let i = 1; i < totalColumn; i++) {
         let totalByDay = 0
         let totalByDay2 = 0
-        tbody.getElementsByTagName('tr').forEach(element => {
+        Array.from(tbody.getElementsByTagName('tr')).forEach(element => {
             let mainDiv = element.getElementsByTagName('td')[i].children[0]
             totalByDay += parseInt(mainDiv.firstChild.innerText)
             if (mainDiv.children.length === 2)
@@ -328,12 +328,12 @@ function getHeader(from, to, tablePersonne = false) {
 
 /**
  * Creates an 'tr' element with given values
- * @param {Array} values 
- * @returns 
+ * @param {Array} values
+ * @returns
  */
 function getHeaderWithValues(values) {
     const line = document.createElement('tr')
-    values.forEach(value => {
+    Array.from(values).forEach(value => {
         line.appendChild(newCell('th', value))
     })
     return line
@@ -366,7 +366,7 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
         placeIsExcluded = !whitelistKeys.includes(userListEvents.id)
 
     let counter = 0
-    headerLine.children.forEach(elem => {
+    Array.from(headerLine.children).forEach(elem => {
         if (counter >= startIndex) {
             let value
             if (type === BY_EMPLOYEE || type === BY_LOCATION) {
@@ -398,9 +398,9 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
 
 
 /**
- * 
- * @param {Array} dataSent 
- * @param {*} response 
+ *
+ * @param {Array} dataSent
+ * @param {*} response
  */
 export function newTableHR(dataSent, response) {
     const tableName = HR_SUMMARY

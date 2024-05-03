@@ -1,6 +1,6 @@
 import moment from "moment"
 /**
- * 
+ *
  * @param {int} diff added to the month number (-2 months from today for example)
  * @return
  */
@@ -12,7 +12,7 @@ export function getDateFirstOfMonth(diff = 0) {
 
 /**
  * Adds options to a select field
- * @param {Array} opts 
+ * @param {Array} opts
  */
 HTMLSelectElement.prototype.populate = function (opts, values = null) {
     if (values === null)
@@ -25,9 +25,9 @@ HTMLSelectElement.prototype.populate = function (opts, values = null) {
 
 /**
  * creates the element tagName with the fields of options
- * @param {string} tagName 
- * @param {Array} options 
- * @returns 
+ * @param {string} tagName
+ * @param {Array} options
+ * @returns
  */
 Document.prototype.createElementOptions = function (tagName, options = null) {
     let elem = this.createElement(tagName)
@@ -40,9 +40,9 @@ Document.prototype.createElementOptions = function (tagName, options = null) {
 }
 
 /**
- * 
- * @param {HTMLElement} element 
- * @param {Array<HTMLElement>} children 
+ *
+ * @param {HTMLElement} element
+ * @param {Array<HTMLElement>} children
  */
 export function appendChildren(element, children) {
     children.forEach(child => {
@@ -65,7 +65,7 @@ export function toFloatingString(date) {
 
 /**
  * Creates a random string Id (taken from : https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript)
- * @param {int} length 
+ * @param {int} length
  * @returns {string}
  */
 export function makeid(length) {
@@ -81,8 +81,8 @@ export function makeid(length) {
 
 /**
  * Test if the given date is a sundat or a saturday
- * @param {Date} date 
- * @returns 
+ * @param {Date} date
+ * @returns
  */
 export function isWeekendDay(date) {
     return date.getDay() === 0 || date.getDay() === 6

@@ -233,8 +233,8 @@ export class NewEventForm {
 
     /**
      * We do not want to create events over the weekend, so we split the event to remove them
-     * @param {Date} dtStart 
-     * @param {Date} dtEnd 
+     * @param {Date} dtStart
+     * @param {Date} dtEnd
      */
     createEvents(dtStart, dtEnd) {
         let res = []

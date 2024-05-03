@@ -157,8 +157,8 @@ export class ListEvents {
 
   /**
    * Returns the interval between dtStart and dtEnd as a string
-   * @param {Date} dtStart 
-   * @param {Date} dtEnd 
+   * @param {Date} dtStart
+   * @param {Date} dtEnd
    * @return {String}
    */
   getDateString(dtStart, dtEnd) {
@@ -171,11 +171,11 @@ export class ListEvents {
   }
 
   /**
-   * 
-   * @param {string} type 
-   * @param {Date} periodStart 
-   * @param {Date} periodEnd 
-   * @returns 
+   *
+   * @param {string} type
+   * @param {Date} periodStart
+   * @param {Date} periodEnd
+   * @returns
    */
   countTypeForUser(type, periodStart, periodEnd) {
     const myCell = document.createElement('td')

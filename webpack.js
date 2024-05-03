@@ -12,7 +12,7 @@ module.exports =
         filename: '../js/[name].app.js',
       },
       optimization: {
-        minimize: true
+        minimize: false
       },
       module: {
         rules: [

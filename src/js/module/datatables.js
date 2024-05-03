@@ -319,7 +319,10 @@ function getHeader(from, to, tablePersonne = false) {
     if (tablePersonne)
         line.appendChild(newCell('th', 'Clés'))
     while (from <= to) {
-        line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
+        // If the day is a Saturday (5) or a Sunday(6), we don't count it
+        if (from.getDay() <= 4) {
+            line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
+        }
         from.setDate(from.getDate() + 1)
     }
     return line

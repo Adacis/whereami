@@ -2,8 +2,8 @@ import { Events } from './Event';
 import { groupBy } from 'lodash/collection';
 
 
-export const days = ['sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'saturday']
-export const daysFr = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+export const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+export const daysFr = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']
 
 /**
  *

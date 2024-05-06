@@ -188,8 +188,8 @@ export function lastSeen(dtStart, dtEnd) {
 
 /**
  * Get icons corresponding to person, with label if given
- * @param {string} person 
- * @param {string} label 
+ * @param {string} person
+ * @param {string} label
  */
 export function getIcons(person, label = "") {
   const data = {
@@ -372,9 +372,9 @@ export function getCalendars() {
 }
 
 /**
- * 
- * @param {Date} dtStart 
- * @param {Date} dtEnd 
+ *
+ * @param {Date} dtStart
+ * @param {Date} dtEnd
  */
 export function isTimeSlotAvailable(dtStart, dtEnd) {
   const data = {

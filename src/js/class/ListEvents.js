@@ -2,8 +2,8 @@ import { Events } from './Event';
 import { groupBy } from 'lodash/collection';
 
 
-export const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-export const daysFr = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']
+export const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+export const daysFr = ['Dimanche','Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 
 /**
  *
@@ -47,10 +47,7 @@ export class ListEvents {
       }
     })
 
-    if (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday') {
-      myCell.setAttribute('style', 'background-color: var(--color-box-shadow);')
-      res = ''
-    } else if (!found) {
+    if (!found) {
       myCell.setAttribute('style', 'background-color: yellow; color: #222;')
       res += 'shame'
     }

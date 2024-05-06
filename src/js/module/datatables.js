@@ -47,9 +47,57 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
     }
 }
 
-export function newTableContracts(response) {
-    const res = JSON.parse(response)
-    var totalPeople = 1, totalContracts = 1
+const tableData =
+`{
+    "contracts": {
+      "D12345": {
+        "admin": {
+          "2024-05-17": 1.0,
+          "2024-05-18": 1.0
+        }
+      },
+      "D32345": {
+        "admin": {
+          "2024-05-17": 1.0
+        }
+      }
+    },
+    "userByContract": {
+      "D12345": {
+        "admin": 2.0
+      },
+      "D32345": {
+        "admin": 1.0
+      }
+    }
+  }`;
+
+/**
+ * Generates an HTML table displaying contract data based on the provided JSON response.
+ * The JSON response should contain contracts and user data in the specified format.
+ *
+ * @param {string} response - The JSON response containing contracts and user data.
+ * Format:
+ * {
+ *   "contracts": {
+ *     "ContractID": {
+ *       "ContractType": {
+ *         "Date": Value
+ *       }
+ *     },
+ *     ...
+ *   },
+ *   "userByContract": {
+ *     "ContractID": {
+ *       "ContractType": TotalValue,
+ *       ...
+ *     },
+ *     ...
+ *   }
+ * }
+ */
+export function newTableContracts(tableD) {
+    const res = JSON.parse(tableD)
 
     const table = document.createElement('table')
     table.setAttribute('id', 'contracts')
@@ -61,46 +109,56 @@ export function newTableContracts(response) {
     const headLine = document.createElement('tr')
     headLine.appendChild(newCell('th', ""))
 
-    Array.from(res.contracts).forEach(contract => {
-        let th = newCell('th', contract);
-        headLine.appendChild(th);
-        totalContracts++;
-    })
-    Array.from(Object.keys(res.userByContract)).forEach(user => {
-        var newLine = document.createElement('tr');
-        let tr = newCell('td', user);
-        newLine.appendChild(tr);
-        tbody.appendChild(newLine);
-        totalPeople++;
-    })
+    //Add contracts as column headers
+    Object.keys(res.contracts).forEach(contractKey => {
+        const contractData = res.contracts[contractKey];
+        const contractName = Object.keys(contractData)[0];
+        headLine.appendChild(newCell('th', contractName));
+    });
 
     thead.appendChild(headLine);
     table.appendChild(thead);
+
+    //Add users and their data
+    Object.keys(res.userByContract).forEach(userKey => {
+        const userContracts = res.userByContract[userKey];
+        const userRow = document.createElement('tr');
+        userRow.appendChild(newCell('td', userKey));
+
+        //Add contracts data for this user
+        Object.keys(res.contracts).forEach(contractKey => {
+            const contractData = res.contracts[contractKey];
+            const contractName = Object.keys(contractData)[0];
+            const contractValue = userContracts[contractName] || 0;
+            userRow.appendChild(newCell('td', contractValue));
+        });
+
+        tbody.appendChild(userRow);
+    });
+
+
+    //Add users and their data
+    Object.keys(res.userByContract).forEach(userKey => {
+        const userContracts = res.userByContract[userKey];
+        const userRow = document.createElement('tr');
+        userRow.appendChild(newCell('td', userKey));
+
+        //Add contracts data for this user
+        Object.keys(res.contracts).forEach(contractKey => {
+            const contractData = res.contracts[contractKey];
+            const contractName = Object.keys(contractData)[0];
+            const contractValue = userContracts[contractName] || 0;
+            userRow.appendChild(newCell('td', contractValue));
+        });
+
+        tbody.appendChild(userRow);
+    });
+
     table.appendChild(tbody);
 
-    //
-    let rows = 0;
-    Array.from(table.rows).forEach(r => {
-        if (rows > 0) {
-            let peoplerow = r.cells[0].innerText;
-            for (var cellPosition = 1; cellPosition < totalContracts; cellPosition++) {
-
-                let contractcolumn = table.rows[0].cells[cellPosition].innerText
-
-                let msg = 0;
-                if(res.userByContract[peoplerow][contractcolumn] != null)
-                    msg = res.userByContract[peoplerow][contractcolumn];
-
-                let newCell = r.insertCell(cellPosition)
-                let newText = document.createTextNode(msg)
-                newCell.appendChild(newText)
-            }
-        }
-        rows++;
-    })
-
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(table)
+    const myappElement = document.getElementById('myapp');
+    myappElement.innerHTML = '';
+    myappElement.appendChild(table);
 }
 
 export function newTableSeen(response, dtStart, dtEnd) {

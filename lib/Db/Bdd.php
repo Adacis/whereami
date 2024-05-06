@@ -52,7 +52,7 @@ class Bdd
 
     /**
      * Insert a word in table wordlist
-     * @word 
+     * @word
      * @usage
      */
     public function insertWordInWordList($word, $usage)
@@ -62,7 +62,7 @@ class Bdd
         return true;
     }
 
-    /** 
+    /**
      * Delete word from table wordlist
      * @word
      * @usage
@@ -73,7 +73,7 @@ class Bdd
         $this->execSQLNoData($sql, array($word, $usage));
     }
 
-    /** 
+    /**
      * Delete word from table wordlist
      * @word
      * @usage

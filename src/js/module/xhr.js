@@ -153,13 +153,13 @@ export function getContracts(dtStart, dtEnd) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(this.response);
       newTableContracts(this.response);
       new DataTable('#contracts', optionDatatable1);
     } else {
       showError(this.response);
     }
   }
+  console.log(JSON.stringify(data))
   oReq.send(JSON.stringify(data));
 }
 
@@ -425,3 +425,4 @@ export function registerNewEvent(event, calendar) {
   oReq.send(data)
   return oReq;
 }
+

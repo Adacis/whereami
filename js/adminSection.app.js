@@ -64392,8 +64392,6 @@ function getHeader(from, to, tablePersonne = false) {
     while (from <= to) {
         // If the day is a Saturday (5) or a Sunday(6), we don't count it
         if (from.getDay() <= 4) {
-            console.log(from)
-            console.log(from.getDay())
             line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
         }
         from.setDate(from.getDate() + 1)
@@ -64795,6 +64793,7 @@ function getContracts(dtStart, dtEnd) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
+      console.log('saucisse');
       console.log(this.response);
       newTableContracts(this.response);
       new DataTable('#contracts', xhr_optionDatatable1);

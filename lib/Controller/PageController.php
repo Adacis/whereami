@@ -78,48 +78,48 @@ class PageController extends Controller
 		);
 	}
 
-	public function getContracts(String $dtStart, String $dtEnd)
-	{
-		$events = [];
-		$contracts = [];
-		$charReplace = "@";
+    /**
+     * @param string $dtStart
+     * @param string $dtEnd
+     */
+    public function getContracts(String $dtStart, String $dtEnd)
+    {
+        // Fetch data from the database
+        $result = $this->myDb->getContracts($dtStart, $dtEnd);
 
-		$toExclude = $this->myDb->getWordInWordList("excluded_places");
-		$toExclude = $this->arrayFromWordQuery($toExclude);
+        // Initialize arrays to store contracts and users per contract
+        $contracts = [];
+        $userByContracts = [];
 
-		//Récupération de la liste des événements sur la période
-		foreach ($this->search($dtStart, $dtEnd) as $c) {
-			$e = new MyEvent($c, $this->myDb, $this->logger);
+        // Loop through the results and aggregate data by contract and user
+        foreach ($result as $r) {
+            $contractValue = $r['nb_contract'];
+            $username = strtolower($r['username']);
+            $acrValue = $r['activity_report_value'];
+            $acrDate = $r['activity_report_date'];
 
-			if (!$e->valid) {
-				continue;
-			}
+            // Aggregate  for contract and user
+            $contracts[$contractValue][$username][] = [
+                'date_cra' => $acrDate,
+                'ac' => $acrValue
+            ];
 
-			$cls = strtolower($e->{"nextcloud_users"});
-			$cls = trim(str_replace($charReplace, "", $cls));
-			$cls = explode(",", $cls)[0];
-			$cls = trim($cls);
+            // Aggregate the total activity report per user for each contract.
+            if (!isset($userByContracts[$contractValue][$username])) {
+                $userByContracts[$contractValue][$username] = 0.0;
+            }
+            $userByContracts[$contractValue][$username] += $acrValue;
+        }
 
-			if(isset($e->quote))
-			{
-				array_push($events, $e);
-				array_push($contracts, $e->quote);
-			}
-		}
-		$listContracts = [];
-		foreach ($events as $e) {
-			$user = strtolower($e->nextcloud_users);
-			if (!array_key_exists($user, $listContracts)) {
-				$listContracts[$user] = [];
-			}
+        // Return aggregated data as a JSON response
+        return new DataResponse([
+            'contracts' => $contracts,
+            'userByContract' => $userByContracts
+        ], 200, ['Content-Type' => 'application/json']);
+    }
 
-			$listContracts[$user] = $e->parseListContracts($contracts, $listContracts[$user], $events, $user);
-		}
-		ksort($listContracts, SORT_STRING);
-		return new DataResponse(['contracts' => $contracts, 'userByContract' => $listContracts], 200, ['Content-Type' => 'application/json']);
-	}
 
-	/**
+    /**
 	 * @NoAdminRequired
 	 * @param string $dtStart
 	 * @param string $dtEnd

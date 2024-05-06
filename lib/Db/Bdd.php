@@ -214,7 +214,7 @@ class Bdd
                         AND FROM_UNIXTIME(oc.firstoccurence) BETWEEN ? AND ?
                 ) sr
                 GROUP BY 
-                    value, user, first_occurence";
+                    value, username, first_occurence";
         return $this->execSQLNoJsonReturn($sql, array($dtStart, $dtEnd));
     }
 

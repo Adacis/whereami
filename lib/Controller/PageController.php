@@ -101,7 +101,7 @@ class PageController extends Controller
             // Aggregate  for contract and user
             $contracts[$contractValue][$username][] = [
                 'date_cra' => $acrDate,
-                'ac' => $acrValue
+                'acr' => $acrValue
             ];
 
             // Aggregate the total activity report per user for each contract.

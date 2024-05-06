@@ -64860,7 +64860,6 @@ function getContracts(dtStart, dtEnd) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log('saucisse');
       console.log(this.response);
       newTableContracts(this.response);
       new (dataTables_bootstrap_min_default())('#contracts', optionDatatable1);

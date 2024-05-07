@@ -47,30 +47,6 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
     }
 }
 
-const tableData =
-`{
-    "contracts": {
-      "D12345": {
-        "admin": {
-          "2024-05-17": 1.0,
-          "2024-05-18": 1.0
-        }
-      },
-      "D32345": {
-        "admin": {
-          "2024-05-17": 1.0
-        }
-      }
-    },
-    "userByContract": {
-      "D12345": {
-        "admin": 2.0
-      },
-      "D32345": {
-        "admin": 1.0
-      }
-    }
-  }`;
 
 /**
  * Generates an HTML table displaying contract data based on the provided JSON response.
@@ -96,20 +72,23 @@ const tableData =
  *   }
  * }
  */
-export function newTableContracts(tableD) {
-    const res = JSON.parse(tableD)
+export function newTableContracts(response) {
+    const res = JSON.parse(response);
+    console.log(response)
 
-    const table = document.createElement('table')
-    table.setAttribute('id', 'contracts')
-    table.setAttribute('class', 'table table-striped')
+    const table = document.createElement('table');
+    table.setAttribute('id', 'contracts');
+    table.setAttribute('class', 'table table-striped');
 
-    let thead = document.createElement('thead')
-    let tbody = document.createElement('tbody')
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+    let tfoot = document.createElement('tfoot');
 
-    const headLine = document.createElement('tr')
-    headLine.appendChild(newCell('th', ""))
+    // Create a headline with contracts names
+    const headLine = document.createElement('tr');
+    headLine.appendChild(newCell('th', 'Employees')); // Header for employees column
 
-    //Add contracts as column headers
+    // Add each contract name to the headline
     Object.keys(res.contracts).forEach(contractKey => {
         const contractData = res.contracts[contractKey];
         const contractName = Object.keys(contractData)[0];
@@ -117,49 +96,35 @@ export function newTableContracts(tableD) {
     });
 
     thead.appendChild(headLine);
+
+    // Add each employee and their data
+    Object.keys(res.userByContract).forEach(userKey => {
+        const userContracts = res.userByContract[userKey];
+        const userRow = document.createElement('tr');
+        userRow.appendChild(newCell('td', userKey)); // Add employee name in the first column
+
+        // Add contract data for this employee
+        Object.keys(res.contracts).forEach(contractKey => {
+            const contractData = res.contracts[contractKey];
+            const contractName = Object.keys(contractData)[0];
+            const contractValue = userContracts[contractName] || 0;
+            userRow.appendChild(newCell('td', contractValue));
+        });
+
+        tbody.appendChild(userRow);
+    });
+
     table.appendChild(thead);
-
-    //Add users and their data
-    Object.keys(res.userByContract).forEach(userKey => {
-        const userContracts = res.userByContract[userKey];
-        const userRow = document.createElement('tr');
-        userRow.appendChild(newCell('td', userKey));
-
-        //Add contracts data for this user
-        Object.keys(res.contracts).forEach(contractKey => {
-            const contractData = res.contracts[contractKey];
-            const contractName = Object.keys(contractData)[0];
-            const contractValue = userContracts[contractName] || 0;
-            userRow.appendChild(newCell('td', contractValue));
-        });
-
-        tbody.appendChild(userRow);
-    });
-
-
-    //Add users and their data
-    Object.keys(res.userByContract).forEach(userKey => {
-        const userContracts = res.userByContract[userKey];
-        const userRow = document.createElement('tr');
-        userRow.appendChild(newCell('td', userKey));
-
-        //Add contracts data for this user
-        Object.keys(res.contracts).forEach(contractKey => {
-            const contractData = res.contracts[contractKey];
-            const contractName = Object.keys(contractData)[0];
-            const contractValue = userContracts[contractName] || 0;
-            userRow.appendChild(newCell('td', contractValue));
-        });
-
-        tbody.appendChild(userRow);
-    });
-
     table.appendChild(tbody);
-
-    const myappElement = document.getElementById('myapp');
-    myappElement.innerHTML = '';
-    myappElement.appendChild(table);
+    table.appendChild(tfoot);
+    document.getElementById('myapp').innerHTML = '';
+    document.getElementById('myapp').appendChild(table);
 }
+
+
+
+
+
 
 export function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)

@@ -7,7 +7,7 @@
   width: 230px;
 }
 
-.app-navigation-entry {
+.app-navigation-entry-link {
   margin-left: 0px;
 }
 
@@ -20,6 +20,16 @@
   outline: none;
   padding-top: 0px;
   padding-bottom: 0px;
+}
+
+.app-title {
+  margin-left:15px;
+  margin-top:10px;
+}
+
+.btn-new-event {
+  display:flex;
+  align-items:center;
 }
 
 /* #content {

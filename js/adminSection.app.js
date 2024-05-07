@@ -64168,18 +64168,21 @@ function datatables_newTableContracts(response) {
     // Iterate over each contract
     Object.keys(res.contracts).forEach(contractKey => {
         const contractData = res.contracts[contractKey];
-        const contractName = Object.keys(contractData)[0];
-
+        const userName = Object.keys(contractData)[0];
         // Iterate over each employee
-        Object.keys(res.userByContract).forEach(userKey => {
-            const contractCount = res.userByContract[userKey][contractName] || 0;
-
+        Object.keys(res.userByContract).forEach(contractKey => {
+            const contractCount = res.userByContract[contractKey][userName] || 0;
             // Add contract value to employee's contract array
-            if (!employeeContracts[userKey]) {
-                employeeContracts[userKey] = [];
+            if (!employeeContracts[contractKey]) {
+                employeeContracts[contractKey] = [];
             }
-
-            employeeContracts[userKey].push(contractCount);
+            //If employeeContractcs[contractKey] not contains userName, add it
+            if (!employeeContracts[contractKey].some(e => e.user === userName)){
+                employeeContracts[contractKey].push({
+                    user: userName,
+                    count: contractCount
+                });
+            }
         });
     });
 
@@ -64193,12 +64196,15 @@ function datatables_newTableContracts(response) {
 
         if (!userPresent.includes(userName)) {
         contractRow.appendChild(newCell('td', userName)); // Add employee in the first row
-        // Add contract counts for each employee
-        Object.keys(res.userByContract).forEach(userKey => {
-            const contractCounts = employeeContracts[userKey];
-            const contractCount = contractCounts ? contractCounts.shift() || 0 : 0;
-            contractRow.appendChild(newCell('td', contractCount));
-        });
+            // Add each time the employee was present for each contract
+            for (const key in employeeContracts) {
+                for(let i = 0; i < employeeContracts[key].length; i++){
+                    if(employeeContracts[key][i].user === userName) {
+                        contractRow.appendChild(newCell('td', employeeContracts[key][i].count));
+                    }
+                }
+
+            }
 
             tbody.appendChild(contractRow);
             userPresent.push(userName);

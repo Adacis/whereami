@@ -3,8 +3,15 @@ import { getLoader, newTableHR } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 import { getDateFirstOfMonth } from '../module/utils'
-import { BY_EMPLOYEE, BY_LOCATION, HR_SUMMARY, LAST_SEEN } from '../config/config'
+import { BY_EMPLOYEE, BY_LOCATION, HR_SUMMARY, LAST_SEEN, CONTRACTS } from '../config/config'
 import { NewEventForm } from '../class/NewEventForm'
+
+/**
+ * set function
+ */
+function setHash(hash) {
+  window.location.hash = hash
+}
 
 function setButtonsMonths(bool) {
   if (bool) {
@@ -40,6 +47,7 @@ function setDateSummary(diff = 0) {
   document.getElementById('dtStart').valueAsDate = start
 }
 
+
 function setDateLastSeen() {
   setButtonsMonths(false)
 
@@ -52,7 +60,6 @@ function setDateLastSeen() {
   }
 }
 
-
 function setDateContracts() {
   const toDay = new Date()
   if (document.getElementById('contracts') === null) {
@@ -62,7 +69,11 @@ function setDateContracts() {
   }
 }
 
-function initiateTableHRSummary(diff = 0) {
+/**
+ * Show function
+ */
+
+function showHRSummary(diff = 0) {
   setDateSummary(diff)
   document.getElementById('finalPath').innerText = "Summary"
   document.getElementById('myapp').innerHTML = ''
@@ -78,13 +89,6 @@ function showByEmployees() {
   document.getElementById('myapp').appendChild(getLoader())
   getData(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, 'nextcloud_users', BY_EMPLOYEE)
   setHash(BY_EMPLOYEE)
-}
-
-/**
- * Sets the hash part of the URL to allow staying on the same "page" when reloading.
- */
-function setHash(hash) {
-  window.location.hash = hash
 }
 
 function showByLocations() {
@@ -105,34 +109,51 @@ function showLastSeen() {
   setHash(LAST_SEEN)
 }
 
+function showContracts(){
+  setDateContracts()
+  document.getElementById('finalPath').innerText = "Contracts"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  getContracts(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
+  setHash(CONTRACTS)
+}
+
+/**
+ * Event Listeners
+ */
+
 var form
 window.addEventListener('click', e => {
   if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
-      showByEmployees();
+    showByEmployees();
   }
 
   else if (e.target.id === 'showByLocations' || (document.getElementById(BY_LOCATION) != null && e.target.className.includes('setDates'))) {
-      showByLocations();
+    showByLocations();
   }
 
-  else if (e.target.id === 'showLastSeen' || (document.getElementById('seen') != null && e.target.className.includes('setDates'))) {
-      showLastSeen();
+  else if (e.target.id === 'showLastSeen' || (document.getElementById(LAST_SEEN) != null && e.target.className.includes('setDates'))) {
+    showLastSeen();
   }
 
   else if (e.target.id === 'showHRSummary' || (document.getElementById(HR_SUMMARY) != null && e.target.className.includes('setDates'))) {
-    initiateTableHRSummary()
+    showHRSummary();
+  }
+
+  else if (e.target.id === 'showContracts' || (document.getElementById(CONTRACTS) != null && e.target.className.includes('setDates'))) {
+    showContracts();
   }
 
   else if (e.target.id === 'addOneMonth') {
     let realMonth = (new Date()).getMonth()
     let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
-    initiateTableHRSummary(currentMonth - realMonth + 1)
+    showHRSummary(currentMonth - realMonth + 1)
   }
 
   else if (e.target.id === 'removeOneMonth') {
     let realMonth = (new Date()).getMonth()
     let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
-    initiateTableHRSummary(currentMonth - realMonth - 1)
+    showHRSummary(currentMonth - realMonth - 1)
   }
 
   else if (e.target.id === 'showNewEventForm') {
@@ -141,14 +162,6 @@ window.addEventListener('click', e => {
     document.getElementById('newEvent').style.display = 'block'
     document.getElementById('modal-content-NewEvent').innerHTML = ''
     document.getElementById('modal-content-NewEvent').appendChild(form.form)
-  }
-
-  else if(e.target.id === 'contracts' || (document.getElementById('Contracts') != null && e.target.className.includes('setDates'))) {
-    setDateContracts()
-    document.getElementById('finalPath').innerText = "Contracts"
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(getLoader())
-    getContracts(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   }
 
   else if (e.target.className.includes('helper')) {
@@ -176,6 +189,8 @@ window.addEventListener('DOMContentLoaded', function () {
       toShow = showHRSummary;
     } else if (loc == LAST_SEEN) {
       toShow = showLastSeen;
+    } else if (loc== CONTRACTS) {
+      toShow = showContracts;
     }
   }
   toShow();

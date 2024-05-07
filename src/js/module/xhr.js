@@ -153,13 +153,13 @@ export function getContracts(dtStart, dtEnd) {
   oReq.setRequestHeader('requesttoken', OC.requestToken)
   oReq.onload = function (e) {
     if (this.status === 200) {
-      console.log(this.response);
       newTableContracts(this.response);
       new DataTable('#contracts', optionDatatable1);
     } else {
       showError(this.response);
     }
   }
+  console.log(JSON.stringify(data))
   oReq.send(JSON.stringify(data));
 }
 
@@ -188,8 +188,8 @@ export function lastSeen(dtStart, dtEnd) {
 
 /**
  * Get icons corresponding to person, with label if given
- * @param {string} person 
- * @param {string} label 
+ * @param {string} person
+ * @param {string} label
  */
 export function getIcons(person, label = "") {
   const data = {
@@ -372,9 +372,9 @@ export function getCalendars() {
 }
 
 /**
- * 
- * @param {Date} dtStart 
- * @param {Date} dtEnd 
+ *
+ * @param {Date} dtStart
+ * @param {Date} dtEnd
  */
 export function isTimeSlotAvailable(dtStart, dtEnd) {
   const data = {
@@ -425,3 +425,4 @@ export function registerNewEvent(event, calendar) {
   oReq.send(data)
   return oReq;
 }
+

@@ -124,7 +124,7 @@
 
             <li class="app-navigation-entry-wrapper">
                 <div data-v-86815ca2="" class="app-navigation-entry">
-                    <a data-v-86815ca2="" id="contracts" title="Contracts" class="app-navigation-entry-link">
+                    <a data-v-86815ca2="" id="showContracts" title="Contracts" class="app-navigation-entry-link">
                         <div data-v-86815ca2="" class="app-navigation-entry-icon">
                             <span data-v-74df2152="" data-v-8291caa8="" role="img" aria-hidden="true" class="icon-vue"
                                   style="--758c7a6a: 20px;">
@@ -152,21 +152,18 @@
             <!--<li class="app-navigation-entry-link"><span class="navmarg icon-contacts-dark"></span><a class="a-entry" id="showByEmployees"> </a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
-			<li class="app-navigation-entry-link"><span class="navmarg icon-address"></span><a id="showByLocations"> </a>
-				<div class="app-navigation-entry-utils"></div>
-			</li>-
-			<li class="app-navigation-entry-link"><span class="navmarg icon-toggle-dark"></span><a id="showLastSeen"> </a>
+			<li class="app-navigation-entry"><span class="navmarg icon-toggle-dark"></span><a id="showLastSeen"><?php p($l->t('Last Seen')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
-			<li class="app-navigation-entry-link"><span class="navmarg icon-category-office"></span><a id="showHRSummary"> </a>
+			<li class="app-navigation-entry"><span class="navmarg icon-category-office"></span><a id="showHRSummary"><?php p($l->t('Summary')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li>
-			<li class="app-navigation-entry-link"><span class="navmarg icon-category-office"></span><a id="contracts"><?php p($l->t('Contracts')); ?></a>
-				<div class="app-navigation-entry-utils"></div>
-			</li>-->
-            <!-- <li class="app-navigation-entry-link"><span class="navmarg icon-template-add"></span><a href="<?php echo($_['url']['quotes']); ?>"><?php p($l->t('Quotes')); ?></a>
+			<li class="app-navigation-entry"><span class="navmarg icon-category-office"></span><a id="showContracts"><?php p($l->t('Contracts')); ?></a>
 				<div class="app-navigation-entry-utils"></div>
 			</li> -->
-        </ul>
-    </li>
+			<!-- <li class="app-navigation-entry"><span class="navmarg icon-template-add"></span><a href="<?php echo ($_['url']['quotes']); ?>"><?php p($l->t('Quotes')); ?></a>
+				<div class="app-navigation-entry-utils"></div>
+			</li> -->
+		</ul>
+	</li>
 </ul>

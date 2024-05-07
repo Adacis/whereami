@@ -1,5 +1,3 @@
-const path = require('path');
-const webpack = require('webpack');
 
 module.exports =
   [
@@ -15,18 +13,6 @@ module.exports =
       },
       optimization: {
         minimize: false
-      },
-      resolve: {
-        fallback: {
-            "http": false,
-            "https": false,
-            "stream": false,
-            process: require.resolve('process/browser')
-        },
-        alias: {
-          "icons": path.resolve(__dirname, "node_modules/vue-material-design-icons")
-        },
-        extensions: ['.vue', '.js', '.json'] // Assurez-vous d'inclure les extensions existantes
       },
       module: {
         rules: [

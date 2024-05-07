@@ -86,9 +86,10 @@ export function newTableContracts(response) {
     const headLine = document.createElement('tr');
     headLine.appendChild(newCell('th', 'Contracts')); // Header for contracts column
 
-    // Add each employee name to the headline
-    Object.keys(res.userByContract).forEach(userKey => {
-        headLine.appendChild(newCell('th', userKey));
+
+    // Add each contracts name to the headline
+    Object.keys(res.userByContract).forEach(contractKey => {
+        headLine.appendChild(newCell('th', contractKey));
     });
 
     thead.appendChild(headLine);
@@ -100,7 +101,7 @@ export function newTableContracts(response) {
     Object.keys(res.contracts).forEach(contractKey => {
         const contractData = res.contracts[contractKey];
         const contractName = Object.keys(contractData)[0];
-        
+
         // Iterate over each employee
         Object.keys(res.userByContract).forEach(userKey => {
             const contractCount = res.userByContract[userKey][contractName] || 0;
@@ -109,30 +110,31 @@ export function newTableContracts(response) {
             if (!employeeContracts[userKey]) {
                 employeeContracts[userKey] = [];
             }
-            
+
             employeeContracts[userKey].push(contractCount);
         });
     });
 
-    console.log(employeeContracts)
+    let userPresent = []
 
     // Create rows for each contract
     Object.keys(employeeContracts).forEach(contractKey => {
         const contractData = res.contracts[contractKey];
-        const contractName = Object.keys(contractData)[0];
+        const userName = Object.keys(contractData)[0];
         const contractRow = document.createElement('tr');
-        console.log(contractName)
-        contractRow.appendChild(newCell('td', contractName)); // Add contract name in the first column
 
+        if (!userPresent.includes(userName)) {
+        contractRow.appendChild(newCell('td', userName)); // Add employee in the first row
         // Add contract counts for each employee
         Object.keys(res.userByContract).forEach(userKey => {
             const contractCounts = employeeContracts[userKey];
             const contractCount = contractCounts ? contractCounts.shift() || 0 : 0;
-            console.log(contractCount)
             contractRow.appendChild(newCell('td', contractCount));
         });
 
-        tbody.appendChild(contractRow);
+            tbody.appendChild(contractRow);
+            userPresent.push(userName);
+        }
     });
 
     table.appendChild(thead);

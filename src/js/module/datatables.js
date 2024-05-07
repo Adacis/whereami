@@ -74,7 +74,6 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
  */
 export function newTableContracts(response) {
     const res = JSON.parse(response);
-    console.log(response)
 
     const table = document.createElement('table');
     table.setAttribute('id', 'contracts');
@@ -82,47 +81,65 @@ export function newTableContracts(response) {
 
     let thead = document.createElement('thead');
     let tbody = document.createElement('tbody');
-    let tfoot = document.createElement('tfoot');
 
     // Create a headline with contracts names
     const headLine = document.createElement('tr');
-    headLine.appendChild(newCell('th', 'Employees')); // Header for employees column
+    headLine.appendChild(newCell('th', 'Contracts')); // Header for contracts column
 
-    // Add each contract name to the headline
-    Object.keys(res.contracts).forEach(contractKey => {
-        const contractData = res.contracts[contractKey];
-        const contractName = Object.keys(contractData)[0];
-        headLine.appendChild(newCell('th', contractName));
+    // Add each employee name to the headline
+    Object.keys(res.userByContract).forEach(userKey => {
+        headLine.appendChild(newCell('th', userKey));
     });
 
     thead.appendChild(headLine);
 
-    // Add each employee and their data
-    Object.keys(res.userByContract).forEach(userKey => {
-        const userContracts = res.userByContract[userKey];
-        const userRow = document.createElement('tr');
-        userRow.appendChild(newCell('td', userKey)); // Add employee name in the first column
+    // Create an array to hold all contracts for each employee
+    const employeeContracts = {};
 
-        // Add contract data for this employee
-        Object.keys(res.contracts).forEach(contractKey => {
-            const contractData = res.contracts[contractKey];
-            const contractName = Object.keys(contractData)[0];
-            const contractValue = userContracts[contractName] || 0;
-            userRow.appendChild(newCell('td', contractValue));
+    // Iterate over each contract
+    Object.keys(res.contracts).forEach(contractKey => {
+        const contractData = res.contracts[contractKey];
+        const contractName = Object.keys(contractData)[0];
+        
+        // Iterate over each employee
+        Object.keys(res.userByContract).forEach(userKey => {
+            const contractCount = res.userByContract[userKey][contractName] || 0;
+
+            // Add contract value to employee's contract array
+            if (!employeeContracts[userKey]) {
+                employeeContracts[userKey] = [];
+            }
+            
+            employeeContracts[userKey].push(contractCount);
+        });
+    });
+
+    console.log(employeeContracts)
+
+    // Create rows for each contract
+    Object.keys(employeeContracts).forEach(contractKey => {
+        const contractData = res.contracts[contractKey];
+        const contractName = Object.keys(contractData)[0];
+        const contractRow = document.createElement('tr');
+        console.log(contractName)
+        contractRow.appendChild(newCell('td', contractName)); // Add contract name in the first column
+
+        // Add contract counts for each employee
+        Object.keys(res.userByContract).forEach(userKey => {
+            const contractCounts = employeeContracts[userKey];
+            const contractCount = contractCounts ? contractCounts.shift() || 0 : 0;
+            console.log(contractCount)
+            contractRow.appendChild(newCell('td', contractCount));
         });
 
-        tbody.appendChild(userRow);
+        tbody.appendChild(contractRow);
     });
 
     table.appendChild(thead);
     table.appendChild(tbody);
-    table.appendChild(tfoot);
     document.getElementById('myapp').innerHTML = '';
     document.getElementById('myapp').appendChild(table);
 }
-
-
-
 
 
 
@@ -408,7 +425,7 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
                 value = elem.innerText
             }
 
-            if (type === BY_EMPLOYEE){
+            if (type === BY_EMPLOYEE) {
                 line.appendChild(userListEvents.eventsAtDay(value))
             } else if (type === BY_LOCATION) {
                 line.appendChild(userListEvents.eventsAtDayCount(value, icons, placeIsExcluded))

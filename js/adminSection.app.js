@@ -64115,6 +64115,22 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
     }
 }
 
+/**
+ * Returns the dates of the contract work by employee
+ * @param informations : Array of all dates of the contract work by employee
+ * @returns {*|string} : The dates of the contract work by employee
+ */
+function getAllDatesFromContract (informations) {
+    let dates = ''
+    if (informations) {
+        for(let key in informations) {
+            // Convert the date (format: dd-mm-yyyy) to the format: dd/mm/yyyy
+            let date = informations[key].date_cra.split('-').reverse().join('/')
+            dates += date + '\n'
+        }
+    }
+    return dates
+}
 
 /**
  * Generates an HTML table displaying contract data based on the provided JSON response.
@@ -64200,7 +64216,7 @@ function datatables_newTableContracts(response) {
             for (const key in employeeContracts) {
                 for(let i = 0; i < employeeContracts[key].length; i++){
                     if(employeeContracts[key][i].user === userName) {
-                        contractRow.appendChild(newCell('td', employeeContracts[key][i].count));
+                        contractRow.appendChild(newCell('td', employeeContracts[key][i].count, '', getAllDatesFromContract(res.contracts[key][userName])));
                     }
                 }
 
@@ -64415,10 +64431,11 @@ function getTotal(tbody) {
  * @param {*} style
  * @returns
  */
-function newCell(type, data, style = '') {
+function newCell (type, data, style = '', titre = '') {
     const myCell = document.createElement(type)
     myCell.setAttribute('style', style)
     myCell.innerText = data
+    myCell.title = titre
     return myCell
 }
 

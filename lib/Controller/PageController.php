@@ -17,7 +17,7 @@ use OCP\AppFramework\Http;
 use Psr\Log\LoggerInterface;
 
 /**
- * 
+ *
  */
 class PageController extends Controller
 {
@@ -28,7 +28,7 @@ class PageController extends Controller
 	public LoggerInterface $logger;
 
 	/**
-	 * 
+	 *
 	 */
 	public function __construct(
 		$AppName,

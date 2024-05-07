@@ -319,8 +319,8 @@ function getHeader(from, to, tablePersonne = false) {
     if (tablePersonne)
         line.appendChild(newCell('th', 'Clés'))
     while (from <= to) {
-        // If the day is a Saturday (5) or a Sunday(6), we don't count it
-        if (from.getDay() <= 4) {
+        // If the day is a Saturday or a Sunday, we don't count it
+        if (from.getDay() !== 0 && from.getDay() !== 6) {
             line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
         }
         from.setDate(from.getDate() + 1)
@@ -370,19 +370,22 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
 
     let counter = 0
     Array.from(headerLine.children).forEach(elem => {
+        let value
         if (counter >= startIndex) {
-            let value
             if (type === BY_EMPLOYEE || type === BY_LOCATION) {
                 let today = new Date(document.getElementById('dtStart').valueAsDate)
                 today.setDate(today.getDate() + counter - startIndex)
+                if (today.getDay() === 6) {
+                    today.setDate(today.getDate() + 2) // Go to Monday
+                    counter += 2 // Add 2 to the counter
+                }
                 value = today
             }
             else if (type === HR_SUMMARY) {
                 value = elem.innerText
             }
 
-
-            if (type === BY_EMPLOYEE) {
+            if (type === BY_EMPLOYEE){
                 line.appendChild(userListEvents.eventsAtDay(value))
             } else if (type === BY_LOCATION) {
                 line.appendChild(userListEvents.eventsAtDayCount(value, icons, placeIsExcluded))

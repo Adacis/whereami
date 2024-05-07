@@ -63842,8 +63842,8 @@ var collection = __webpack_require__(74927);
 
 
 
-const days = (/* unused pure expression or super */ null && (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']))
-const ListEvents_daysFr = (/* unused pure expression or super */ null && (['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']))
+const days = (/* unused pure expression or super */ null && (['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']))
+const ListEvents_daysFr = (/* unused pure expression or super */ null && (['Dimanche','Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']))
 
 /**
  *
@@ -63887,10 +63887,7 @@ class ListEvents_ListEvents {
       }
     })
 
-    if (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday') {
-      myCell.setAttribute('style', 'background-color: var(--color-box-shadow);')
-      res = ''
-    } else if (!found) {
+    if (!found) {
       myCell.setAttribute('style', 'background-color: yellow; color: #222;')
       res += 'shame'
     }
@@ -64390,8 +64387,8 @@ function getHeader(from, to, tablePersonne = false) {
     if (tablePersonne)
         line.appendChild(newCell('th', 'Clés'))
     while (from <= to) {
-        // If the day is a Saturday (5) or a Sunday(6), we don't count it
-        if (from.getDay() <= 4) {
+        // If the day is a Saturday or a Sunday, we don't count it
+        if (from.getDay() !== 0 && from.getDay() !== 6) {
             line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
         }
         from.setDate(from.getDate() + 1)
@@ -64441,19 +64438,22 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
 
     let counter = 0
     Array.from(headerLine.children).forEach(elem => {
+        let value
         if (counter >= startIndex) {
-            let value
             if (type === BY_EMPLOYEE || type === BY_LOCATION) {
                 let today = new Date(document.getElementById('dtStart').valueAsDate)
                 today.setDate(today.getDate() + counter - startIndex)
+                if (today.getDay() === 6) {
+                    today.setDate(today.getDate() + 2) // Go to Monday
+                    counter += 2 // Add 2 to the counter
+                }
                 value = today
             }
             else if (type === HR_SUMMARY) {
                 value = elem.innerText
             }
 
-
-            if (type === BY_EMPLOYEE) {
+            if (type === BY_EMPLOYEE){
                 line.appendChild(userListEvents.eventsAtDay(value))
             } else if (type === BY_LOCATION) {
                 line.appendChild(userListEvents.eventsAtDayCount(value, icons, placeIsExcluded))
@@ -64828,8 +64828,8 @@ function lastSeen(dtStart, dtEnd) {
 
 /**
  * Get icons corresponding to person, with label if given
- * @param {string} person 
- * @param {string} label 
+ * @param {string} person
+ * @param {string} label
  */
 function getIcons(person, label = "") {
   const data = {
@@ -65012,9 +65012,9 @@ function getCalendars() {
 }
 
 /**
- * 
- * @param {Date} dtStart 
- * @param {Date} dtEnd 
+ *
+ * @param {Date} dtStart
+ * @param {Date} dtEnd
  */
 function isTimeSlotAvailable(dtStart, dtEnd) {
   const data = {
@@ -65065,6 +65065,7 @@ function registerNewEvent(event, calendar) {
   oReq.send(data)
   return oReq;
 }
+
 ;// CONCATENATED MODULE: ./src/js/class/tagsInput.js
 
 

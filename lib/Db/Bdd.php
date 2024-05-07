@@ -212,6 +212,7 @@ class Bdd
                         name = 'SUMMARY'
                         AND ocp.value REGEXP '^[dD][0-9]{5}$'
                         AND FROM_UNIXTIME(oc.firstoccurence) BETWEEN ? AND ?
+                        AND oc.deleted_at IS NULL
                 ) sr
                 GROUP BY 
                     value, username, first_occurence";

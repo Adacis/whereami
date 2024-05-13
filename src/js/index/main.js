@@ -61,6 +61,8 @@ function setDateLastSeen() {
 }
 
 function setDateContracts() {
+  setButtonsMonths(false)
+
   const toDay = new Date()
   if (document.getElementById('contracts') === null) {
     document.getElementById('dtEnd').valueAsDate = toDay

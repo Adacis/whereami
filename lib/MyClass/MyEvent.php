@@ -120,7 +120,7 @@ class MyEvent
     }
 
     /**
-     * test if two date intervals intersect, return 0 if event do not cross, return the length of intersection otherwise
+     * Test if two date intervals intersect, return 0 if event do not cross, return the length of intersection otherwise
      */
     public function eventCross($event): int
     {
@@ -174,41 +174,52 @@ class MyEvent
     }
 
     /**
-     * Parse a list of events and determine last event that intersect with this event
+     * Parse a list of events and determine the last event that intersects with each event.
+     *
+     * @param array $events List of events to parse.
+     * @param array $listSeen Previously seen events to compare against.
+     * @param array $toExclude List of places to exclude from consideration.
+     * @return array Updated list of seen events after processing the input events.
      */
     public function parseListEvents($events, $listSeen, $toExclude): array
     {
         foreach ($events as $e) {
             $user = strtolower($e->nextcloud_users);
             $thisUser = strtolower($this->nextcloud_users);
-            $inter = $this->eventCross($e);
+            $intersects = $this->eventCross($e);
             $commonPlace = $this->getPlaceCommon($e);
+
+            // Check conditions for updating seen events
             if (
-                $user != $thisUser // Je ne me teste pas moi même
-                &&  $commonPlace != '' // On est sur le même lieu une partie de la journée
-                &&  !in_array($commonPlace, $toExclude)
-                &&  $inter // Nos dates sont dans le même interval
+                $user != $thisUser // Exclude self-comparison
+                && $commonPlace != '' // Events share a common place during part of the day
+                && !in_array($commonPlace, $toExclude) // Common place is not in the exclusion list
+                && $intersects // Events have intersecting dates
             ) {
-                if (array_key_exists($user, $listSeen) && $listSeen[$user]['seen'] < $this->getSeen($e)) { // La date enregistrée est plus ancienne, on l'update
+                // Update or add to the list of seen events for the user
+                if (array_key_exists($user, $listSeen) && $listSeen[$user]['seen'] < $this->getSeen($e)) {
+                    // Update existing seen event if the current event is more recent
                     $listSeen[$user] = [
-                        'load' => False,
+                        'load' => false,
                         'place' => $commonPlace,
                         'seen' => $this->getSeen($e),
-                        'count' => $listSeen[$user]['count'] + $inter
+                        'count' => $listSeen[$user]['count'] + $intersects
                     ];
-                } else if (array_key_exists($user, $listSeen)) { // La date enregistrée est plus récente, on incrémente le compteur tout de même
-                    $listSeen[$user]['count'] = $listSeen[$user]['count'] + $inter;
-                } else { // nouvel event, on l'ajoute
+                } else if (array_key_exists($user, $listSeen)) {
+                    // Increment the counter of seen events if the current event is not more recent
+                    $listSeen[$user]['count'] = $listSeen[$user]['count'] + $intersects;
+                } else {
+                    // Add new event to the list of seen events
                     $listSeen[$user] = [
-                        'load' => False,
+                        'load' => false,
                         'place' => $commonPlace,
                         'seen' => $this->getSeen($e),
-                        'count' => $inter
+                        'count' => $intersects
                     ];
                 }
             }
         }
-        return $listSeen; // Retour 
+        return $listSeen;
     }
 
     public function parseListContracts($contracts, $userContracts, $allEvents, $userId)

@@ -132,7 +132,7 @@ class PageController extends Controller
 		$toExclude = $this->myDb->getWordInWordList("excluded_places");
 		$toExclude = $this->arrayFromWordQuery($toExclude);
 
-		//Récupération de la liste des événements sur la période
+        // Retrieval of the list of events over the period
 		foreach ($this->search($dtStart, $dtEnd) as $c) {
 			$e = new MyEvent($c, $this->myDb, $this->logger);
 
@@ -148,7 +148,7 @@ class PageController extends Controller
 			array_push($events, $e);
 		}
 
-		//Récupération de la liste des événements croisées sur la période
+        // Retrieval of the list of overlapping events over the period
 		$listSeen = [];
 		foreach ($events as $e) {
 			$user = strtolower($e->nextcloud_users);
@@ -205,7 +205,7 @@ class PageController extends Controller
 
 			$cls = trim(strtolower($e->{$classement}));
 
-			# selectionner tout ceux qui sont dans la db
+            // Selecting all the events that are in the database
 			if (in_array($e->place, $toInclude) && ($e->place2 === "" || in_array($e->place2, $toInclude))) {
 				if (!array_key_exists($cls, $events)) {
 					$events[$cls] = [];

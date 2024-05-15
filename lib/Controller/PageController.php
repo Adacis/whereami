@@ -79,6 +79,7 @@ class PageController extends Controller
 	}
 
     /**
+     * @NoAdminRequired
      * @param string $dtStart
      * @param string $dtEnd
      */
@@ -93,12 +94,12 @@ class PageController extends Controller
 
         // Loop through the results and aggregate data by contract and user
         foreach ($result as $r) {
-            $contractValue = $r['nb_contract'];
+            $contractValue = strtoupper($r['nb_contract']);
             $username = strtolower($r['username']);
             $acrValue = $r['activity_report_value'];
             $acrDate = $r['activity_report_date'];
 
-            // Aggregate  for contract and user
+            // Aggregate for contract (contract number) and user (username)
             $contracts[$contractValue][$username][] = [
                 'date_cra' => $acrDate,
                 'acr' => $acrValue

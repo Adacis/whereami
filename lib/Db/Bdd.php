@@ -192,15 +192,22 @@ class Bdd
                     value as nb_contract,
                     username,
                     sum(past_times) AS activity_report_value,
-                    CAST(first_occurence AS DATE) AS activity_report_date
+                    CASE 
+                        WHEN DATEDIFF(last_occurence, first_occurence) <= 1
+                            THEN CAST(first_occurence AS DATE)
+                            ELSE CONCAT(CAST(first_occurence AS DATE), ' - ', CAST(last_occurence AS DATE))
+                	END AS activity_report_date
                 FROM (
-                      SELECT 
+                    SELECT 
                         ocp.value,
                         REPLACE(SUBSTRING_INDEX(ocal.principaluri, '/', -1), ' ', '') AS username,
                         FROM_UNIXTIME(oc.firstoccurence) AS first_occurence,
                         FROM_UNIXTIME(oc.lastoccurence) AS last_occurence,
                         CASE WHEN 
-                            (DATEDIFF(FROM_UNIXTIME(oc.lastoccurence),FROM_UNIXTIME(oc.firstoccurence))) <= 0.5 then 0.5 else 1
+                            TIMESTAMPDIFF(HOUR, FROM_UNIXTIME(oc.firstoccurence), FROM_UNIXTIME(oc.lastoccurence)) / 24 <= 0.5 
+                            THEN 0.5 
+                            ELSE 
+                            ROUND(TIMESTAMPDIFF(HOUR, FROM_UNIXTIME(oc.firstoccurence), FROM_UNIXTIME(oc.lastoccurence)) / 24 * 2) / 2
                         END AS past_times
                     FROM
                         `*PREFIX*calendarobjects_props` ocp
@@ -215,7 +222,7 @@ class Bdd
                         AND oc.deleted_at IS NULL
                 ) sr
                 GROUP BY 
-                    value, username, first_occurence";
+                    value, username, first_occurence, last_occurence";
         return $this->execSQLNoJsonReturn($sql, array($dtStart, $dtEnd));
     }
 

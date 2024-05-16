@@ -22,11 +22,11 @@ export function getLoader() {
 
 
 /**
- * Fills the title and inner with the icons. For table byEmployee, adds an event 
+ * Fills the title and inner with the icons. For table byEmployee, adds an event
  * listenner to redirect to byLocation on click on the key's place
- * @param {HTMLBaseElement} element 
- * @param {Array} icons 
- * @param {boolean} tablePersonne 
+ * @param {HTMLBaseElement} element
+ * @param {Array} icons
+ * @param {boolean} tablePersonne
  */
 function setTitleWithIcons(element, icons, tablePersonne = false) {
     for (let dic of icons) {
@@ -47,61 +47,134 @@ function setTitleWithIcons(element, icons, tablePersonne = false) {
     }
 }
 
-export function newTableContracts(response) {
-    const res = JSON.parse(response)
-    var totalPeople = 1, totalContracts = 1
-
-    const table = document.createElement('table')
-    table.setAttribute('id', 'contracts')
-    table.setAttribute('class', 'table table-striped')
-
-    let thead = document.createElement('thead')
-    let tbody = document.createElement('tbody')
-
-    const headLine = document.createElement('tr')
-    headLine.appendChild(newCell('th', ""))
-
-    res.contracts.forEach(contract => {
-        let th = newCell('th', contract);
-        headLine.appendChild(th);
-        totalContracts++;
-    })
-    Object.keys(res.userByContract).forEach(user => {
-        var newLine = document.createElement('tr');
-        let tr = newCell('td', user);
-        newLine.appendChild(tr);
-        tbody.appendChild(newLine);
-        totalPeople++;
-    })
-
-    thead.appendChild(headLine);
-    table.appendChild(thead);
-    table.appendChild(tbody);
-
-    //
-    let rows = 0;
-    table.rows.forEach(r => {
-        if (rows > 0) {
-            let peoplerow = r.cells[0].innerText;
-            for (var cellPosition = 1; cellPosition < totalContracts; cellPosition++) {
-
-                let contractcolumn = table.rows[0].cells[cellPosition].innerText
-
-                let msg = 0;
-                if(res.userByContract[peoplerow][contractcolumn] != null)
-                    msg = res.userByContract[peoplerow][contractcolumn];
-
-                let newCell = r.insertCell(cellPosition)
-                let newText = document.createTextNode(msg)
-                newCell.appendChild(newText)
+/**
+ * Returns the dates of the contract work by employee
+ * @param informations : Array of all dates of the contract work by employee
+ * @returns {*|string} : The dates of the contract work by employee
+ */
+function getAllDatesFromContract (informations) {
+    let dates = ''
+    if (informations) {
+        for(let key in informations) {
+            let date_cra = informations[key].date_cra
+            if (date_cra.includes(' - ')) {
+                // If the string contains " - ", the string is at the format "yyyy-mm-dd - yyyy-mm-dd"
+                let datesArray = date_cra.split(' - ')
+                let startDate = datesArray[0].split('-').reverse().join('/')
+                let endDate = datesArray[1].split('-').reverse().join('/')
+                dates += startDate + ' - ' + endDate + '\n'
+            } else {
+                // Else, the string is at the format "yyyy-mm-dd"
+                let date = date_cra.split('-').reverse().join('/')
+                dates += date + '\n';
             }
         }
-        rows++;
-    })
-
-    document.getElementById('myapp').innerHTML = ''
-    document.getElementById('myapp').appendChild(table)
+    }
+    return dates
 }
+
+/**
+ * Generates an HTML table displaying contract data based on the provided JSON response.
+ * The JSON response should contain contracts and user data in the specified format.
+ *
+ * @param {string} response - The JSON response containing contracts and user data.
+ * Format:
+ * {
+ *   "contracts": {
+ *     "ContractID": {
+ *       "ContractType": {
+ *         "Date": Value
+ *       }
+ *     },
+ *     ...
+ *   },
+ *   "userByContract": {
+ *     "ContractID": {
+ *       "ContractType": TotalValue,
+ *       ...
+ *     },
+ *     ...
+ *   }
+ * }
+ */
+export function newTableContracts(response) {
+    const res = JSON.parse(response);
+
+    const table = document.createElement('table');
+    table.setAttribute('id', 'contracts');
+    table.setAttribute('class', 'table table-striped');
+
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+
+    // Create a headline with contracts names
+    const headLine = document.createElement('tr');
+    headLine.appendChild(newCell('th', 'Contracts')); // Header for contracts column
+
+
+    // Add each contracts name to the headline
+    Object.keys(res.userByContract).forEach(contractKey => {
+        headLine.appendChild(newCell('th', contractKey));
+    });
+
+    thead.appendChild(headLine);
+
+    // Create an array to hold all contracts for each employee
+    const employeeContracts = {};
+
+    // Iterate over each contract
+    Object.keys(res.contracts).forEach(contractKey => {
+        const contractData = res.contracts[contractKey];
+        const userName = Object.keys(contractData)[0];
+        // Iterate over each employee
+        Object.keys(res.userByContract).forEach(contractKey => {
+            const contractCount = res.userByContract[contractKey][userName] || 0;
+            // Add contract value to employee's contract array
+            if (!employeeContracts[contractKey]) {
+                employeeContracts[contractKey] = [];
+            }
+            //If employeeContractcs[contractKey] not contains userName, add it
+            if (!employeeContracts[contractKey].some(e => e.user === userName)){
+                employeeContracts[contractKey].push({
+                    user: userName,
+                    count: contractCount
+                });
+            }
+        });
+    });
+
+    let userPresent = []
+
+    // Create rows for each contract
+    Object.keys(employeeContracts).forEach(contractKey => {
+        const contractData = res.contracts[contractKey];
+        const userName = Object.keys(contractData)[0];
+        const contractRow = document.createElement('tr');
+
+        if (!userPresent.includes(userName)) {
+        contractRow.appendChild(newCell('td', userName)); // Add employee in the first row
+            // Add each time the employee was present for each contract
+            for (const key in employeeContracts) {
+                for(let i = 0; i < employeeContracts[key].length; i++){
+                    if(employeeContracts[key][i].user === userName) {
+                        contractRow.appendChild(newCell('td', employeeContracts[key][i].count, '', getAllDatesFromContract(res.contracts[key][userName])));
+                    }
+                }
+
+            }
+
+            tbody.appendChild(contractRow);
+            userPresent.push(userName);
+        }
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    document.getElementById('myapp').innerHTML = '';
+    document.getElementById('myapp').appendChild(table);
+}
+
+
 
 export function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
@@ -119,7 +192,7 @@ export function newTableSeen(response, dtStart, dtEnd) {
     const headLine = document.createElement('tr')
     headLine.appendChild(newCell('th', ""))
 
-    Object.keys(res).forEach(person => {
+    Array.from(Object.keys(res)).forEach(person => {
         let th = newCell('th', person);
         headLine.appendChild(th);
 
@@ -138,7 +211,7 @@ export function newTableSeen(response, dtStart, dtEnd) {
     let icons = getAllIcons().onload();
     let groupedIcons = groupBy(icons, 'person');
     let rows = 0;
-    table.rows.forEach(r => {
+    Array.from(table.rows).forEach(r => {
         if (rows > 0) {
             let peoplerow = r.cells[0].innerText;
             for (var cellPosition = 1; cellPosition < totalPeople; cellPosition++) {
@@ -231,7 +304,7 @@ export function newTablePersonne(response, dtStart, dtEnd, tablename) {
     if (tablename === BY_LOCATION)
         whitelistKeys = getTags(ACCOUNTED_FOR_KEYS).onload().map(element => element.word.toLowerCase())
 
-    Object.keys(res).forEach(element => {
+    Array.from(Object.keys(res)).forEach(element => {
         let from = new Date(dtStart)
         const userListEvents = new ListEvents(element, res[element])
         if (tablename === BY_LOCATION) {
@@ -272,7 +345,7 @@ function getTotal(tbody) {
     for (let i = 1; i < totalColumn; i++) {
         let totalByDay = 0
         let totalByDay2 = 0
-        tbody.getElementsByTagName('tr').forEach(element => {
+        Array.from(tbody.getElementsByTagName('tr')).forEach(element => {
             let mainDiv = element.getElementsByTagName('td')[i].children[0]
             totalByDay += parseInt(mainDiv.firstChild.innerText)
             if (mainDiv.children.length === 2)
@@ -299,10 +372,11 @@ function getTotal(tbody) {
  * @param {*} style
  * @returns
  */
-function newCell(type, data, style = '') {
+function newCell (type, data, style = '', titre = '') {
     const myCell = document.createElement(type)
     myCell.setAttribute('style', style)
     myCell.innerText = data
+    myCell.title = titre
     return myCell
 }
 
@@ -319,7 +393,10 @@ function getHeader(from, to, tablePersonne = false) {
     if (tablePersonne)
         line.appendChild(newCell('th', 'Clés'))
     while (from <= to) {
-        line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
+        // If the day is a Saturday or a Sunday, we don't count it
+        if (from.getDay() !== 0 && from.getDay() !== 6) {
+            line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
+        }
         from.setDate(from.getDate() + 1)
     }
     return line
@@ -328,12 +405,12 @@ function getHeader(from, to, tablePersonne = false) {
 
 /**
  * Creates an 'tr' element with given values
- * @param {Array} values 
- * @returns 
+ * @param {Array} values
+ * @returns
  */
 function getHeaderWithValues(values) {
     const line = document.createElement('tr')
-    values.forEach(value => {
+    Array.from(values).forEach(value => {
         line.appendChild(newCell('th', value))
     })
     return line
@@ -366,18 +443,21 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
         placeIsExcluded = !whitelistKeys.includes(userListEvents.id)
 
     let counter = 0
-    headerLine.children.forEach(elem => {
+    Array.from(headerLine.children).forEach(elem => {
+        let value
         if (counter >= startIndex) {
-            let value
             if (type === BY_EMPLOYEE || type === BY_LOCATION) {
                 let today = new Date(document.getElementById('dtStart').valueAsDate)
                 today.setDate(today.getDate() + counter - startIndex)
+                if (today.getDay() === 6) {
+                    today.setDate(today.getDate() + 2) // Go to Monday
+                    counter += 2 // Add 2 to the counter
+                }
                 value = today
             }
             else if (type === HR_SUMMARY) {
                 value = elem.innerText
             }
-
 
             if (type === BY_EMPLOYEE) {
                 line.appendChild(userListEvents.eventsAtDay(value))
@@ -398,9 +478,9 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
 
 
 /**
- * 
- * @param {Array} dataSent 
- * @param {*} response 
+ *
+ * @param {Array} dataSent
+ * @param {*} response
  */
 export function newTableHR(dataSent, response) {
     const tableName = HR_SUMMARY

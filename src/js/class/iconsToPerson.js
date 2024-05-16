@@ -5,8 +5,8 @@ import { makeid } from '../module/utils'
 
 /**
  * Initializes the event for the TagsInput of the IconToPerson class
- * @param {IconsToPerson} mainClass 
- * @param {TagsInput} tags 
+ * @param {IconsToPerson} mainClass
+ * @param {TagsInput} tags
  */
 function initEventTagsIcons(mainClass, tags) {
     tags.wrapper.addEventListener('click', function () {

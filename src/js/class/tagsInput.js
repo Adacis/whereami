@@ -99,7 +99,7 @@ export class TagsInput {
         return false;
     }
 
-    // Add tags programmatically 
+    // Add tags programmatically
     addData(array) {
         var plugin = this;
 

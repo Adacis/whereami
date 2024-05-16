@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: nextcloud-db
+    image: mysql:8.3.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: nextcloud
+    volumes:
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - nextcloud
+
+networks:
+    nextcloud:
+        external: true

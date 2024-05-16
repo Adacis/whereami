@@ -52,7 +52,7 @@ class Bdd
 
     /**
      * Insert a word in table wordlist
-     * @word 
+     * @word
      * @usage
      */
     public function insertWordInWordList($word, $usage)
@@ -62,7 +62,7 @@ class Bdd
         return true;
     }
 
-    /** 
+    /**
      * Delete word from table wordlist
      * @word
      * @usage
@@ -73,7 +73,7 @@ class Bdd
         $this->execSQLNoData($sql, array($word, $usage));
     }
 
-    /** 
+    /**
      * Delete word from table wordlist
      * @word
      * @usage
@@ -176,6 +176,56 @@ class Bdd
         }
     }
 
+    /**
+     * Retrieve activity reports for contracts within a specified date range.
+     *
+     * This method fetches activity reports including the number of contracts (`nb_contract`),
+     * associated usernames (`username`), aggregated activity values (`activity_report_value`),
+     * and corresponding dates (`activity_report_date`) for a given time period.
+     *
+     * @param string $dtStart The start date of the date range (YYYY-MM-DD format).
+     * @param string $dtEnd The end date of the date range (YYYY-MM-DD format).
+     * @return array Fetched database results containing activity report details.
+     */
+    public function getContracts($dtStart, $dtEnd){
+        $sql = "SELECT 
+                    value as nb_contract,
+                    username,
+                    sum(past_times) AS activity_report_value,
+                    CASE 
+                        WHEN DATEDIFF(last_occurence, first_occurence) <= 1
+                            THEN CAST(first_occurence AS DATE)
+                            ELSE CONCAT(CAST(first_occurence AS DATE), ' - ', CAST(last_occurence AS DATE))
+                	END AS activity_report_date
+                FROM (
+                    SELECT 
+                        ocp.value,
+                        REPLACE(SUBSTRING_INDEX(ocal.principaluri, '/', -1), ' ', '') AS username,
+                        FROM_UNIXTIME(oc.firstoccurence) AS first_occurence,
+                        FROM_UNIXTIME(oc.lastoccurence) AS last_occurence,
+                        CASE WHEN 
+                            TIMESTAMPDIFF(HOUR, FROM_UNIXTIME(oc.firstoccurence), FROM_UNIXTIME(oc.lastoccurence)) / 24 <= 0.5 
+                            THEN 0.5 
+                            ELSE 
+                            ROUND(TIMESTAMPDIFF(HOUR, FROM_UNIXTIME(oc.firstoccurence), FROM_UNIXTIME(oc.lastoccurence)) / 24 * 2) / 2
+                        END AS past_times
+                    FROM
+                        `*PREFIX*calendarobjects_props` ocp
+                    LEFT JOIN
+                        `*PREFIX*calendarobjects` oc ON ocp.objectid = oc.id
+                    LEFT JOIN
+                        `*PREFIX*calendars` ocal ON ocp.calendarid = ocal.id
+                    WHERE
+                        name = 'SUMMARY'
+                        AND ocp.value REGEXP '^[dD][0-9]{5}$'
+                        AND FROM_UNIXTIME(oc.firstoccurence) BETWEEN ? AND ?
+                        AND oc.deleted_at IS NULL
+                ) sr
+                GROUP BY 
+                    value, username, first_occurence, last_occurence";
+        return $this->execSQLNoJsonReturn($sql, array($dtStart, $dtEnd));
+    }
+
 
     private function getQuadri($name)
     {
@@ -198,8 +248,6 @@ class Bdd
         }
         return strtoupper($quadri);
     }
-
-
 
     /**
      * @sql

@@ -10,6 +10,7 @@ export const BY_EMPLOYEE = 'byEmployee'
 export const BY_LOCATION = 'byLocation'
 export const LAST_SEEN = 'lastSeen'
 export const HR_SUMMARY = 'HRSummary'
+export const CONTRACTS = 'contracts'
 
 // Color control for lastSeen table
 export const FRACTION_FOR_ORANGE = 2 / 3

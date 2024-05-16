@@ -2,8 +2,8 @@ import { Events } from './Event';
 import { groupBy } from 'lodash/collection';
 
 
-export const days = ['sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'saturday']
-export const daysFr = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+export const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+export const daysFr = ['Dimanche','Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 
 /**
  *
@@ -47,10 +47,7 @@ export class ListEvents {
       }
     })
 
-    if (days[from.getDay()] === 'sunday' || days[from.getDay()] === 'saturday') {
-      myCell.setAttribute('style', 'background-color: var(--color-box-shadow);')
-      res = ''
-    } else if (!found) {
+    if (!found) {
       myCell.setAttribute('style', 'background-color: yellow; color: #222;')
       res += 'shame'
     }
@@ -157,8 +154,8 @@ export class ListEvents {
 
   /**
    * Returns the interval between dtStart and dtEnd as a string
-   * @param {Date} dtStart 
-   * @param {Date} dtEnd 
+   * @param {Date} dtStart
+   * @param {Date} dtEnd
    * @return {String}
    */
   getDateString(dtStart, dtEnd) {
@@ -171,11 +168,11 @@ export class ListEvents {
   }
 
   /**
-   * 
-   * @param {string} type 
-   * @param {Date} periodStart 
-   * @param {Date} periodEnd 
-   * @returns 
+   *
+   * @param {string} type
+   * @param {Date} periodStart
+   * @param {Date} periodEnd
+   * @returns
    */
   countTypeForUser(type, periodStart, periodEnd) {
     const myCell = document.createElement('td')

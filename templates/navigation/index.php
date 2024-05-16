@@ -1,5 +1,5 @@
 <ul class="app-navigation">
-    <li class="app-navigation-entry"><span class="app-title"></span><b>Where am I V 0.0.34-dev</b></li>
+    <li class="app-navigation-entry"><span class="app-title"></span><b>Where am I V 0.0.34</b></li>
     <li class="app-navigation-entry-link">
         <ul class="app-navigation">
             <li class="active app-navigation-entry-link button new btn-new-event"><span class="navmarg icon-add"></span><a

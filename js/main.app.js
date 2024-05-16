@@ -64191,9 +64191,18 @@ function getAllDatesFromContract (informations) {
     let dates = ''
     if (informations) {
         for(let key in informations) {
-            // Convert the date (format: dd-mm-yyyy) to the format: dd/mm/yyyy
-            let date = informations[key].date_cra.split('-').reverse().join('/')
-            dates += date + '\n'
+            let date_cra = informations[key].date_cra
+            if (date_cra.includes(' - ')) {
+                // If the string contains " - ", the string is at the format "yyyy-mm-dd - yyyy-mm-dd"
+                let datesArray = date_cra.split(' - ')
+                let startDate = datesArray[0].split('-').reverse().join('/')
+                let endDate = datesArray[1].split('-').reverse().join('/')
+                dates += startDate + ' - ' + endDate + '\n'
+            } else {
+                // Else, the string is at the format "yyyy-mm-dd"
+                let date = date_cra.split('-').reverse().join('/')
+                dates += date + '\n';
+            }
         }
     }
     return dates
@@ -65628,6 +65637,8 @@ function setDateLastSeen() {
 }
 
 function setDateContracts() {
+  setButtonsMonths(false)
+
   const toDay = new Date()
   if (document.getElementById('contracts') === null) {
     document.getElementById('dtEnd').valueAsDate = toDay

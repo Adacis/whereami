@@ -94,22 +94,28 @@ class PageController extends Controller
 
         // Loop through the results and aggregate data by contract and user
         foreach ($result as $r) {
+            $uid = $r['uid'];
+
             $contractValue = strtoupper($r['nb_contract']);
-            $username = strtolower($r['username']);
             $acrValue = $r['activity_report_value'];
             $acrDate = $r['activity_report_date'];
 
+            // Extracting user infos
+            $userInfos = $this->myDb->getUID($uid);
+            $myObj = json_decode($userInfos[0]['data']);
+            $userDisplayName = strtolower($myObj->displayname->value);
+
             // Aggregate for contract (contract number) and user (username)
-            $contracts[$contractValue][$username][] = [
+            $contracts[$contractValue][$userDisplayName][] = [
                 'date_cra' => $acrDate,
                 'acr' => $acrValue
             ];
 
             // Aggregate the total activity report per user for each contract.
-            if (!isset($userByContracts[$contractValue][$username])) {
-                $userByContracts[$contractValue][$username] = 0.0;
+            if (!isset($userByContracts[$contractValue][$userDisplayName])) {
+                $userByContracts[$contractValue][$userDisplayName] = 0.0;
             }
-            $userByContracts[$contractValue][$username] += $acrValue;
+            $userByContracts[$contractValue][$userDisplayName] += $acrValue;
         }
 
         // Return aggregated data as a JSON response

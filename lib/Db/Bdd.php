@@ -189,7 +189,7 @@ class Bdd
      */
     public function getContracts($dtStart, $dtEnd){
         $sql = "SELECT 
-                    value as nb_contract,
+                    REGEXP_SUBSTR(value, '\\\\b[Dd]\\\\d{5}\\\\b') as nb_contract,
                     username,
                     sum(past_times) AS activity_report_value,
                     CASE 
@@ -217,7 +217,7 @@ class Bdd
                         `*PREFIX*calendars` ocal ON ocp.calendarid = ocal.id
                     WHERE
                         name = 'SUMMARY'
-                        AND ocp.value REGEXP '^[dD][0-9]{5}$'
+                        AND ocp.value REGEXP '\\\\b[Dd]\\\\d{5}\\\\b'
                         AND FROM_UNIXTIME(oc.firstoccurence) BETWEEN ? AND ?
                         AND oc.deleted_at IS NULL
                 ) sr

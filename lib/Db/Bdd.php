@@ -189,8 +189,8 @@ class Bdd
      */
     public function getContracts($dtStart, $dtEnd){
         $sql = "SELECT 
-                    value as nb_contract,
-                    username,
+                    REGEXP_SUBSTR(value, '\\\\b[Dd]\\\\d{5}\\\\b') as nb_contract,
+                    uid,
                     sum(past_times) AS activity_report_value,
                     CASE 
                         WHEN DATEDIFF(last_occurence, first_occurence) <= 1
@@ -200,7 +200,7 @@ class Bdd
                 FROM (
                     SELECT 
                         ocp.value,
-                        REPLACE(SUBSTRING_INDEX(ocal.principaluri, '/', -1), ' ', '') AS username,
+                        REPLACE(SUBSTRING_INDEX(ocal.principaluri, '/', -1), ' ', '') AS uid,
                         FROM_UNIXTIME(oc.firstoccurence) AS first_occurence,
                         FROM_UNIXTIME(oc.lastoccurence) AS last_occurence,
                         CASE WHEN 
@@ -217,12 +217,12 @@ class Bdd
                         `*PREFIX*calendars` ocal ON ocp.calendarid = ocal.id
                     WHERE
                         name = 'SUMMARY'
-                        AND ocp.value REGEXP '^[dD][0-9]{5}$'
+                        AND ocp.value REGEXP '\\\\b[Dd]\\\\d{5}\\\\b'
                         AND FROM_UNIXTIME(oc.firstoccurence) BETWEEN ? AND ?
                         AND oc.deleted_at IS NULL
                 ) sr
                 GROUP BY 
-                    value, username, first_occurence, last_occurence";
+                    value, uid, first_occurence, last_occurence";
         return $this->execSQLNoJsonReturn($sql, array($dtStart, $dtEnd));
     }
 

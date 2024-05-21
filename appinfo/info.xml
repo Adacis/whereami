@@ -4,7 +4,7 @@
     <name>Where am I ?</name>
     <summary><![CDATA[Is a simple application to locate everybody in your company.]]></summary>
     <description><![CDATA[Is a simple application to locate everybody in your company.]]></description>
-    <version>0.0.36</version>
+    <version>0.0.37</version>
     <licence>agpl</licence>
     <author mail="contact@adacis.net" homepage="https://www.adacis.net">ADACIS</author>
     <namespace>Whereami</namespace>
@@ -12,7 +12,7 @@
 	<category>organization</category>
     <bugs>https://github.com/Adacis/whereami/issues</bugs>
     <dependencies>
-        <nextcloud min-version="29" max-version="29"/>
+        <nextcloud min-version="28" max-version="29"/>
     </dependencies>
     <settings>
         <admin>OCA\Whereami\Settings\WhereamiAdmin</admin>

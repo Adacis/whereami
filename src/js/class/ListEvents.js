@@ -102,6 +102,7 @@ export class ListEvents {
           e.place2 = e.place
         }
 
+
         if (placeIsExcluded) {
           isSomeoneThere = true
           isSomeoneThere2 = true
@@ -118,16 +119,10 @@ export class ListEvents {
             }
           }
 
-        if (e.place === this.id) {
           title += e.nextcloud_users + '\n'
           res += 1
           found = true
-        }
-        if (e.place2 === this.id) {
-          title2 += e.nextcloud_users + '\n'
-          res2 += 1
-          found2 = true
-        }
+
       }
     })
 
@@ -140,10 +135,8 @@ export class ListEvents {
     let div1 = this.createDiv(res, title, found, isSomeoneThere, from)
     div.appendChild(div1)
     if (title !== title2) {
-      let div2 = this.createDiv(res2, title2, found2, isSomeoneThere2, from)
       div1.classList.add('cell-base-two')
-      div2.classList.add('cell-base-two')
-      div.appendChild(div2)
+      div.appendChild(div1)
     }
     else
       div1.classList.add('cell-base-alone')

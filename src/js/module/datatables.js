@@ -98,83 +98,70 @@ function getAllDatesFromContract (informations) {
  * }
  */
 export function newTableContracts(response) {
-    const res = JSON.parse(response);
+  const res = JSON.parse(response);
 
-    const table = document.createElement('table');
-    table.setAttribute('id', 'contracts');
-    table.setAttribute('class', 'table table-striped');
+  const table = document.createElement('table');
+  table.setAttribute('id', 'contracts');
+  table.setAttribute('class', 'table table-striped');
 
-    let thead = document.createElement('thead');
-    let tbody = document.createElement('tbody');
+  let thead = document.createElement('thead');
+  let tbody = document.createElement('tbody');
 
-    // Create a headline with contracts names
-    const headLine = document.createElement('tr');
-    headLine.appendChild(newCell('th', 'Contracts')); // Header for contracts column
+  // Create a headline with contracts names
+  const headLine = document.createElement('tr');
+  headLine.appendChild(newCell('th', 'Contracts')); // Header for contracts column
 
+  // Add each contracts name to the headline
+  Object.keys(res.userByContract).forEach(contractKey => {
+    headLine.appendChild(newCell('th', contractKey));
+  });
 
-    // Add each contracts name to the headline
-    Object.keys(res.userByContract).forEach(contractKey => {
-        headLine.appendChild(newCell('th', contractKey));
+  thead.appendChild(headLine);
+
+  // Create an array to hold all contracts for each employee
+  const employeeContracts = {};
+
+  // Iterate over each contract
+  Object.keys(res.contracts).forEach(contractKey => {
+    const contractData = res.contracts[contractKey];
+    // Iterate over each user within the contract
+    Object.keys(contractData).forEach(userName => {
+      const contractCount = res.userByContract[contractKey][userName] || 0;
+      // Initialize user in employeeContracts if not already present
+      if (!employeeContracts[userName]) {
+        employeeContracts[userName] = {};
+      }
+      // Add contract value to employee's contract array
+      employeeContracts[userName][contractKey] = contractCount;
     });
+  });
 
-    thead.appendChild(headLine);
+  // Track which users have been added to the table
+  let userPresent = [];
 
-    // Create an array to hold all contracts for each employee
-    const employeeContracts = {};
+  // Create rows for each user
+  Object.keys(employeeContracts).forEach(userName => {
+    if (!userPresent.includes(userName)) {
+      const userContracts = employeeContracts[userName];
+      const contractRow = document.createElement('tr');
 
-    // Iterate over each contract
-    Object.keys(res.contracts).forEach(contractKey => {
-        const contractData = res.contracts[contractKey];
-        const userName = Object.keys(contractData)[0];
-        // Iterate over each employee
-        Object.keys(res.userByContract).forEach(contractKey => {
-            const contractCount = res.userByContract[contractKey][userName] || 0;
-            // Add contract value to employee's contract array
-            if (!employeeContracts[contractKey]) {
-                employeeContracts[contractKey] = [];
-            }
-            //If employeeContractcs[contractKey] not contains userName, add it
-            if (!employeeContracts[contractKey].some(e => e.user === userName)){
-                employeeContracts[contractKey].push({
-                    user: userName,
-                    count: contractCount
-                });
-            }
-        });
-    });
+      contractRow.appendChild(newCell('td', userName)); // Add employee name in the first column
+      // Add each contract count for the user
+      Object.keys(res.userByContract).forEach(contractKey => {
+        const contractCount = userContracts[contractKey] || 0;
+        contractRow.appendChild(newCell('td', contractCount, '', getAllDatesFromContract(res.contracts[contractKey][userName])));
+      });
 
-    let userPresent = []
+      tbody.appendChild(contractRow);
+      userPresent.push(userName);
+    }
+  });
 
-    // Create rows for each contract
-    Object.keys(employeeContracts).forEach(contractKey => {
-        const contractData = res.contracts[contractKey];
-        const userName = Object.keys(contractData)[0];
-        const contractRow = document.createElement('tr');
-
-        if (!userPresent.includes(userName)) {
-        contractRow.appendChild(newCell('td', userName)); // Add employee in the first row
-            // Add each time the employee was present for each contract
-            for (const key in employeeContracts) {
-                for(let i = 0; i < employeeContracts[key].length; i++){
-                    if(employeeContracts[key][i].user === userName) {
-                        contractRow.appendChild(newCell('td', employeeContracts[key][i].count, '', getAllDatesFromContract(res.contracts[key][userName])));
-                    }
-                }
-
-            }
-
-            tbody.appendChild(contractRow);
-            userPresent.push(userName);
-        }
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('myapp').innerHTML = '';
-    document.getElementById('myapp').appendChild(table);
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  document.getElementById('myapp').innerHTML = '';
+  document.getElementById('myapp').appendChild(table);
 }
-
-
 
 export function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)

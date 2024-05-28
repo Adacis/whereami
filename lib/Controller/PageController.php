@@ -86,7 +86,7 @@ class PageController extends Controller
     public function getContracts(String $dtStart, String $dtEnd)
     {
         // Fetch data from the database
-        $result = $this->myDb->getContracts($dtStart, $dtEnd);
+        $result = $this->myDb->getContracts($dtStart, $dtEnd, $this->userId);
 
         // Initialize arrays to store contracts and users per contract
         $contracts = [];

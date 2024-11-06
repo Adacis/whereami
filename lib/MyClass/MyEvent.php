@@ -8,13 +8,13 @@ use Psr\Log\LoggerInterface;
 
 class MyEvent
 {
-    public String $id;
-    public String $summary;
-    public String $dtStart;
-    public String $dtEnd;
-    public String $place;
-    public String $place2;
-    public String $nextcloud_users;
+    public string $id;
+    public string $summary;
+    public ?string $dtStart;
+    public ?string $dtEnd;
+    public string $place;
+    public string $place2;
+    public string $nextcloud_users;
     public $quote;
 
     public bool $valid;
@@ -31,12 +31,12 @@ class MyEvent
         $this->log = $logger;
         $this->myDb             = $myDb;
         $this->id               = $e['id'];
-        $this->dtStart          = $e["objects"][0]["DTSTART"][0]?->modify('+ 1 minute')?->format('Y-m-d H:i:s');
-        $this->dtEnd            = $e["objects"][0]["DTEND"][0]?->modify('- 1 minute')?->format('Y-m-d H:i:s') ?? $this->dtStart;
+        $this->dtStart          = ($e["objects"][0]["DTSTART"][0] ?? null)?->modify('+ 1 minute')?->format('Y-m-d H:i:s');
+        $this->dtEnd            = ($e["objects"][0]["DTEND"][0] ?? null)?->modify('- 1 minute')?->format('Y-m-d H:i:s') ?? $this->dtStart;
         $this->nextcloud_users  = $this->getNameCalendar($this->id);
-        $this->summary          = str_replace("@", "", $e["objects"][0]["SUMMARY"][0]);
+        $this->summary          = str_replace("@", "", $e["objects"][0]["SUMMARY"][0] ?? '');
 
-        $tmp                    = $this->extractData(",", 0, $e["objects"][0]["SUMMARY"][0]);
+        $tmp                    = $this->extractData(",", 0, $e["objects"][0]["SUMMARY"][0] ?? '');
         if (!is_null($this->dtStart) && count($tmp) > 0) {
             $this->place = $tmp[0];
             if (count($tmp) >= 2) {
@@ -108,9 +108,12 @@ class MyEvent
         preg_match_all($re, strtolower($data), $matches, PREG_SET_ORDER, 0);
 
         try {
-            $cls = [$matches[0][1]];
-            if (count($matches[0]) >= 4) {
-                array_push($cls, $matches[0][3]);
+            $cls = [];
+            if (isset($matches[0][1])) {
+                $cls[] = $matches[0][1];
+            }
+            if (count($matches[0] ?? []) >= 4) {
+                $cls[] = $matches[0][3];
             }
         } catch (\Throwable $th) {
             $cls = [];

@@ -64019,7 +64019,7 @@ class ListEvents_ListEvents {
     const slots = new Map()
     this.ListEvents.forEach(event => {
       const e = new Events(event)
-      const start = new Date(e.dtStart), end = new Date(e.dtEnd)
+      const start = Events.parseDate(e.dtStart), end = Events.parseDate(e.dtEnd)
       const day = new Date(Math.max(start.getTime(), periodStart.getTime()))
       day.setHours(0, 0, 0, 0)
       for (; day < end && day <= periodEnd; day.setDate(day.getDate() + 1)) {
@@ -64194,7 +64194,7 @@ function datatables_newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
     var totalPeople = 1
     const today = new Date()
-    const periodLength = toInteger((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
+    const periodLength = toInteger((new Date(dtEnd + 'T00:00:00') - new Date(dtStart + 'T00:00:00')) / (1000 * 3600 * 24))
 
     const table = document.createElement('table')
     table.setAttribute('id', 'lastSeen')
@@ -64307,12 +64307,12 @@ function datatables_newTablePersonne(response, dtStart, dtEnd, tablename) {
     table.setAttribute('class', 'table table-striped')
 
     // var retHead = getHeader(from,to);
-    // var from = new Date(dtStart)
-    // var to = new Date(dtEnd)
-    const head = getHeader(new Date(dtStart), new Date(dtEnd), tablename == BY_EMPLOYEE)
+    // var from = new Date(dtStart + 'T00:00:00')
+    // var to = new Date(dtEnd + 'T00:00:00')
+    const head = getHeader(new Date(dtStart + 'T00:00:00'), new Date(dtEnd + 'T00:00:00'), tablename == BY_EMPLOYEE)
     thead.appendChild(head)
 
-    const to = new Date(dtEnd)
+    const to = new Date(dtEnd + 'T00:00:00')
     const res = JSON.parse(response)
     let icons = getAllIcons().onload()
     let whitelistKeys
@@ -64320,7 +64320,7 @@ function datatables_newTablePersonne(response, dtStart, dtEnd, tablename) {
         whitelistKeys = getTags(ACCOUNTED_FOR_KEYS).onload().map(element => element.word.toLowerCase())
 
     Array.from(Object.keys(res)).forEach(element => {
-        let from = new Date(dtStart)
+        let from = new Date(dtStart + 'T00:00:00')
         const userListEvents = new ListEvents(element, res[element])
         if (tablename === BY_LOCATION) {
             tbody = getContent(tbody, head, 1, userListEvents, BY_LOCATION, icons, whitelistKeys)
@@ -64333,7 +64333,7 @@ function datatables_newTablePersonne(response, dtStart, dtEnd, tablename) {
         tfoot.appendChild(getTotal(tbody))
     }
 
-    tfoot.appendChild(getHeader(new Date(dtStart), to, tablename == BY_EMPLOYEE))
+    tfoot.appendChild(getHeader(new Date(dtStart + 'T00:00:00'), to, tablename == BY_EMPLOYEE))
 
     table.appendChild(thead)
     table.appendChild(tbody)
@@ -64417,7 +64417,7 @@ function getHeader(from, to, tablePersonne = false) {
         // If the day is a Saturday or a Sunday, we don't count it
         if (from.getDay() !== 0 && from.getDay() !== 6) {
             const cell = newCell('th', daysFr[from.getDay()].slice(0, 3) + '\n' + from.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }))
-            cell.dataset.date = from.toISOString().slice(0, 10)
+            cell.dataset.date = `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-${String(from.getDate()).padStart(2, '0')}`
             if (!tablePersonne) {
                 cell.classList.add('wai-location-day')
                 const halves = document.createElement('div')

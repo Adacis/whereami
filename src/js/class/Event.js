@@ -20,13 +20,22 @@ export class Events {
      * @returns
      */
   inInterval(from) {
-    const dtStart = new Date(this.dtStart)
-    const dtEnd = new Date(this.dtEnd)
-    if (from >= dtStart &&
-      from < dtEnd) {
-      return true
+    const dtStart = Events.parseDate(this.dtStart)
+    const dtEnd = Events.parseDate(this.dtEnd)
+    const dayStart = new Date(from)
+    dayStart.setHours(0, 0, 0, 0)
+    const dayEnd = new Date(dayStart)
+    dayEnd.setDate(dayEnd.getDate() + 1)
+    // Calendar intervals have an exclusive end. Check the whole displayed day,
+    // so a valid occurrence does not disappear just because it ends before noon.
+    return dtStart < dayEnd && dtEnd > dayStart
+  }
+
+  static parseDate(value) {
+    if (typeof value === 'string') {
+      value = value.length === 10 ? value + 'T00:00:00' : value.replace(' ', 'T')
     }
-    return false
+    return new Date(value)
   }
 
   /**

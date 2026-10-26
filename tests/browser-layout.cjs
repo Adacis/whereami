@@ -5,10 +5,12 @@ const root=require('node:path').resolve(__dirname, '..') + '/';
 const read=p=>fs.readFileSync(root+p,'utf8');
 const xhrSource=read('src/js/module/xhr.js');
 const optionsSource=xhrSource.slice(xhrSource.indexOf('export const optionDatatable2'), xhrSource.indexOf('/**', xhrSource.indexOf('export const optionDatatable2'))).replace(/export /g, '');
+const calendarFixture=JSON.parse(fs.readFileSync(process.env.WHEREAMI_CALENDAR_FIXTURE_INPUT || root+'tests/fixtures/calendar/expanded-events.json','utf8'));
+const timezone=process.env.WHEREAMI_TEST_TIMEZONE || 'Europe/Paris';
 const source=p=>read(p).replace(/^import .*$/mg,'').replace(/export /g,'');
 (async()=>{
 const browser=await chromium.launch({executablePath:process.env.WHEREAMI_BROWSER_EXECUTABLE || '/usr/bin/chromium',headless:true,args:['--no-sandbox']});
-const page=await browser.newPage({viewport:{width:1280,height:900}});
+const page=await browser.newPage({viewport:{width:1280,height:900},timezoneId:timezone});
 const errors=[]; page.on('pageerror',e=>errors.push(e.message));
 const html=read('templates/content/index.php').replace(/<\?php[\s\S]*?\?>/g,'Employees');
 await page.setContent(`<style>:root{--color-main-background:white;--color-background-hover:#f4f6f8;--color-border:#ddd;--color-primary-element:#087b8b;--color-primary-element-light:#e5f4f5;--color-main-text:#222}body{margin:0}*{box-sizing:border-box}tbody tr{height:50px}</style><div id="app"><div id="app-content">${html}</div></div>`);
@@ -72,7 +74,31 @@ assert.equal(await page.locator('.dataTables_scrollHead thead th:visible').count
 await page.evaluate(()=>newTableContracts(JSON.stringify({userByContract:{Q1:{Alice:2.5,Bob:1},Q2:{Carol:4}},contracts:{Q1:{Alice:[{date_cra:'2026-10-01'}],Bob:[]},Q2:{Carol:[]}}})));
 assert.equal(await page.locator('#contracts').count(),0);await page.selectOption('#contractSelect','Q1');assert.equal(await page.locator('#contracts tbody tr').count(),2);assert.equal(await page.locator('#contracts tfoot').innerText(),'Total\t3,5\t');
 assert.ok(!(await page.locator('#contracts').innerText()).includes('Carol'));
-const navigationPage=await browser.newPage();
+// Use the actual PHP/Nextcloud-expanded JSON contract, including the Wednesday.
+await page.evaluate(fixture=>{
+ document.getElementById('dtStart').value='2026-10-19';
+ document.getElementById('dtEnd').value='2026-10-23';
+ newTablePersonne(JSON.stringify({'person 1':fixture.weekly}), '2026-10-19','2026-10-23','byEmployee');
+ new DataTable('#byEmployee',optionDatatable2);
+},calendarFixture);
+assert.deepEqual(await page.locator('#byEmployee tbody tr td:nth-child(n+3)').allInnerTexts(), Array(5).fill('congés'));
+assert.deepEqual(await page.locator('.dataTables_scrollHead th:nth-child(n+3)').allInnerTexts(), ['Lun\n19/10','Mar\n20/10','Mer\n21/10','Jeu\n22/10','Ven\n23/10']);
+await page.evaluate(fixture=>{
+ const total=new ListEvents('person 1',fixture.weekly).countTypeForUser('congés',new Date('2026-10-01T00:00:00'),new Date('2026-10-31T23:59:59'));
+ if(total.innerText!=='5')throw Error('Five recurring leave days must appear in the monthly summary');
+ const dst=new ListEvents('person 1',fixture.dst).countTypeForUser('congés',new Date('2026-10-01T00:00:00'),new Date('2026-10-31T23:59:59'));
+ if(dst.innerText!=='3')throw Error('DST recurrence has three workdays, with no shifted dates');
+ const spanning=new ListEvents('person 1',fixture.spanning).countTypeForUser('congés',new Date('2026-10-01T00:00:00'),new Date('2026-10-31T23:59:59'));
+ if(spanning.innerText!=='10')throw Error('Repeated full-week absences must count ten workdays');
+ if(!new Events(fixture.spanning[1]).inInterval(new Date('2026-10-28T12:00:00')))throw Error('Wednesday inside a repeated multi-day event must be displayed');
+ const timed=new Events(fixture.timed);
+ if(!timed.inInterval(new Date('2026-10-21T12:00:00')))throw Error('An occurrence ending at noon cannot disappear from the day');
+ if(timed.inInterval(new Date('2026-10-22T12:00:00')))throw Error('Exclusive end cannot add an extra day');
+ newTablePersonne(JSON.stringify({'congés':fixture.weekly}), '2026-10-19','2026-10-23','byLocation');
+ new DataTable('#byLocation',optionDatatable1);
+},calendarFixture);
+assert.deepEqual(await page.locator('#byLocation tbody .cell-main > div').allInnerTexts(), Array(10).fill('1'));
+const navigationPage=await browser.newPage({timezoneId:timezone});
 await navigationPage.setContent(`<style>${read('css/style.css')}</style><div id="app">${read('templates/content/modal.php')}<button class="helper">Aide et fonctionnement</button><div id="finalPath"></div><div id="viewDescription"></div><div id="myapp"></div><div id="rangeControls"><input id="dtStart" type="date"><input id="dtEnd" type="date"><button class="setDates">Appliquer</button></div><div id="monthControls"><select id="summaryMonth"></select><input id="summaryYear" type="number" min="1900" max="9999"></div><button id="addOneMonth">Next</button><button id="removeOneMonth">Previous</button><button class="wai-nav-item" id="showByEmployees"><span>People</span></button><button class="wai-nav-item" id="showByLocations"><span>Places</span></button></div>`);
 await navigationPage.addScriptTag({content:`const BY_EMPLOYEE='byEmployee',BY_LOCATION='byLocation',HR_SUMMARY='HRSummary',LAST_SEEN='lastSeen',CONTRACTS='contracts';const getLoader=()=>document.createElement('div');const newTableHR=()=>{};const getData=()=>{},retrieveData=()=>{},lastSeen=()=>{},getContracts=()=>{};${source('src/js/index/main.js')}`});
 await navigationPage.evaluate(()=>window.dispatchEvent(new Event('DOMContentLoaded')));
@@ -104,5 +130,5 @@ await page.evaluate(()=>{
   const ids=Array.from(document.querySelectorAll('[id]')).map(el=>el.id);
   if(new Set(ids).size!==ids.length)throw Error('Duplicate modal IDs');
 });
-assert.deepEqual(errors,[]);console.log('PASS: cloned header/body alignment at 1280/600px, fixed columns, permanent morning/afternoon splits and totals, guide navigation and focus, monthly totals, contract selection, year navigation.');await browser.close();
+assert.deepEqual(errors,[]);console.log(`PASS [${timezone}]: recurring leave Monday–Friday, Wednesday, DST and exclusive dates; cloned header/body alignment at 1280/600px, fixed columns, permanent morning/afternoon splits and totals, guide navigation and focus, monthly totals, contract selection, year navigation.`);await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

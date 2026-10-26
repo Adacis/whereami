@@ -1,0 +1,203 @@
+{
+    "weekly": [
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-19T00:00:00",
+            "dtEnd": "2026-10-20T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-20T00:00:00",
+            "dtEnd": "2026-10-21T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-21T00:00:00",
+            "dtEnd": "2026-10-22T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-22T00:00:00",
+            "dtEnd": "2026-10-23T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-23T00:00:00",
+            "dtEnd": "2026-10-24T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        }
+    ],
+    "dst": [
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-23T00:00:00",
+            "dtEnd": "2026-10-24T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-24T00:00:00",
+            "dtEnd": "2026-10-25T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-25T00:00:00",
+            "dtEnd": "2026-10-26T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-26T00:00:00",
+            "dtEnd": "2026-10-27T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-27T00:00:00",
+            "dtEnd": "2026-10-28T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        }
+    ],
+    "timed": {
+        "id": "1",
+        "summary": "Cenon",
+        "dtStart": "2026-10-21T09:00:00+02:00",
+        "dtEnd": "2026-10-21T12:00:00+02:00",
+        "place": "cenon",
+        "place2": "",
+        "nextcloud_users": "Person 1",
+        "userId": "1",
+        "allDay": false,
+        "quote": [
+            []
+        ],
+        "valid": true
+    },
+    "spanning": [
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-19T00:00:00",
+            "dtEnd": "2026-10-24T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        },
+        {
+            "id": "1",
+            "summary": "Congés",
+            "dtStart": "2026-10-26T00:00:00",
+            "dtEnd": "2026-10-31T00:00:00",
+            "place": "congés",
+            "place2": "",
+            "nextcloud_users": "Person 1",
+            "userId": "1",
+            "allDay": true,
+            "quote": [
+                []
+            ],
+            "valid": true
+        }
+    ]
+}

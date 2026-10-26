@@ -23,7 +23,7 @@
             </section>
             <section id="help-employees">
                 <h3>03 · Employees — les présences par personne</h3>
-                <p>Une ligne par collaborateur, une colonne par date. Les deux lieux d’une journée sont affichés dans l’ordre <strong>matin, puis après-midi</strong>. Un seul lieu vaut pour toute la journée ; <strong>—</strong> signifie qu’aucune présence n’a été renseignée.</p>
+                <p>Une ligne par collaborateur, une colonne par date. Les deux lieux d’une journée sont affichés dans l’ordre <strong>matin, puis après-midi</strong>. Un seul lieu vaut pour toute la journée ; <strong>⚠️</strong> signifie qu’aucune présence n’a été renseignée.</p>
                 <p>Les colonnes <strong>Personne</strong> et <strong>Clés</strong> restent fixes lorsque vous faites défiler les dates. Les clés indiquent les lieux auxquels la personne a accès ; cliquez sur une clé pour retrouver le lieu dans Locations. Survolez une présence pour lire son commentaire.</p>
             </section>
             <section id="help-locations">

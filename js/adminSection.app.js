@@ -63977,14 +63977,14 @@ class ListEvents_ListEvents {
 
     let div1 = this.createDiv(res, title, found, isSomeoneThere, from)
     div.appendChild(div1)
-    if (title !== title2) {
-      let div2 = this.createDiv(res2, title2, found2, isSomeoneThere2, from)
-      div1.classList.add('cell-base-two')
-      div2.classList.add('cell-base-two')
-      div.appendChild(div2)
-    }
-    else
-      div1.classList.add('cell-base-alone')
+    const div2 = this.createDiv(res2, title2, found2, isSomeoneThere2, from)
+    div1.classList.add('cell-base-two')
+    div2.classList.add('cell-base-two')
+    div1.setAttribute('aria-label', `Matin : ${res} personne(s)`)
+    div2.setAttribute('aria-label', `Après-midi : ${res2} personne(s)`)
+    div1.title = 'Matin' + (title ? '\n' + title : ' : personne sur ce lieu')
+    div2.title = 'Après-midi' + (title2 ? '\n' + title2 : ' : personne sur ce lieu')
+    div.appendChild(div2)
 
     myCell.classList.add('td-location')
     return myCell
@@ -64368,14 +64368,20 @@ function getTotal(tbody) {
             else
                 totalByDay2 += parseInt(mainDiv.firstChild.innerText)
         })
-        let text = ''
-        if (!isNaN(totalByDay)) {
-            text += totalByDay
-            if (totalByDay2 != totalByDay) {
-                text += ", " + totalByDay2
-            }
-        }
-        line.appendChild(newCell('td', text, 'text-align: center;'))
+        const cell = newCell('td', '')
+        cell.className = 'td-location'
+        const split = document.createElement('div')
+        split.className = 'cell-main'
+        ;[['Matin', totalByDay], ['Après-midi', totalByDay2]].forEach(([label, total]) => {
+            const half = document.createElement('div')
+            half.className = 'cell-base-two'
+            half.textContent = Number.isFinite(total) ? total : 0
+            half.setAttribute('aria-label', `${label} : ${half.textContent} personne(s)`)
+            half.title = `${label} : ${half.textContent} personne(s)`
+            split.append(half)
+        })
+        cell.append(split)
+        line.appendChild(cell)
     }
     return line
 }
@@ -64412,6 +64418,13 @@ function getHeader(from, to, tablePersonne = false) {
         if (from.getDay() !== 0 && from.getDay() !== 6) {
             const cell = newCell('th', daysFr[from.getDay()].slice(0, 3) + '\n' + from.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }))
             cell.dataset.date = from.toISOString().slice(0, 10)
+            if (!tablePersonne) {
+                cell.classList.add('wai-location-day')
+                const halves = document.createElement('div')
+                halves.className = 'wai-half-headings'
+                halves.append(newCell('span', 'Matin'), newCell('span', 'Après-midi'))
+                cell.append(halves)
+            }
             line.appendChild(cell)
         }
         from.setDate(from.getDate() + 1)
@@ -64697,7 +64710,7 @@ const optionDatatable2 = {
   scrollCollapse: true,
   autoWidth: false,
   dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
-  columnDefs: [{ targets: 0, width: '148px' }],
+  columnDefs: [{ targets: 0, width: '148px', className: 'wai-person-column' }, { targets: 1, width: '108px', className: 'wai-keys-column' }],
   stateSave: false,
   paging: false,
   fixedColumns: {
@@ -64732,7 +64745,7 @@ const xhr_optionDatatable1 = {
   scrollCollapse: true,
   autoWidth: false,
   dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
-  columnDefs: [{ targets: 0, width: '148px' }],
+  columnDefs: [{ targets: 0, width: '148px', className: 'wai-person-column' }],
   stateSave: false,
   paging: false,
   fixedColumns: {

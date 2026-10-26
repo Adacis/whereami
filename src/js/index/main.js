@@ -122,9 +122,29 @@ function showContracts(){
  */
 
 var form
+let modalReturnFocus
+
+function openModal(id, trigger) {
+  modalReturnFocus = trigger
+  const modal = document.getElementById(id)
+  modal.style.display = 'block'
+  modal.querySelector('.modalClose').focus()
+}
+
+function closeModal(modal) {
+  modal.style.display = 'none'
+  if (modalReturnFocus) modalReturnFocus.focus()
+  if (modal.id === 'newEvent') form = undefined
+}
 window.addEventListener('click', event => {
+  if (event.target.matches('.modal')) { closeModal(event.target); return }
   const target = event.target.closest('button, a, .helper, .modalClose')
   if (!target) return
+  if (target.matches('.wai-help-body nav a')) {
+    event.preventDefault()
+    document.getElementById(target.hash.slice(1)).scrollIntoView({ block: 'start' })
+    return
+  }
   const e = { target }
   if (target.closest('.wai-navigation')) event.preventDefault()
   if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
@@ -157,18 +177,16 @@ window.addEventListener('click', event => {
   else if (e.target.id === 'showNewEventForm') {
     form = new NewEventForm()
 
-    document.getElementById('newEvent').style.display = 'block'
+    openModal('newEvent', target)
     document.getElementById('modal-content-NewEvent').innerHTML = ''
     document.getElementById('modal-content-NewEvent').appendChild(form.form)
     form.dtStartE.focus()
   }
 
   else if (e.target.className.includes('helper')) {
-    document.getElementById('helper').style.display = 'block'
+    openModal('helper', target)
   } else if (e.target.className.includes('modalClose')) {
-    e.target.closest('.modal').style.display = 'none'
-    document.getElementById('showNewEventForm').focus()
-    form = undefined
+    closeModal(e.target.closest('.modal'))
   }
 })
 
@@ -206,11 +224,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
 
 window.addEventListener('keydown', e => {
-  const modal = document.getElementById('newEvent')
-  if (modal.style.display !== 'block') return
+  const modal = Array.from(document.querySelectorAll('.modal')).find(element => element.style.display === 'block')
+  if (!modal) return
   if (e.key === 'Escape') modal.querySelector('.modalClose').click()
   if (e.key === 'Tab') {
-    const controls = Array.from(modal.querySelectorAll('button, input, select')).filter(el => !el.hidden && el.getClientRects().length && !el.disabled)
+    const controls = Array.from(modal.querySelectorAll('button, a[href], input, select, textarea, summary')).filter(el => !el.hidden && el.getClientRects().length && !el.disabled)
     const first = controls[0], last = controls[controls.length - 1]
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }

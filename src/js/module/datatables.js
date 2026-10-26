@@ -322,14 +322,20 @@ function getTotal(tbody) {
             else
                 totalByDay2 += parseInt(mainDiv.firstChild.innerText)
         })
-        let text = ''
-        if (!isNaN(totalByDay)) {
-            text += totalByDay
-            if (totalByDay2 != totalByDay) {
-                text += ", " + totalByDay2
-            }
-        }
-        line.appendChild(newCell('td', text, 'text-align: center;'))
+        const cell = newCell('td', '')
+        cell.className = 'td-location'
+        const split = document.createElement('div')
+        split.className = 'cell-main'
+        ;[['Matin', totalByDay], ['Après-midi', totalByDay2]].forEach(([label, total]) => {
+            const half = document.createElement('div')
+            half.className = 'cell-base-two'
+            half.textContent = Number.isFinite(total) ? total : 0
+            half.setAttribute('aria-label', `${label} : ${half.textContent} personne(s)`)
+            half.title = `${label} : ${half.textContent} personne(s)`
+            split.append(half)
+        })
+        cell.append(split)
+        line.appendChild(cell)
     }
     return line
 }
@@ -366,6 +372,13 @@ function getHeader(from, to, tablePersonne = false) {
         if (from.getDay() !== 0 && from.getDay() !== 6) {
             const cell = newCell('th', daysFr[from.getDay()].slice(0, 3) + '\n' + from.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }))
             cell.dataset.date = from.toISOString().slice(0, 10)
+            if (!tablePersonne) {
+                cell.classList.add('wai-location-day')
+                const halves = document.createElement('div')
+                halves.className = 'wai-half-headings'
+                halves.append(newCell('span', 'Matin'), newCell('span', 'Après-midi'))
+                cell.append(halves)
+            }
             line.appendChild(cell)
         }
         from.setDate(from.getDate() + 1)

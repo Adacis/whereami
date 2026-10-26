@@ -139,14 +139,14 @@ export class ListEvents {
 
     let div1 = this.createDiv(res, title, found, isSomeoneThere, from)
     div.appendChild(div1)
-    if (title !== title2) {
-      let div2 = this.createDiv(res2, title2, found2, isSomeoneThere2, from)
-      div1.classList.add('cell-base-two')
-      div2.classList.add('cell-base-two')
-      div.appendChild(div2)
-    }
-    else
-      div1.classList.add('cell-base-alone')
+    const div2 = this.createDiv(res2, title2, found2, isSomeoneThere2, from)
+    div1.classList.add('cell-base-two')
+    div2.classList.add('cell-base-two')
+    div1.setAttribute('aria-label', `Matin : ${res} personne(s)`)
+    div2.setAttribute('aria-label', `Après-midi : ${res2} personne(s)`)
+    div1.title = 'Matin' + (title ? '\n' + title : ' : personne sur ce lieu')
+    div2.title = 'Après-midi' + (title2 ? '\n' + title2 : ' : personne sur ce lieu')
+    div.appendChild(div2)
 
     myCell.classList.add('td-location')
     return myCell

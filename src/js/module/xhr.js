@@ -18,7 +18,7 @@ export const optionDatatable2 = {
   scrollCollapse: true,
   autoWidth: false,
   dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
-  columnDefs: [{ targets: 0, width: '148px' }],
+  columnDefs: [{ targets: 0, width: '148px', className: 'wai-person-column' }, { targets: 1, width: '108px', className: 'wai-keys-column' }],
   stateSave: false,
   paging: false,
   fixedColumns: {
@@ -53,7 +53,7 @@ export const optionDatatable1 = {
   scrollCollapse: true,
   autoWidth: false,
   dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
-  columnDefs: [{ targets: 0, width: '148px' }],
+  columnDefs: [{ targets: 0, width: '148px', className: 'wai-person-column' }],
   stateSave: false,
   paging: false,
   fixedColumns: {

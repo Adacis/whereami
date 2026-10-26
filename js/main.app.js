@@ -64026,14 +64026,14 @@ class ListEvents {
 
     let div1 = this.createDiv(res, title, found, isSomeoneThere, from)
     div.appendChild(div1)
-    if (title !== title2) {
-      let div2 = this.createDiv(res2, title2, found2, isSomeoneThere2, from)
-      div1.classList.add('cell-base-two')
-      div2.classList.add('cell-base-two')
-      div.appendChild(div2)
-    }
-    else
-      div1.classList.add('cell-base-alone')
+    const div2 = this.createDiv(res2, title2, found2, isSomeoneThere2, from)
+    div1.classList.add('cell-base-two')
+    div2.classList.add('cell-base-two')
+    div1.setAttribute('aria-label', `Matin : ${res} personne(s)`)
+    div2.setAttribute('aria-label', `Après-midi : ${res2} personne(s)`)
+    div1.title = 'Matin' + (title ? '\n' + title : ' : personne sur ce lieu')
+    div2.title = 'Après-midi' + (title2 ? '\n' + title2 : ' : personne sur ce lieu')
+    div.appendChild(div2)
 
     myCell.classList.add('td-location')
     return myCell
@@ -64435,14 +64435,20 @@ function getTotal(tbody) {
             else
                 totalByDay2 += parseInt(mainDiv.firstChild.innerText)
         })
-        let text = ''
-        if (!isNaN(totalByDay)) {
-            text += totalByDay
-            if (totalByDay2 != totalByDay) {
-                text += ", " + totalByDay2
-            }
-        }
-        line.appendChild(newCell('td', text, 'text-align: center;'))
+        const cell = newCell('td', '')
+        cell.className = 'td-location'
+        const split = document.createElement('div')
+        split.className = 'cell-main'
+        ;[['Matin', totalByDay], ['Après-midi', totalByDay2]].forEach(([label, total]) => {
+            const half = document.createElement('div')
+            half.className = 'cell-base-two'
+            half.textContent = Number.isFinite(total) ? total : 0
+            half.setAttribute('aria-label', `${label} : ${half.textContent} personne(s)`)
+            half.title = `${label} : ${half.textContent} personne(s)`
+            split.append(half)
+        })
+        cell.append(split)
+        line.appendChild(cell)
     }
     return line
 }
@@ -64479,6 +64485,13 @@ function getHeader(from, to, tablePersonne = false) {
         if (from.getDay() !== 0 && from.getDay() !== 6) {
             const cell = newCell('th', daysFr[from.getDay()].slice(0, 3) + '\n' + from.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }))
             cell.dataset.date = from.toISOString().slice(0, 10)
+            if (!tablePersonne) {
+                cell.classList.add('wai-location-day')
+                const halves = document.createElement('div')
+                halves.className = 'wai-half-headings'
+                halves.append(newCell('span', 'Matin'), newCell('span', 'Après-midi'))
+                cell.append(halves)
+            }
             line.appendChild(cell)
         }
         from.setDate(from.getDate() + 1)
@@ -64764,7 +64777,7 @@ const optionDatatable2 = {
   scrollCollapse: true,
   autoWidth: false,
   dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
-  columnDefs: [{ targets: 0, width: '148px' }],
+  columnDefs: [{ targets: 0, width: '148px', className: 'wai-person-column' }, { targets: 1, width: '108px', className: 'wai-keys-column' }],
   stateSave: false,
   paging: false,
   fixedColumns: {
@@ -64799,7 +64812,7 @@ const optionDatatable1 = {
   scrollCollapse: true,
   autoWidth: false,
   dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
-  columnDefs: [{ targets: 0, width: '148px' }],
+  columnDefs: [{ targets: 0, width: '148px', className: 'wai-person-column' }],
   stateSave: false,
   paging: false,
   fixedColumns: {
@@ -65670,9 +65683,29 @@ function showContracts(){
  */
 
 var main_form
+let modalReturnFocus
+
+function openModal(id, trigger) {
+  modalReturnFocus = trigger
+  const modal = document.getElementById(id)
+  modal.style.display = 'block'
+  modal.querySelector('.modalClose').focus()
+}
+
+function closeModal(modal) {
+  modal.style.display = 'none'
+  if (modalReturnFocus) modalReturnFocus.focus()
+  if (modal.id === 'newEvent') main_form = undefined
+}
 window.addEventListener('click', event => {
+  if (event.target.matches('.modal')) { closeModal(event.target); return }
   const target = event.target.closest('button, a, .helper, .modalClose')
   if (!target) return
+  if (target.matches('.wai-help-body nav a')) {
+    event.preventDefault()
+    document.getElementById(target.hash.slice(1)).scrollIntoView({ block: 'start' })
+    return
+  }
   const e = { target }
   if (target.closest('.wai-navigation')) event.preventDefault()
   if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
@@ -65705,18 +65738,16 @@ window.addEventListener('click', event => {
   else if (e.target.id === 'showNewEventForm') {
     main_form = new NewEventForm()
 
-    document.getElementById('newEvent').style.display = 'block'
+    openModal('newEvent', target)
     document.getElementById('modal-content-NewEvent').innerHTML = ''
     document.getElementById('modal-content-NewEvent').appendChild(main_form.form)
     main_form.dtStartE.focus()
   }
 
   else if (e.target.className.includes('helper')) {
-    document.getElementById('helper').style.display = 'block'
+    openModal('helper', target)
   } else if (e.target.className.includes('modalClose')) {
-    e.target.closest('.modal').style.display = 'none'
-    document.getElementById('showNewEventForm').focus()
-    main_form = undefined
+    closeModal(e.target.closest('.modal'))
   }
 })
 
@@ -65754,11 +65785,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
 
 window.addEventListener('keydown', e => {
-  const modal = document.getElementById('newEvent')
-  if (modal.style.display !== 'block') return
+  const modal = Array.from(document.querySelectorAll('.modal')).find(element => element.style.display === 'block')
+  if (!modal) return
   if (e.key === 'Escape') modal.querySelector('.modalClose').click()
   if (e.key === 'Tab') {
-    const controls = Array.from(modal.querySelectorAll('button, input, select')).filter(el => !el.hidden && el.getClientRects().length && !el.disabled)
+    const controls = Array.from(modal.querySelectorAll('button, a[href], input, select, textarea, summary')).filter(el => !el.hidden && el.getClientRects().length && !el.disabled)
     const first = controls[0], last = controls[controls.length - 1]
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }

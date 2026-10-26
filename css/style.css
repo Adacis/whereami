@@ -240,9 +240,9 @@ table.dataTable.table-striped>tbody>tr.odd:hover>* {
 #myapp table tbody tr:hover > td { box-shadow: inset 0 0 0 9999px #80808012; }
 #myapp .dataTables_scrollBody { border: 0; max-width: 100%; }
 #myapp .dtfc-fixed-left { z-index: 2; background: var(--color-main-background); }
-#myapp table th:first-child, #myapp table td:first-child { min-width: 148px; max-width: 148px; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; }
-#myapp #byEmployee th:nth-child(2), #myapp #byEmployee td:nth-child(2) { min-width: 76px; max-width: 76px; box-sizing: border-box; box-shadow: 3px 0 5px #0001; }
-#myapp #byEmployee th:nth-child(n+3), #myapp #byLocation th:nth-child(n+2) { min-width: 82px; text-align: center; }
+#myapp table .wai-person-column { width: 148px !important; min-width: 148px; max-width: 148px; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; }
+#myapp table .wai-keys-column { width: 108px !important; min-width: 108px; max-width: 108px; box-sizing: border-box; box-shadow: 3px 0 5px #0001; overflow: hidden; text-overflow: ellipsis; }
+#myapp #byEmployee th:nth-child(n+3) { min-width: 82px; text-align: center; }
 #myapp .wai-seen-pending, #myapp table tbody tr > .wai-seen-pending { background: var(--color-primary-element-light); color: var(--color-primary-element); text-align: center; }
 #myapp .wai-seen-away, #myapp table tbody tr > .wai-seen-away { background: #f4e8cf; color: #70551f; }
 #myapp .wai-unfilled, #myapp table tbody tr > .wai-unfilled { color: var(--color-text-maxcontrast); background: var(--color-background-hover); text-align: center; }
@@ -276,3 +276,28 @@ table.dataTable.table-striped>tbody>tr.odd:hover>* {
 #myapp table tbody tr:nth-child(even) > td.dtfc-fixed-left { background-color: var(--color-background-hover); }
 #newEventForm .round input[type=checkbox] { visibility: visible; appearance: auto; width: 16px; height: 16px; }
 #newEventForm .round label { display: none; }
+
+/* Column classes are copied into DataTables' separate header/footer tables. */
+#myapp table .wai-location-day { min-width: 138px; text-align: center; padding: 5px 0 0; }
+#myapp .wai-half-headings, #myapp .cell-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); width: 100%; }
+#myapp .wai-half-headings { margin-top: 5px; font-size: 10px; font-weight: 500; border-top: 1px solid var(--color-border); }
+#myapp .wai-half-headings span { padding: 4px 2px; }
+#myapp .wai-half-headings span + span, #myapp .cell-main > div + div { border-left: 1px solid var(--color-border); }
+#myapp .cell-main > div { padding: 5px 3px; box-sizing: border-box; min-width: 0; }
+#myapp table .td-location { padding: 0; text-align: center; }
+#app #helper .modal-content { width: min(820px, 100%); }
+.wai-help-body { padding: 20px 24px 24px; display: grid; gap: 16px; font-size: 12px; line-height: 1.6; }
+.wai-help-intro { margin: 0; color: var(--color-text-maxcontrast); }
+.wai-help-body section { padding: 16px; border: 1px solid var(--color-border); border-radius: 12px; }
+.wai-help-body h3 { font-size: 13px; font-weight: 600; margin: 0 0 8px; }
+.wai-help-body p { margin: 6px 0; }
+.wai-help-body ul, .wai-help-body ol { padding-left: 20px; list-style: revert; margin: 8px 0; }
+.wai-help-body code { background: var(--color-background-hover); border: 1px solid var(--color-border); border-radius: 5px; padding: 2px 5px; font-size: 11px; white-space: normal; overflow-wrap: anywhere; }
+.wai-help-example { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+.wai-help-example > div { background: var(--color-primary-element-light); border-radius: 8px; padding: 10px 12px; }
+.wai-help-example small { display: block; color: var(--color-text-maxcontrast); }
+.wai-help-footer { padding: 12px 24px; border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end; }
+.wai-help-body a { color: var(--color-primary-element); }
+@media(max-width: 600px) { .wai-help-body { padding: 12px; } .wai-help-body section { padding: 12px; } }
+#app .wai-help-footer .modalClose { font-size: 12px; padding: 7px 16px; font-weight: 600; }
+.wai-help-body section { scroll-margin-top: 16px; }

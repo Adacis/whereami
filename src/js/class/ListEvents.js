@@ -49,7 +49,9 @@ export class ListEvents {
 
     if (!found) {
       myCell.classList.add('wai-unfilled')
-      res += '—'
+      res += '⚠️'
+      title = 'Présence non renseignée dans le calendrier'
+      myCell.setAttribute('aria-label', title)
     }
 
     myCell.setAttribute('title', title)

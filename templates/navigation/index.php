@@ -5,4 +5,4 @@
 <li><button type="button" id="<?php p($id); ?>" class="wai-nav-item"><span aria-hidden="true"><?php p($entry[0]); ?></span><?php p($l->t($entry[1])); ?></button></li>
 <?php endforeach; ?>
 </ul>
-<div class="wai-nav-footer"><button type="button" class="helper">Aide et fonctionnement</button><small>Whereami · v1.0.2</small></div>
+<div class="wai-nav-footer"><button type="button" class="helper">Aide et fonctionnement</button><small>Whereami · v1.0.3</small></div>

@@ -98,83 +98,51 @@ function getAllDatesFromContract (informations) {
  * }
  */
 export function newTableContracts(response) {
-    const res = JSON.parse(response);
-
-    const table = document.createElement('table');
-    table.setAttribute('id', 'contracts');
-    table.setAttribute('class', 'table table-striped');
-
-    let thead = document.createElement('thead');
-    let tbody = document.createElement('tbody');
-
-    // Create a headline with contracts names
-    const headLine = document.createElement('tr');
-    headLine.appendChild(newCell('th', 'Contracts')); // Header for contracts column
-
-
-    // Add each contracts name to the headline
-    Object.keys(res.userByContract).forEach(contractKey => {
-        headLine.appendChild(newCell('th', contractKey));
-    });
-
-    thead.appendChild(headLine);
-
-    // Create an array to hold all contracts for each employee
-    const employeeContracts = {};
-
-    // Iterate over each contract
-    Object.keys(res.contracts).forEach(contractKey => {
-        const contractData = res.contracts[contractKey];
-        const userName = Object.keys(contractData)[0];
-        // Iterate over each employee
-        Object.keys(res.userByContract).forEach(contractKey => {
-            const contractCount = res.userByContract[contractKey][userName] || 0;
-            // Add contract value to employee's contract array
-            if (!employeeContracts[contractKey]) {
-                employeeContracts[contractKey] = [];
-            }
-            //If employeeContractcs[contractKey] not contains userName, add it
-            if (!employeeContracts[contractKey].some(e => e.user === userName)){
-                employeeContracts[contractKey].push({
-                    user: userName,
-                    count: contractCount
-                });
-            }
-        });
-    });
-
-    let userPresent = []
-
-    // Create rows for each contract
-    Object.keys(employeeContracts).forEach(contractKey => {
-        const contractData = res.contracts[contractKey];
-        const userName = Object.keys(contractData)[0];
-        const contractRow = document.createElement('tr');
-
-        if (!userPresent.includes(userName)) {
-        contractRow.appendChild(newCell('td', userName)); // Add employee in the first row
-            // Add each time the employee was present for each contract
-            for (const key in employeeContracts) {
-                for(let i = 0; i < employeeContracts[key].length; i++){
-                    if(employeeContracts[key][i].user === userName) {
-                        contractRow.appendChild(newCell('td', employeeContracts[key][i].count, '', getAllDatesFromContract(res.contracts[key][userName])));
-                    }
-                }
-
-            }
-
-            tbody.appendChild(contractRow);
-            userPresent.push(userName);
+    const res = JSON.parse(response)
+    const app = document.getElementById('myapp')
+    app.replaceChildren()
+    const toolbar = document.createElement('div')
+    toolbar.className = 'wai-toolbar'
+    const label = document.createElement('label')
+    label.htmlFor = 'contractSelect'
+    label.textContent = 'Devis'
+    const select = document.createElement('select')
+    select.id = 'contractSelect'
+    select.add(new Option('Choisir un devis…', ''))
+    Object.keys(res.userByContract || {}).sort().forEach(key => select.add(new Option(key, key)))
+    toolbar.append(label, select)
+    const result = document.createElement('div')
+    result.className = 'wai-table-scroll'
+    result.setAttribute('aria-live', 'polite')
+    app.append(toolbar, result)
+    const render = () => {
+        result.replaceChildren()
+        if (!select.value) {
+            const hint = document.createElement('p')
+            hint.className = 'wai-empty'
+            hint.textContent = select.options.length > 1 ? 'Sélectionnez un devis pour afficher ses imputations.' : 'Aucune imputation sur cette période.'
+            result.append(hint)
+            return
         }
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('myapp').innerHTML = '';
-    document.getElementById('myapp').appendChild(table);
+        const table = document.createElement('table')
+        table.id = 'contracts'
+        table.className = 'table table-striped'
+        const head = table.createTHead()
+        head.append(getHeaderWithValues(['Collaborateur', 'Jours imputés', 'Dates']))
+        const body = table.createTBody()
+        let total = 0
+        Object.entries(res.userByContract[select.value]).sort(([a], [b]) => a.localeCompare(b)).forEach(([user, count]) => {
+            const row = body.insertRow()
+            row.append(newCell('td', user), newCell('td', Number(count).toLocaleString('fr-FR')), newCell('td', getAllDatesFromContract((res.contracts[select.value] || {})[user])))
+            total += Number(count)
+        })
+        const foot = table.createTFoot().insertRow()
+        foot.append(newCell('th', 'Total'), newCell('th', total.toLocaleString('fr-FR')), newCell('th', ''))
+        result.append(table)
+    }
+    select.addEventListener('change', render)
+    render()
 }
-
-
 
 export function newTableSeen(response, dtStart, dtEnd) {
     const res = JSON.parse(response)
@@ -183,7 +151,7 @@ export function newTableSeen(response, dtStart, dtEnd) {
     const periodLength = toInteger((new Date(dtEnd) - new Date(dtStart)) / (1000 * 3600 * 24))
 
     const table = document.createElement('table')
-    table.setAttribute('id', 'seen')
+    table.setAttribute('id', 'lastSeen')
     table.setAttribute('class', 'table table-striped')
 
     let thead = document.createElement('thead')
@@ -218,8 +186,8 @@ export function newTableSeen(response, dtStart, dtEnd) {
 
                 let peoplecolumn = table.rows[0].cells[cellPosition].innerText
 
-                let msg = ":'(";
-                let title = "No title";
+                let msg = '◷';
+                let title = 'Pas de croisement sur cette période';
                 var daysLastSeen = -1
 
                 if (peoplerow === peoplecolumn) {
@@ -244,7 +212,7 @@ export function newTableSeen(response, dtStart, dtEnd) {
                         title = title + " today"
                     else
                         title = title + ' ' + daysLastSeen + ' day(s) ago'
-                    title = title + " (" + res[peoplerow][peoplecolumn].count + ' time(s))'
+                    title = title + " (" + res[peoplerow][peoplecolumn].count + ' jour(s) en commun)'
                 }
 
 
@@ -254,11 +222,12 @@ export function newTableSeen(response, dtStart, dtEnd) {
                 newCell.appendChild(newText)
 
                 if (daysLastSeen >= toInteger(FRACTION_FOR_ORANGE * periodLength)) {
-                    newCell.style = "background-color: orange;"
+                    newCell.classList.add('wai-seen-away')
                 }
                 if (daysLastSeen == -1 || daysLastSeen >= toInteger(FRACTION_FOR_RED * periodLength) && peoplerow != peoplecolumn) {
-                    newCell.style = "background-color: red;"
-                    newCell.title = "Not seen in the last " + periodLength + " days"
+                    newCell.classList.add('wai-seen-pending')
+                    newCell.title = 'Aucun croisement récent à Cenon, Bordeaux ou DNUM sur la période'
+                    if (daysLastSeen === -1) newCell.setAttribute('aria-label', 'Pas encore croisés sur cette période')
                 }
 
                 //setTitleWithIcons(table.rows[0].cells[cellPosition], groupedIcons[peoplecolumn])
@@ -395,7 +364,9 @@ function getHeader(from, to, tablePersonne = false) {
     while (from <= to) {
         // If the day is a Saturday or a Sunday, we don't count it
         if (from.getDay() !== 0 && from.getDay() !== 6) {
-            line.appendChild(newCell('th', daysFr[from.getDay()] + '\n' + from.toLocaleDateString()))
+            const cell = newCell('th', daysFr[from.getDay()].slice(0, 3) + '\n' + from.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }))
+            cell.dataset.date = from.toISOString().slice(0, 10)
+            line.appendChild(cell)
         }
         from.setDate(from.getDate() + 1)
     }
@@ -447,13 +418,7 @@ function getContent(tbody, headerLine, startIndex, userListEvents, type, icons =
         let value
         if (counter >= startIndex) {
             if (type === BY_EMPLOYEE || type === BY_LOCATION) {
-                let today = new Date(document.getElementById('dtStart').valueAsDate)
-                today.setDate(today.getDate() + counter - startIndex)
-                if (today.getDay() === 6) {
-                    today.setDate(today.getDate() + 2) // Go to Monday
-                    counter += 2 // Add 2 to the counter
-                }
-                value = today
+                value = new Date(elem.dataset.date + 'T12:00:00')
             }
             else if (type === HR_SUMMARY) {
                 value = elem.innerText
@@ -492,7 +457,12 @@ export function newTableHR(dataSent, response) {
     table.setAttribute('id', tableName)
     table.setAttribute('class', 'table table-striped')
 
-    var headerValues = ['Personne'].concat(getTags(ALLOWED_PLACES).onload().map((elem) => elem.word), ['Total'])
+    const places = getTags(ALLOWED_PLACES).onload().map(elem => elem.word)
+    const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    const priority = value => /rtt|teletravail|remote|conge|vacation|leave/.test(normalize(value))
+    const primary = places.filter(priority)
+    const additional = places.filter(value => !priority(value))
+    var headerValues = ['Personne'].concat(primary, additional, ['Total'])
     const head = getHeaderWithValues(headerValues)
     thead.appendChild(head)
 
@@ -510,5 +480,22 @@ export function newTableHR(dataSent, response) {
     table.appendChild(tfoot)
     document.getElementById('myapp').innerHTML = ''
     document.getElementById('myapp').appendChild(table)
-    new DataTable('#' + tableName, optionDatatable1)
+    const dt = new DataTable('#' + tableName, { ...optionDatatable1, stateSave: false })
+    const options = document.createElement('details')
+    options.className = 'wai-columns'
+    const summary = document.createElement('summary')
+    summary.textContent = 'Colonnes additionnelles'
+    options.append(summary)
+    additional.concat(['Total']).forEach((place, offset) => {
+        const index = 1 + primary.length + offset
+        dt.column(index).visible(false, false)
+        const label = document.createElement('label')
+        const checkbox = document.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.addEventListener('change', () => { dt.column(index).visible(checkbox.checked); dt.columns.adjust() })
+        label.append(checkbox, document.createTextNode(place))
+        options.append(label)
+    })
+    document.getElementById('myapp').prepend(options)
+    dt.columns.adjust().draw(false)
 }

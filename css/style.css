@@ -201,3 +201,78 @@ table.dataTable.table-striped>tbody>tr.odd:hover>* {
   text-decoration: none;
   cursor: pointer;
 }
+
+/* Whereami — compact workspace */
+#app { min-width: 0; }
+#app-navigation:not(.vue) { width: 220px; flex: 0 0 220px; display: flex; flex-direction: column; padding: 16px 10px; box-sizing: border-box; }
+#app-content, #app-content-wrapper { min-width: 0; flex: 1; width: 100%; }
+#contentTable { box-sizing: border-box; padding: 22px 20px; }
+.wai-brand { display: grid; grid-template-columns: 32px 1fr; gap: 3px 8px; padding: 10px 8px 24px; }
+.wai-brand strong { font-size: 18px; letter-spacing: -.5px; }
+.wai-brand-mark { grid-row: span 2; color: var(--color-primary-element); font-size: 26px; }
+.wai-brand small { font-size: 10px; color: var(--color-text-maxcontrast); }
+#app-navigation .wai-navigation { flex: 1; padding: 0; }
+#app-navigation .wai-navigation li { margin: 4px 0; padding: 0; }
+#app-navigation .wai-navigation button { display: flex; gap: 12px; align-items: center; width: 100%; min-height: 40px; border: 0; border-radius: 10px; margin: 0; text-align: left; padding: 8px 12px; cursor: pointer; }
+#app-navigation .wai-navigation button span { width: 20px; flex: 0 0 20px; font-size: 19px; text-align: center; pointer-events: none; }
+#app-navigation .wai-nav-item { background: transparent; font-weight: 500; }
+#app-navigation .wai-nav-item:hover, #app-navigation .wai-nav-item[aria-current=page] { background: var(--color-primary-element-light); color: var(--color-primary-element); }
+#app-navigation .wai-navigation .wai-new { margin-bottom: 20px; background: var(--color-primary-element); color: var(--color-primary-element-text); box-shadow: 0 4px 12px #0002; font-weight: 600; }
+.wai-nav-footer { margin-top: auto; border-top: 1px solid var(--color-border); padding-top: 12px; display: grid; gap: 8px; }
+.wai-nav-footer small { color: var(--color-text-maxcontrast); padding-left: 12px; font-size: 11px; }
+.wai-page-header { margin-bottom: 18px; border-bottom: 1px solid var(--color-border); padding-bottom: 16px; }
+.wai-eyebrow { color: var(--color-primary-element); font-size: 10px; letter-spacing: 1.6px; font-weight: 700; margin-bottom: 6px; }
+.wai-page-header h2 { font-size: 18px; margin: 0 0 5px; font-weight: 600; }
+#viewDescription, .wai-dialog-header p:not(.wai-eyebrow) { color: var(--color-text-maxcontrast); font-size: 12px; }
+.wai-toolbar, #rangeControls, #monthControls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.wai-toolbar { margin: 0 0 14px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-background-hover); }
+#contentTable [hidden], #newEvent [hidden] { display: none !important; }
+.wai-toolbar input, .wai-toolbar select { margin: 0; min-height: 32px; }
+#summaryYear { width: 92px; }
+#myapp { min-width: 0; font-size: 12px; }
+#myapp .dataTables_wrapper { width: 100%; min-width: 0; }
+#myapp table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 12px; border: 1px solid var(--color-border); border-radius: 10px; }
+#myapp table.dataTable { font-size: 12px; margin: 0 !important; }
+#myapp table th, #myapp table td { padding: 5px 8px; line-height: 1.35; vertical-align: middle; border-bottom: 1px solid var(--color-border); border-right: 1px solid var(--color-border); }
+#myapp table thead th, #myapp table tfoot th { background: var(--color-primary-element-light); color: var(--color-main-text); font-weight: 600; }
+#myapp table tbody tr:nth-child(even) > td { background-color: var(--color-background-hover); }
+#myapp table tbody tr:nth-child(odd) > td { background-color: var(--color-main-background); }
+#myapp table tbody tr:hover > td { box-shadow: inset 0 0 0 9999px #80808012; }
+#myapp .dataTables_scrollBody { border: 0; max-width: 100%; }
+#myapp .dtfc-fixed-left { z-index: 2; background: var(--color-main-background); }
+#myapp table th:first-child, #myapp table td:first-child { min-width: 148px; max-width: 148px; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; }
+#myapp #byEmployee th:nth-child(2), #myapp #byEmployee td:nth-child(2) { min-width: 76px; max-width: 76px; box-sizing: border-box; box-shadow: 3px 0 5px #0001; }
+#myapp #byEmployee th:nth-child(n+3), #myapp #byLocation th:nth-child(n+2) { min-width: 82px; text-align: center; }
+#myapp .wai-seen-pending, #myapp table tbody tr > .wai-seen-pending { background: var(--color-primary-element-light); color: var(--color-primary-element); text-align: center; }
+#myapp .wai-seen-away, #myapp table tbody tr > .wai-seen-away { background: #f4e8cf; color: #70551f; }
+#myapp .wai-unfilled, #myapp table tbody tr > .wai-unfilled { color: var(--color-text-maxcontrast); background: var(--color-background-hover); text-align: center; }
+#myapp .cell-no-keys { background: #f4e8cf; color: #70551f; }
+#myapp .cell-no-one { background: var(--color-background-hover); color: var(--color-text-maxcontrast); }
+.wai-table-tools { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.wai-table-info { padding: 8px 0; color: var(--color-text-maxcontrast); font-size: 11px; }
+.wai-columns { margin-bottom: 12px; border: 1px solid var(--color-border); border-radius: 8px; padding: 8px 12px; }
+.wai-columns summary { cursor: pointer; font-weight: 600; }
+.wai-columns label { display: inline-flex; gap: 6px; align-items: center; margin: 8px 16px 0 0; }
+.wai-columns input { appearance: auto; width: 16px; height: 16px; }
+.wai-table-scroll { overflow-x: auto; }
+.wai-empty { padding: 32px 16px; text-align: center; color: var(--color-text-maxcontrast); border: 1px dashed var(--color-border); border-radius: 10px; }
+.lds-dual-ring { width: 80px; height: 80px; }
+#app .modal { z-index: 2000; padding: 7vh 16px; box-sizing: border-box; background: #101b2a80; backdrop-filter: blur(5px); }
+#app .modal-content { width: min(620px, 100%); max-height: 85vh; overflow: auto; border: 1px solid var(--color-border); border-radius: 18px; padding: 0; box-shadow: 0 24px 80px #0004; }
+.wai-dialog-header { padding: 24px; display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--color-border); }
+.wai-dialog-header h2 { font-size: 18px; margin: 0 0 6px; }
+#app .modalClose { float: none; align-self: flex-start; min-width: 32px; font-size: 22px; color: var(--color-main-text); border: 0; background: var(--color-background-hover); }
+#newEventForm { padding: 20px 24px; display: grid; gap: 16px; }
+#newEventForm > div { text-align: left; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+#newEventForm input:not([type=checkbox]), #newEventForm select { min-width: 0; flex: 1; margin: 0; border-radius: 8px; }
+#newEventForm > div:last-child { justify-content: flex-end; border-top: 1px solid var(--color-border); padding-top: 16px; }
+#newEventForm #submitButton { padding-inline: 24px; border-radius: 9px; }
+#newEventForm #dateInfo { width: 100%; font-size: 12px; }
+@media(max-width: 900px) { #contentTable { padding: 16px 10px; } #datesHeader { align-items: flex-start; } }
+@media(max-width: 600px) { #app-navigation:not(.vue) { width: 180px; flex-basis: 180px; } #rangeControls { gap: 4px; } #rangeControls input { width: 125px; } .wai-dialog-header { padding: 18px; } #newEventForm { padding: 18px; } }
+#myapp table tbody tr { height: 28px; min-height: 0; }
+#myapp table tbody td { min-height: 0; height: 28px; box-sizing: border-box; }
+#myapp table tbody tr > td.dtfc-fixed-left { background-color: var(--color-main-background); }
+#myapp table tbody tr:nth-child(even) > td.dtfc-fixed-left { background-color: var(--color-background-hover); }
+#newEventForm .round input[type=checkbox] { visibility: visible; appearance: auto; width: 16px; height: 16px; }
+#newEventForm .round label { display: none; }

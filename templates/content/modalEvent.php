@@ -1,9 +1,2 @@
-<div id="newEvent" class="modal">
-    <div class="modal-content">
-        <span class="modalClose">&times;</span>
-        <h2><?php p($l->t('Add a new event')); ?></h2>
-
-        <div id="modal-content-NewEvent">
-        </div>
-    </div>
-</div>
+<div id="newEvent" class="modal" role="dialog" aria-modal="true" aria-labelledby="newEventTitle" tabindex="-1">
+<div class="modal-content"><header class="wai-dialog-header"><div><p class="wai-eyebrow">PLANIFIER UNE PRÉSENCE</p><h2 id="newEventTitle"><?php p($l->t('Add a new event')); ?></h2><p>Un lieu, une date : informez votre équipe.</p></div><button type="button" class="modalClose" aria-label="Fermer">×</button></header><div id="modal-content-NewEvent"></div></div></div>

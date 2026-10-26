@@ -133,48 +133,64 @@ class PageController extends Controller
 	 */
 	public function getLastSeen(String $dtStart, String $dtEnd)
 	{
-		$events = [];
-		$charReplace = "@";
-
-		$toExclude = $this->myDb->getWordInWordList("excluded_places");
-		$toExclude = $this->arrayFromWordQuery($toExclude);
-
-        // Retrieval of the list of events over the period
-		foreach ($this->search($dtStart, $dtEnd) as $c) {
-			$e = new MyEvent($c, $this->myDb, $this->logger);
-
-			if (!$e->valid) {
-				continue;
-			}
-
-			$cls = strtolower($e->{"nextcloud_users"});
-			$cls = trim(str_replace($charReplace, "", $cls));
-			$cls = explode(",", $cls)[0];
-			$cls = trim($cls);
-
-			array_push($events, $e);
-		}
-
-        // Retrieval of the list of overlapping events over the period
-		$listSeen = [];
-		foreach ($events as $e) {
-			$user = strtolower($e->nextcloud_users);
-			if (!array_key_exists($user, $listSeen)) {
-				$listSeen[$user] = [];
-			}
-
-			$listSeen[$user] = $e->parseListEvents($events, $listSeen[$user], $toExclude);
-		}
-		ksort($listSeen, SORT_STRING);
-		return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);
-	}
+        $listSeen = [];
+        $slots = [];
+        $from = new DateTime($dtStart);
+        $until = new DateTime($dtEnd);
+        $until->setTime(23, 59, 59);
+        $now = new DateTime();
+        if ($until > $now) {
+            $until = $now;
+        }
+        foreach ($this->search($dtStart, $dtEnd) as $calendarEvent) {
+            $event = new MyEvent($calendarEvent, $this->myDb, $this->logger);
+            if (!$event->valid) {
+                continue;
+            }
+            $user = strtolower($event->nextcloud_users);
+            $listSeen[$user] = $listSeen[$user] ?? [];
+            $start = new DateTime($event->dtStart);
+            $end = new DateTime($event->dtEnd);
+            $day = clone ($start > $from ? $start : $from);
+            $day->setTime(0, 0);
+            while ($day < $end && $day <= $until) {
+                if ((int)$day->format('N') <= 5) {
+                    foreach ([$event->place, $event->place2 ?: $event->place] as $half => $place) {
+                        $place = strtolower(trim($place));
+                        if (in_array($place, ['cenon', 'bordeaux', 'dnum'], true)) {
+                            $slots[$day->format('Y-m-d')][$half][$place][$user] = true;
+                        }
+                    }
+                }
+                $day->modify('+1 day');
+            }
+        }
+        ksort($slots);
+        foreach ($slots as $date => $halves) {
+            foreach ($halves as $places) {
+                foreach ($places as $place => $users) {
+                    foreach (array_keys($users) as $user) {
+                        foreach (array_keys($users) as $other) {
+                            if ($user === $other) {
+                                continue;
+                            }
+                            $count = ($listSeen[$user][$other]['count'] ?? 0) + 0.5;
+                            $listSeen[$user][$other] = ['place' => $place, 'seen' => $date, 'count' => $count, 'load' => false];
+                        }
+                    }
+                }
+            }
+        }
+        ksort($listSeen, SORT_STRING);
+        return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);
+    }
 
 	public function search(String $dtStart, String $dtEnd)
 	{
 		$from = new DateTime($dtStart);
 		$to = new DateTime($dtEnd);
 		// It looks like search does not include the upper bound (end of day at 00H00)
-		$to->modify('+1 minute');
+		$to->modify('+1 day');
 		$searchResults = $this->calendarManager->search("@", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
 
 		return $searchResults;

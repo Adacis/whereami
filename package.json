@@ -1,5 +1,6 @@
 {
 	"name": "whereami",
+	"version": "1.0.0",
 	"description": "Is a simple application to locate everybody in your company.",
 	"author": "ADACIS",
 	"contributors": [

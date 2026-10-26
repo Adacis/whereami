@@ -13,11 +13,13 @@ export const baseUrl = generateUrl('/apps/whereami')
 export const homeUrl = generateUrl('/')
 
 export const optionDatatable2 = {
-  scrollY: true,
+
   scrollX: true,
   scrollCollapse: true,
   autoWidth: false,
-  stateSave: true,
+  dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
+  columnDefs: [{ targets: 0, width: '148px' }],
+  stateSave: false,
   paging: false,
   fixedColumns: {
     left: 2
@@ -46,11 +48,13 @@ export const optionDatatable2 = {
 }
 
 export const optionDatatable1 = {
-  scrollY: true,
+
   scrollX: true,
   scrollCollapse: true,
   autoWidth: false,
-  stateSave: true,
+  dom: '<"wai-table-tools"f>t<"wai-table-info"i>',
+  columnDefs: [{ targets: 0, width: '148px' }],
+  stateSave: false,
   paging: false,
   fixedColumns: {
     left: 1
@@ -154,7 +158,7 @@ export function getContracts(dtStart, dtEnd) {
   oReq.onload = function (e) {
     if (this.status === 200) {
       newTableContracts(this.response);
-      new DataTable('#contracts', optionDatatable1);
+
     } else {
       showError(this.response);
     }
@@ -177,7 +181,7 @@ export function lastSeen(dtStart, dtEnd) {
     if (this.status === 200) {
       console.log(this.response);
       newTableSeen(this.response, dtStart, dtEnd);
-      new DataTable('#seen', optionDatatable1);
+      new DataTable('#lastSeen', optionDatatable1);
     } else {
       showError(this.response);
     }

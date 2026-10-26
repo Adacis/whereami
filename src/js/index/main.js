@@ -11,19 +11,15 @@ import { NewEventForm } from '../class/NewEventForm'
  */
 function setHash(hash) {
   window.location.hash = hash
+  const ids = { byEmployee: 'showByEmployees', byLocation: 'showByLocations', lastSeen: 'showLastSeen', HRSummary: 'showHRSummary', contracts: 'showContracts' }
+  document.querySelectorAll('.wai-nav-item').forEach(button => button.setAttribute('aria-current', button.id === ids[hash] ? 'page' : 'false'))
+  const descriptions = { byEmployee: 'Les présences de l’équipe en un coup d’œil.', byLocation: 'Les effectifs et les clés, lieu par lieu.', lastSeen: 'Derniers croisements à Cenon, Bordeaux et DNUM. Congés, RTT et télétravail exclus.', HRSummary: 'Le bilan mensuel des RTT, du télétravail et des congés, en jours.', contracts: 'Sélectionnez un devis pour consulter les jours imputés et les collaborateurs concernés.' }
+  document.getElementById('viewDescription').textContent = descriptions[hash]
 }
 
-function setButtonsMonths(bool) {
-  if (bool) {
-    document.getElementById('addOneMonth').removeAttribute('hidden')
-    document.getElementById('removeOneMonth').removeAttribute('hidden')
-    document.getElementsByClassName('setDates')[0].setAttribute('hidden', true)
-  }
-  else {
-    document.getElementById('addOneMonth').setAttribute('hidden', true)
-    document.getElementById('removeOneMonth').setAttribute('hidden', true)
-    document.getElementsByClassName('setDates')[0].removeAttribute('hidden')
-  }
+function setButtonsMonths(summary) {
+  document.getElementById('monthControls').hidden = !summary
+  document.getElementById('rangeControls').hidden = summary
 }
 
 function setDateUsual() {
@@ -39,14 +35,15 @@ function setDateUsual() {
 
 function setDateSummary(diff = 0) {
   setButtonsMonths(true)
-
-  let start = getDateFirstOfMonth(diff)
-  let end = getDateFirstOfMonth(1 + diff)
-  end.setMinutes(end.getMinutes() - 1)
-  document.getElementById('dtEnd').valueAsDate = end
-  document.getElementById('dtStart').valueAsDate = start
+  const month = document.getElementById('summaryMonth')
+  const year = document.getElementById('summaryYear')
+  const date = new Date(Number(year.value), Number(month.value) + diff, 1, 12)
+  month.value = date.getMonth()
+  year.value = date.getFullYear()
+  const format = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  document.getElementById('dtStart').value = format(date)
+  document.getElementById('dtEnd').value = format(new Date(date.getFullYear(), date.getMonth() + 1, 0, 12))
 }
-
 
 function setDateLastSeen() {
   setButtonsMonths(false)
@@ -125,7 +122,11 @@ function showContracts(){
  */
 
 var form
-window.addEventListener('click', e => {
+window.addEventListener('click', event => {
+  const target = event.target.closest('button, a, .helper, .modalClose')
+  if (!target) return
+  const e = { target }
+  if (target.closest('.wai-navigation')) event.preventDefault()
   if (e.target.id === 'showByEmployees' || (e.target.className.includes('setDates') && document.getElementById(BY_EMPLOYEE) != null)) {
     showByEmployees();
   }
@@ -147,15 +148,10 @@ window.addEventListener('click', e => {
   }
 
   else if (e.target.id === 'addOneMonth') {
-    let realMonth = (new Date()).getMonth()
-    let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
-    showHRSummary(currentMonth - realMonth + 1)
+    showHRSummary(1)
   }
-
   else if (e.target.id === 'removeOneMonth') {
-    let realMonth = (new Date()).getMonth()
-    let currentMonth = (new Date(document.getElementById('dtStart').value)).getMonth()
-    showHRSummary(currentMonth - realMonth - 1)
+    showHRSummary(-1)
   }
 
   else if (e.target.id === 'showNewEventForm') {
@@ -164,17 +160,26 @@ window.addEventListener('click', e => {
     document.getElementById('newEvent').style.display = 'block'
     document.getElementById('modal-content-NewEvent').innerHTML = ''
     document.getElementById('modal-content-NewEvent').appendChild(form.form)
+    form.dtStartE.focus()
   }
 
   else if (e.target.className.includes('helper')) {
     document.getElementById('helper').style.display = 'block'
   } else if (e.target.className.includes('modalClose')) {
-    e.target.parentElement.parentElement.style.display = 'none'
+    e.target.closest('.modal').style.display = 'none'
+    document.getElementById('showNewEventForm').focus()
     form = undefined
   }
 })
 
 window.addEventListener('DOMContentLoaded', function () {
+  const now = new Date()
+  const month = document.getElementById('summaryMonth')
+  for (let i = 0; i < 12; i++) month.add(new Option(new Date(2024, i, 1).toLocaleString('fr-FR', { month: 'long' }), i))
+  month.value = now.getMonth()
+  document.getElementById('summaryYear').value = now.getFullYear()
+  month.addEventListener('change', () => showHRSummary())
+  document.getElementById('summaryYear').addEventListener('change', () => { if (document.getElementById('summaryYear').checkValidity()) showHRSummary() })
   setButtonsMonths(false)
   const toDay = new Date()
   document.getElementById('dtStart').valueAsDate = toDay
@@ -199,3 +204,15 @@ window.addEventListener('DOMContentLoaded', function () {
 })
 
 
+
+window.addEventListener('keydown', e => {
+  const modal = document.getElementById('newEvent')
+  if (modal.style.display !== 'block') return
+  if (e.key === 'Escape') modal.querySelector('.modalClose').click()
+  if (e.key === 'Tab') {
+    const controls = Array.from(modal.querySelectorAll('button, input, select')).filter(el => !el.hidden && el.getClientRects().length && !el.disabled)
+    const first = controls[0], last = controls[controls.length - 1]
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+  }
+})

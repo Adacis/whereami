@@ -48,12 +48,12 @@ export class ListEvents {
     })
 
     if (!found) {
-      myCell.setAttribute('style', 'background-color: yellow; color: #222;')
-      res += 'shame'
+      myCell.classList.add('wai-unfilled')
+      res += '—'
     }
 
     myCell.setAttribute('title', title)
-    myCell.innerHTML = res
+    myCell.innerText = res.replace(/<br\/>/g, '\n').trim()
     return myCell
   }
 
@@ -178,44 +178,24 @@ export class ListEvents {
     const myCell = document.createElement('td')
     let res = 0
     let title = ''
+    const slots = new Map()
     this.ListEvents.forEach(event => {
       const e = new Events(event)
-      let fullDay = false
-      if (e.place2 === '') {
-        e.place2 = e.place
-        fullDay = true
+      const start = new Date(e.dtStart), end = new Date(e.dtEnd)
+      const day = new Date(Math.max(start.getTime(), periodStart.getTime()))
+      day.setHours(0, 0, 0, 0)
+      for (; day < end && day <= periodEnd; day.setDate(day.getDate() + 1)) {
+        if (day.getDay() === 0 || day.getDay() === 6) continue
+        ;[e.place, e.place2 || e.place].forEach((place, half) => {
+          if (place.toLowerCase() === type.toLowerCase() || type.toLowerCase() === 'total') {
+            const key = `${day.getFullYear()}-${day.getMonth()}-${day.getDate()}-${half}`
+            slots.set(key, day.toLocaleDateString('fr-FR') + (half ? ' (après-midi)' : ' (matin)'))
+          }
+        })
       }
-      const ar = [e.place, e.place2]
-
-      var tmp = 0
-      ar.forEach(place => {
-        if ((place.toLowerCase() === type.toLowerCase() || type.toLowerCase() === 'total')) {
-          let dtStart = new Date(e.dtStart)
-          let dtEnd = new Date(e.dtEnd)
-          // if event overflows, clamp to current period
-          if (dtStart < periodStart)
-            dtStart = periodStart
-
-          if (dtEnd > periodEnd)
-            dtEnd = periodEnd
-
-
-          let dateString = this.getDateString(dtStart, dtEnd)
-          if (fullDay && tmp == 0) {
-            title += dateString + '\n'
-          }
-          else if (tmp == 0) {
-            title += dateString
-            if (place === e.place)
-              title += ' (matin)\n'
-            else
-              title += ' (après-midi)\n'
-          }
-          tmp += Math.round((dtEnd - dtStart) / (3600 * 1000 * 24)) / 2
-        }
-      })
-      res += tmp
     })
+    res = slots.size / 2
+    title = Array.from(slots.values()).join('\n')
 
     myCell.innerText = res
     myCell.style = 'text-align: center; '

@@ -28,7 +28,8 @@ export class NewEventForm {
 
         appendChildren(this.form, [divDates, this.divCalendar, divPlaces, divSummary, divSubmit])
 
-        console.log('Form initialized')
+        ;[[this.dtStartE, 'Début'], [this.dtEndE, 'Fin'], [this.selectCalendarE, 'Calendrier'], [this.selectPlace1E, 'Lieu de la journée ou du matin'], [this.selectPlace2E, 'Lieu de l’après-midi'], [this.summaryAME, 'Description'], [this.summaryPME, 'Description de l’après-midi']].forEach(([input, label]) => input.setAttribute('aria-label', label))
+        this.submitE.classList.add('primary')
     }
 
     get getFormE() {
@@ -39,9 +40,9 @@ export class NewEventForm {
         let div = document.createElement('div')
 
         let labelStart = document.createElementOptions('label', { innerText: t('whereami', 'Event from ') })
-        this.dtStartE = document.createElementOptions('input', { type: 'date', id: 'dtStart' })
+        this.dtStartE = document.createElementOptions('input', { type: 'date', id: 'eventStart' })
         let labelTo = document.createElementOptions('label', { innerText: t('whereami', ' to ') })
-        this.dtEndE = document.createElementOptions('input', { type: 'date', id: 'dtEnd' })
+        this.dtEndE = document.createElementOptions('input', { type: 'date', id: 'eventEnd' })
 
         let divRound = document.createElement('span')
         divRound.classList.add('round')
@@ -52,6 +53,9 @@ export class NewEventForm {
 
         let labelHalfDay = document.createElementOptions('label', { innerText: t('whereami', 'half day') })
 
+        labelHalfDay.htmlFor = 'halfDay'
+        labelStart.htmlFor = 'eventStart'
+        labelTo.htmlFor = 'eventEnd'
         this.dateInfoE = document.createElementOptions('div', { id: 'dateInfo' })
 
         appendChildren(div, [labelStart, this.dtStartE, labelTo, this.dtEndE, divRound, labelHalfDay, this.dateInfoE])
@@ -105,7 +109,7 @@ export class NewEventForm {
         let labelSummaryE = document.createElement('span')
         labelSummaryE.classList.add('icon-category-office')
         this.summaryAME = document.createElementOptions('input', { id: 'summary1', type: 'text', placeholder: t('whereami', 'Description') })
-        this.summaryPME = document.createElementOptions('input', { id: 'summary1', type: 'text', placeholder: t('whereami', 'Description'), hidden: 'true' })
+        this.summaryPME = document.createElementOptions('input', { id: 'summary2', type: 'text', placeholder: t('whereami', 'Description'), hidden: 'true' })
 
         appendChildren(div, [labelSummaryE, this.summaryAME, this.summaryPME])
 
@@ -190,7 +194,7 @@ export class NewEventForm {
             showError(t('whereami', 'Please make sure to enter a valid date.'))
             return false
         }
-        if (this.dtStartE.valueAsDate > this.dtEndE.valueAsDateEnd) {
+        if (this.dtStartE.valueAsDate > this.dtEndE.valueAsDate) {
             showError(t('whereami', 'Please make sure your end date is superior or equal to your start date.'))
             return false
         }

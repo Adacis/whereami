@@ -14,6 +14,7 @@
                 <p><code>@Déplacement, @Cenon, D26010</code> :</p>
                 <div class="wai-help-example"><div><small>MATIN · premier @</small><strong>Déplacement</strong></div><div><small>APRÈS-MIDI · deuxième @</small><strong>Cenon</strong></div></div>
                 <p><code>D26010</code> est une référence de devis, pas un troisième lieu. Les éléments après les lieux, séparés par des virgules, peuvent aussi servir de commentaire. Pour le télétravail, les RTT et les congés, utilisez les libellés configurés, par exemple <code>@Télétravail</code> ou <code>@Congés</code>.</p>
+                <p>Les événements répétés suivent les dates de la série et ses exceptions : un jour déplacé utilise sa nouvelle date et son nouveau lieu ; un jour supprimé ou annulé reste absent. Une présence de plusieurs jours couvre toutes les dates jusqu’à la date de fin du calendrier, qui est exclusive.</p>
             </section>
             <section id="help-new">
                 <h3>02 · New event — déclarer une présence</h3>

@@ -181,7 +181,7 @@ export class ListEvents {
     const slots = new Map()
     this.ListEvents.forEach(event => {
       const e = new Events(event)
-      const start = new Date(e.dtStart), end = new Date(e.dtEnd)
+      const start = Events.parseDate(e.dtStart), end = Events.parseDate(e.dtEnd)
       const day = new Date(Math.max(start.getTime(), periodStart.getTime()))
       day.setHours(0, 0, 0, 0)
       for (; day < end && day <= periodEnd; day.setDate(day.getDate() + 1)) {

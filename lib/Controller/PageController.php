@@ -185,23 +185,62 @@ class PageController extends Controller
         return new DataResponse($listSeen, 200, ['Content-Type' => 'application/json']);
     }
 
-	public function search(String $dtStart, String $dtEnd)
-	{
-		$from = new DateTime($dtStart);
-		$to = new DateTime($dtEnd);
-		// It looks like search does not include the upper bound (end of day at 00H00)
-		$to->modify('+1 day');
-		$searchResults = $this->calendarManager->search("@", ['SUMMARY'], ['timerange' => ['start' => $from, 'end' => $to]]);
-
-		return $searchResults;
-		// list de tous les utilisateurs
-		// if($e->{$classement} === "nextcloud_users"){
-		// 	$allUID = $this->myDb->getAllUID();
-		// 	foreach ($allUID as $UID){
-		// 		$events[json_decode($UID['data'])->{'displayname'}->{'value'}] = [];
-		// 	}
-		// }
-	}
+    /**
+     * Nextcloud already expands RRULE/RDATE and applies EXDATE/RECURRENCE-ID.
+     * A search result contains all occurrences in `objects`, not just index 0.
+     */
+    public function search(String $dtStart, String $dtEnd)
+    {
+        $from = \DateTimeImmutable::createFromFormat('!Y-m-d', $dtStart);
+        $last = \DateTimeImmutable::createFromFormat('!Y-m-d', $dtEnd);
+        if (!$from || !$last || $from->format('Y-m-d') !== $dtStart
+            || $last->format('Y-m-d') !== $dtEnd || $last < $from) {
+            throw new \InvalidArgumentException('Invalid calendar date range');
+        }
+        $to = $last->modify('+1 day');
+        // Filter titles per occurrence, so an edited exception with an @ title
+        // is found even when the series' master title does not contain @.
+        $results = $this->calendarManager->search('', [], [
+            'timerange' => ['start' => $from, 'end' => $to],
+            'types' => ['VEVENT'],
+        ]);
+        $occurrences = [];
+        $seen = [];
+        foreach ($results as $calendar) {
+            if (isset($calendar['type']) && strtoupper($calendar['type']) !== 'VEVENT') {
+                continue;
+            }
+            foreach ($calendar['objects'] ?? [] as $object) {
+                if (!is_array($object) || strtoupper($object['STATUS'][0] ?? '') === 'CANCELLED') {
+                    continue;
+                }
+                if (!str_starts_with(MyEvent::normalizePlace($object['SUMMARY'][0] ?? ''), '@')) {
+                    continue;
+                }
+                // Compare scalar values, not Sabre parameter objects and their parents.
+                $dates = [];
+                foreach (['RECURRENCE-ID', 'DTSTART', 'DTEND'] as $property) {
+                    $value = $object[$property][0] ?? null;
+                    $dates[] = $value instanceof \DateTimeInterface ? $value->format('c') : $value;
+                }
+                // Repeated copies of the same occurrence must not inflate counts.
+                $key = hash('sha256', serialize([
+                    $calendar['calendar-key'] ?? '', $calendar['id'] ?? '',
+                    $calendar['uid'] ?? '', $dates,
+                    $object['SUMMARY'][0] ?? '', $object['DURATION'][0] ?? '',
+                    (string)($object['DTSTART'][1]['VALUE'] ?? ''),
+                ]));
+                if (isset($seen[$key])) {
+                    continue;
+                }
+                $seen[$key] = true;
+                $occurrence = $calendar;
+                $occurrence['objects'] = [$object];
+                $occurrences[] = $occurrence;
+            }
+        }
+        return $occurrences;
+    }
 
 	/**
 	 * @NoAdminRequired
@@ -234,7 +273,7 @@ class PageController extends Controller
 					$events[$cls] = [];
 				}
 				array_push($events[$cls], $e);
-				if ($classement === 'place' && $e->place2 !== '') {
+				if ($classement === 'place' && $e->place2 !== '' && $e->place2 !== $e->place) {
 					if (!array_key_exists($e->place2, $events)) {
 						$events[$e->place2] = [];
 					}
@@ -277,7 +316,7 @@ class PageController extends Controller
 		foreach ($this->search($dtStart, $dtEnd) as $e) {
 			$event = new MyEvent($e, $this->myDb, $this->logger);
 
-			if ($event->nextcloud_users === $this->userId) {
+			if ($event->valid && $event->userId === $this->userId) {
 				array_push($collisions, $event);
 				$status = Http::STATUS_OK;
 			}
@@ -292,7 +331,7 @@ class PageController extends Controller
 	private function arrayFromWordQuery($wordQuery)
 	{
 		$res = array_map(function ($q) {
-			return strtolower(trim($q['word']));
+			return MyEvent::normalizePlace($q['word']);
 		}, $wordQuery);
 		return $res;
 	}

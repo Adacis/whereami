@@ -10,14 +10,16 @@ class MyEvent
 {
     public string $id;
     public string $summary;
-    public ?string $dtStart;
-    public ?string $dtEnd;
-    public string $place;
-    public string $place2;
-    public string $nextcloud_users;
+    public ?string $dtStart = null;
+    public ?string $dtEnd = null;
+    public string $place = '';
+    public string $place2 = '';
+    public string $nextcloud_users = '';
+    public string $userId = '';
+    public bool $allDay = false;
     public $quote;
 
-    public bool $valid;
+    public bool $valid = false;
 
     private LoggerInterface $log;
 
@@ -30,26 +32,53 @@ class MyEvent
     ) {
         $this->log = $logger;
         $this->myDb             = $myDb;
-        $this->id               = $e['id'];
-        $this->dtStart          = ($e["objects"][0]["DTSTART"][0] ?? null)?->modify('+ 1 minute')?->format('Y-m-d H:i:s');
-        $this->dtEnd            = ($e["objects"][0]["DTEND"][0] ?? null)?->modify('- 1 minute')?->format('Y-m-d H:i:s') ?? $this->dtStart;
-        $this->nextcloud_users  = $this->getNameCalendar($this->id);
-        $this->summary          = str_replace("@", "", $e["objects"][0]["SUMMARY"][0] ?? '');
-
-        $tmp                    = $this->extractData(",", 0, $e["objects"][0]["SUMMARY"][0] ?? '');
-        if (!is_null($this->dtStart) && count($tmp) > 0) {
-            $this->place = $tmp[0];
-            if (count($tmp) >= 2) {
-                $this->place2 = $tmp[1];
-            } else {
-                $this->place2 = '';
-            }
-            $this->valid = true;
-        } else {
-            $this->valid = false;
+        $this->id = (string)($e['id'] ?? '');
+        $object = $e['objects'][0] ?? [];
+        $summary = $object['SUMMARY'][0] ?? '';
+        $this->summary = str_replace('@', '', $summary);
+        preg_match_all('/D[0-9]{5}/i', $this->summary, $this->quote);
+        $places = $this->extractData(',', 0, $summary);
+        if (!$places || strtoupper($object['STATUS'][0] ?? '') === 'CANCELLED') {
+            return;
         }
-
-        preg_match_all("/D[0-9]{5}/", $this->summary, $this->quote);
+        $start = $object['DTSTART'][0] ?? null;
+        if (!$start instanceof \DateTimeInterface) {
+            $this->log->warning('Ignoring Whereami occurrence without a valid DTSTART', ['id' => $this->id]);
+            return;
+        }
+        // Never modify DateTime instances owned by the calendar provider.
+        $start = \DateTimeImmutable::createFromInterface($start);
+        $this->allDay = strtoupper((string)($object['DTSTART'][1]['VALUE'] ?? '')) === 'DATE';
+        $end = $object['DTEND'][0] ?? null;
+        if ($end instanceof \DateTimeInterface) {
+            $end = \DateTimeImmutable::createFromInterface($end);
+        } elseif (isset($object['DURATION'][0])) {
+            try {
+                $end = $start->add(new \DateInterval($object['DURATION'][0]));
+            } catch (\Exception $exception) {
+                $this->log->warning('Ignoring Whereami occurrence with invalid duration', ['id' => $this->id]);
+                return;
+            }
+        } elseif ($this->allDay) {
+            // RFC 5545: a DATE event without DTEND lasts one calendar day.
+            $end = $start->modify('+1 day');
+        } else {
+            $this->log->warning('Ignoring Whereami occurrence without an end', ['id' => $this->id]);
+            return;
+        }
+        if ($end <= $start) {
+            $this->log->warning('Ignoring Whereami occurrence with an empty or reversed interval', ['id' => $this->id]);
+            return;
+        }
+        // DATE values are civil dates: a browser timezone must not move them to
+        // the previous day. Timed events retain their explicit UTC offset.
+        $format = $this->allDay ? 'Y-m-d\TH:i:s' : 'Y-m-d\TH:i:sP';
+        $this->dtStart = $start->format($format);
+        $this->dtEnd = $end->format($format);
+        $this->place = $places[0];
+        $this->place2 = $places[1] ?? '';
+        $this->nextcloud_users = $this->getNameCalendar($this->id);
+        $this->valid = true;
     }
 
     public function toString()
@@ -60,7 +89,8 @@ class MyEvent
     public function getNameCalendar($calendarsUid)
     {
         $res = $this->myDb->getCalendars($calendarsUid)[0]["principaluri"];
-        $name = $this->myDb->getUID(str_replace("principals/users/", "", $res));
+        $this->userId = str_replace("principals/users/", "", $res);
+        $name = $this->myDb->getUID($this->userId);
         $myObj = json_decode($name[0]['data']);
         $parameters = $myObj->displayname->value;
         if (empty($parameters))
@@ -70,7 +100,7 @@ class MyEvent
 
     public function getDtStart()
     {
-        return $this->dtStart->format("d/m/Y");
+        return (new DateTime($this->dtStart))->format("d/m/Y");
     }
 
     /**
@@ -103,23 +133,26 @@ class MyEvent
      */
     public function extractData($separator, $position, $data): array
     {
-        $re = '/^@\s*([^' . $separator . '\s]+)(' . $separator . '\s?@\s*([^' . $separator . '\s]+))?.*/m';
-
-        preg_match_all($re, strtolower($data), $matches, PREG_SET_ORDER, 0);
-
-        try {
-            $cls = [];
-            if (isset($matches[0][1])) {
-                $cls[] = $matches[0][1];
-            }
-            if (count($matches[0] ?? []) >= 4) {
-                $cls[] = $matches[0][3];
-            }
-        } catch (\Throwable $th) {
-            $cls = [];
+        $data = self::normalizePlace($data);
+        if (!preg_match('/^@\s*([^,@]+)(?:,\s*@\s*([^,@]+))?/u', $data, $matches)) {
+            return [];
         }
+        $places = [trim($matches[1])];
+        if (isset($matches[2]) && trim($matches[2]) !== '') {
+            $places[] = trim($matches[2]);
+        }
+        return $places[0] !== '' ? $places : [];
+    }
 
-        return $cls;
+    public static function normalizePlace(string $value): string
+    {
+        // Calendar clients can introduce NBSPs, decomposed accents or a BOM.
+        $value = preg_replace('/\x{FEFF}/u', '', $value);
+        $value = trim(preg_replace('/[\p{Z}\s]+/u', ' ', $value));
+        if (class_exists('\Normalizer')) {
+            $value = \Normalizer::normalize($value, \Normalizer::FORM_C);
+        }
+        return mb_strtolower($value, 'UTF-8');
     }
 
     /**

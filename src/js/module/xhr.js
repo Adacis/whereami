@@ -5,7 +5,7 @@ import DataTable from 'datatables.net-bs/js/dataTables.bootstrap.min.js'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 
-import { newTablePersonne, newTableSeen, newTableContracts } from "./datatables.js"
+import { newTablePersonne, newTableSeen, newTableContracts, newTableDevisTracker } from "./datatables.js"
 import { makeIcsString } from './ics.js'
 import { makeid, toFloatingString } from './utils.js'
 
@@ -164,6 +164,27 @@ export function getContracts(dtStart, dtEnd) {
     }
   }
   console.log(JSON.stringify(data))
+  oReq.send(JSON.stringify(data));
+}
+
+export function getDevisTracker(dtStart, dtEnd, lbp = '') {
+  const data = {
+    dtStart,
+    dtEnd,
+    lbp
+  }
+
+  const oReq = new XMLHttpRequest()
+  oReq.open('POST', baseUrl + '/getDevisTracker', true)
+  oReq.setRequestHeader('Content-Type', 'application/json')
+  oReq.setRequestHeader('requesttoken', OC.requestToken)
+  oReq.onload = function (e) {
+    if (this.status === 200) {
+      newTableDevisTracker(this.response);
+    } else {
+      showError(this.response);
+    }
+  }
   oReq.send(JSON.stringify(data));
 }
 

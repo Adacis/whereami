@@ -8,6 +8,7 @@ return [
         ['name' => 'page#getEvents', 'url' => '/getEvents', 'verb' => 'POST'],
         ['name' => 'page#getIcons', 'url' => '/getIcons', 'verb' => 'POST'],
         ['name' => 'page#getContracts', 'url' => '/getContracts', 'verb' => 'POST'],
+        ['name' => 'page#getDevisTracker', 'url' => '/getDevisTracker', 'verb' => 'POST'],
         ['name' => 'page#getCalendarsForUser', 'url' => '/getCalendars', 'verb' => 'GET'],
         ['name' => 'page#isTimeSlotAvailable', 'url' => '/isTimeSlotAvailable', 'verb' => 'POST'],
         ['name' => 'admin#setTags', 'url' => '/setTags', 'verb' => 'POST'],

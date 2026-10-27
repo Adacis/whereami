@@ -3,6 +3,7 @@
 namespace OCA\Whereami\Controller;
 
 use OCA\Whereami\Db\Bdd;
+use OCA\Whereami\MyClass\DevisTracker;
 use OCA\Whereami\MyClass\MyEvent;
 
 use OCP\IRequest;
@@ -118,13 +119,81 @@ class PageController extends Controller
             $userByContracts[$contractValue][$userDisplayName] += $acrValue;
         }
 
+        // Aggregate per user: total days and work slots by contract
+        $contractByUsers = [];
+        foreach ($userByContracts as $contractValue => $users) {
+            foreach ($users as $userDisplayName => $total) {
+                if (!isset($contractByUsers[$userDisplayName])) {
+                    $contractByUsers[$userDisplayName] = ['total' => 0.0, 'contracts' => []];
+                }
+                $contractByUsers[$userDisplayName]['total'] += $total;
+                $contractByUsers[$userDisplayName]['contracts'][$contractValue] = [
+                    'days' => $total,
+                    'nb' => count($contracts[$contractValue][$userDisplayName])
+                ];
+            }
+        }
+
         // Return aggregated data as a JSON response
         return new DataResponse([
             'contracts' => $contracts,
-            'userByContract' => $userByContracts
+            'userByContract' => $userByContracts,
+            'contractByUser' => $contractByUsers
         ], 200, ['Content-Type' => 'application/json']);
     }
 
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getDevisTracker(String $dtStart, String $dtEnd, String $lbp = '')
+    {
+        $from = new DateTime($dtStart . ' T00:00:00');
+        $to = new DateTime($dtEnd . ' T23:59:59');
+        $tracker = new DevisTracker($this->calendarManager, $this->myDb, $this->logger, $from, $to, [], [], $lbp);
+        $events = [];
+        foreach ($tracker->getEvents() as $day => $quadris) {
+            $events[$day] = [];
+            foreach ($quadris as $quadri => $report) {
+                $events[$day][$quadri] = [
+                    'isHalfDay' => $report['isHalfDay'],
+                    'isAllDayDevisImportant' => $report['isAllDayDevisImportant'],
+                    'events' => $report['events'],
+                ];
+            }
+        }
+        $round = function (float $value): float {
+            return round($value * 8) / 8;
+        };
+        $summary = [];
+        foreach ($tracker->getSummary() as $label => $hours) {
+            $summary[$label] = ['hours' => $round($hours), 'days' => round($hours / DevisTracker::HOURS_MAX_DAY, 2)];
+        }
+        $summaryByUser = [];
+        foreach ($tracker->getSummaryByUser() as $label => $data) {
+            $users = [];
+            foreach ($data['users'] as $quadri => $hours) {
+                $users[$quadri] = ['hours' => $round($hours), 'days' => round($hours / DevisTracker::HOURS_MAX_DAY, 2)];
+            }
+            $summaryByUser[$label] = [
+                'total' => ['hours' => $round($data['_sum']), 'days' => round($data['_sum'] / DevisTracker::HOURS_MAX_DAY, 2)],
+                'users' => $users
+            ];
+        }
+        $summaryLbp = [];
+        foreach ($tracker->getSummaryLbp() as $project => $hours) {
+            $summaryLbp[$project] = ['hours' => $round($hours), 'days' => round($hours / DevisTracker::HOURS_MAX_DAY, 2)];
+        }
+        return new DataResponse([
+            'hoursMaxDay' => DevisTracker::HOURS_MAX_DAY,
+            'events' => $events,
+            'summary' => $summary,
+            'summaryByUser' => $summaryByUser,
+            'summaryLbp' => $summaryLbp,
+            'lbpDevis' => $lbp
+        ], 200, ['Content-Type' => 'application/json']);
+    }
 
     /**
 	 * @NoAdminRequired

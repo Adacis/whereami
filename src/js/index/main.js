@@ -1,9 +1,9 @@
-import { getData, lastSeen, retrieveData, getContracts } from '../module/xhr'
+import { getData, lastSeen, retrieveData, getContracts, getDevisTracker } from '../module/xhr'
 import { getLoader, newTableHR } from '../module/datatables'
 import 'datatables.net-fixedcolumns/js/dataTables.fixedColumns'
 import 'datatables.net-bs/css/dataTables.bootstrap.min.css'
 import { getDateFirstOfMonth } from '../module/utils'
-import { BY_EMPLOYEE, BY_LOCATION, HR_SUMMARY, LAST_SEEN, CONTRACTS } from '../config/config'
+import { BY_EMPLOYEE, BY_LOCATION, HR_SUMMARY, LAST_SEEN, CONTRACTS, DEVIS_TRACKER } from '../config/config'
 import { NewEventForm } from '../class/NewEventForm'
 
 /**
@@ -11,9 +11,9 @@ import { NewEventForm } from '../class/NewEventForm'
  */
 function setHash(hash) {
   window.location.hash = hash
-  const ids = { byEmployee: 'showByEmployees', byLocation: 'showByLocations', lastSeen: 'showLastSeen', HRSummary: 'showHRSummary', contracts: 'showContracts' }
+  const ids = { byEmployee: 'showByEmployees', byLocation: 'showByLocations', lastSeen: 'showLastSeen', HRSummary: 'showHRSummary', contracts: 'showContracts', devisTracker: 'showDevisTracker' }
   document.querySelectorAll('.wai-nav-item').forEach(button => button.setAttribute('aria-current', button.id === ids[hash] ? 'page' : 'false'))
-  const descriptions = { byEmployee: 'Les présences de l’équipe en un coup d’œil.', byLocation: 'Les effectifs et les clés, lieu par lieu.', lastSeen: 'Derniers croisements à Cenon, Bordeaux et DNUM. Congés, RTT et télétravail exclus.', HRSummary: 'Le bilan mensuel des RTT, du télétravail et des congés, en jours.', contracts: 'Sélectionnez un devis pour consulter les jours imputés et les collaborateurs concernés.' }
+  const descriptions = { byEmployee: 'Les présences de l’équipe en un coup d’œil.', byLocation: 'Les effectifs et les clés, lieu par lieu.', lastSeen: 'Derniers croisements à Cenon, Bordeaux et DNUM. Congés, RTT et télétravail exclus.', HRSummary: 'Le bilan mensuel des RTT, du télétravail et des congés, en jours.', contracts: 'Sélectionnez un devis pour consulter les jours imputés et les collaborateurs concernés.', devisTracker: 'Le temps passé par devis, en heures et en jours, semaine par semaine.' }
   document.getElementById('viewDescription').textContent = descriptions[hash]
 }
 
@@ -68,11 +68,31 @@ function setDateContracts() {
   }
 }
 
+function setDateDevisTracker() {
+  setButtonsMonths(true)
+  const lbpControls = document.getElementById('lbpControls')
+  if (lbpControls) lbpControls.hidden = false
+  const lbpDevis = document.getElementById('lbpDevis')
+  if (lbpDevis) lbpDevis.addEventListener('change', () => showDevisTracker())
+  const now = new Date()
+  const month = document.getElementById('summaryMonth')
+  const year = document.getElementById('summaryYear')
+  month.value = now.getMonth()
+  year.value = now.getFullYear()
+  setDateSummary(0)
+}
+
+function hideLbpControls() {
+  const lbpControls = document.getElementById('lbpControls')
+  if (lbpControls) lbpControls.hidden = true
+}
+
 /**
  * Show function
  */
 
 function showHRSummary(diff = 0) {
+  hideLbpControls()
   setDateSummary(diff)
   document.getElementById('finalPath').innerText = "Summary"
   document.getElementById('myapp').innerHTML = ''
@@ -82,6 +102,7 @@ function showHRSummary(diff = 0) {
 }
 
 function showByEmployees() {
+  hideLbpControls()
   setDateUsual()
   document.getElementById('finalPath').innerText = "Employees"
   document.getElementById('myapp').innerHTML = ''
@@ -91,6 +112,7 @@ function showByEmployees() {
 }
 
 function showByLocations() {
+  hideLbpControls()
   setDateUsual()
   document.getElementById('finalPath').innerText = "Locations"
   document.getElementById('myapp').innerHTML = ''
@@ -100,6 +122,7 @@ function showByLocations() {
 }
 
 function showLastSeen() {
+  hideLbpControls()
   setDateLastSeen()
   document.getElementById('finalPath').innerText = "Last Seen"
   document.getElementById('myapp').innerHTML = ''
@@ -109,12 +132,26 @@ function showLastSeen() {
 }
 
 function showContracts(){
+  hideLbpControls()
   setDateContracts()
   document.getElementById('finalPath').innerText = "Contracts"
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(getLoader())
   getContracts(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   setHash(CONTRACTS)
+}
+
+function showDevisTracker(diff = 0) {
+  if (diff === 0) {
+    setDateDevisTracker()
+  } else {
+    setDateSummary(diff)
+  }
+  document.getElementById('finalPath').innerText = "Devis Tracker"
+  document.getElementById('myapp').innerHTML = ''
+  document.getElementById('myapp').appendChild(getLoader())
+  getDevisTracker(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, document.getElementById('lbpDevis').value)
+  setHash(DEVIS_TRACKER)
 }
 
 /**
@@ -167,11 +204,23 @@ window.addEventListener('click', event => {
     showContracts();
   }
 
+  else if (e.target.id === 'showDevisTracker' || (document.getElementById(DEVIS_TRACKER) != null && e.target.className.includes('setDates'))) {
+    showDevisTracker();
+  }
+
   else if (e.target.id === 'addOneMonth') {
-    showHRSummary(1)
+    if (document.getElementById(DEVIS_TRACKER) != null) {
+      showDevisTracker(1)
+    } else {
+      showHRSummary(1)
+    }
   }
   else if (e.target.id === 'removeOneMonth') {
-    showHRSummary(-1)
+    if (document.getElementById(DEVIS_TRACKER) != null) {
+      showDevisTracker(-1)
+    } else {
+      showHRSummary(-1)
+    }
   }
 
   else if (e.target.id === 'showNewEventForm') {
@@ -216,6 +265,8 @@ window.addEventListener('DOMContentLoaded', function () {
       toShow = showLastSeen;
     } else if (loc== CONTRACTS) {
       toShow = showContracts;
+    } else if (loc == DEVIS_TRACKER) {
+      toShow = showDevisTracker;
     }
   }
   toShow();

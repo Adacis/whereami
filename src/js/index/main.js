@@ -68,14 +68,21 @@ function setDateContracts() {
   }
 }
 
-function setDateDevisTracker() {
+function setDateDevisTracker(diff = 0) {
   setButtonsMonths(true)
-  const now = new Date()
   const month = document.getElementById('summaryMonth')
   const year = document.getElementById('summaryYear')
-  month.value = now.getMonth()
-  year.value = now.getFullYear()
-  setDateSummary(0)
+  if (diff === 0 && !month.value && !year.value) {
+    const now = new Date()
+    month.value = now.getMonth()
+    year.value = now.getFullYear()
+  }
+  const date = new Date(Number(year.value), Number(month.value) + diff, 1, 12)
+  month.value = date.getMonth()
+  year.value = date.getFullYear()
+  const format = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  document.getElementById('dtStart').value = format(date)
+  document.getElementById('dtEnd').value = format(new Date(date.getFullYear(), date.getMonth() + 1, 0, 12))
 }
 
 function hideLbpControls() {
@@ -138,11 +145,7 @@ function showContracts(){
 }
 
 function showDevisTracker(diff = 0) {
-  if (diff === 0) {
-    setDateDevisTracker()
-  } else {
-    setDateSummary(diff)
-  }
+  setDateDevisTracker(diff)
   document.getElementById('finalPath').innerText = "Devis Tracker"
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(getLoader())
@@ -241,8 +244,8 @@ window.addEventListener('DOMContentLoaded', function () {
   for (let i = 0; i < 12; i++) month.add(new Option(new Date(2024, i, 1).toLocaleString('fr-FR', { month: 'long' }), i))
   month.value = now.getMonth()
   document.getElementById('summaryYear').value = now.getFullYear()
-  month.addEventListener('change', () => showHRSummary())
-  document.getElementById('summaryYear').addEventListener('change', () => { if (document.getElementById('summaryYear').checkValidity()) showHRSummary() })
+  month.addEventListener('change', () => { if (document.getElementById(DEVIS_TRACKER) != null) showDevisTracker(); else showHRSummary() })
+  document.getElementById('summaryYear').addEventListener('change', () => { if (document.getElementById('summaryYear').checkValidity()) { if (document.getElementById(DEVIS_TRACKER) != null) showDevisTracker(); else showHRSummary() } })
   setButtonsMonths(false)
   const toDay = new Date()
   document.getElementById('dtStart').valueAsDate = toDay

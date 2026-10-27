@@ -189,7 +189,7 @@ class Bdd
      */
     public function getContracts($dtStart, $dtEnd){
         $sql = "SELECT 
-                    REGEXP_SUBSTR(value, '\\\\b[Dd]\\\\d{5}\\\\b') as nb_contract,
+                    REGEXP_SUBSTR(value, '\\\\b[Dd]?\\\\d{5}\\\\b') as nb_contract,
                     uid,
                     sum(past_times) AS activity_report_value,
                     CASE 
@@ -201,29 +201,39 @@ class Bdd
                     SELECT 
                         ocp.value,
                         REPLACE(SUBSTRING_INDEX(ocal.principaluri, '/', -1), ' ', '') AS uid,
-                        FROM_UNIXTIME(oc.firstoccurence) AS first_occurence,
-                        FROM_UNIXTIME(oc.lastoccurence) AS last_occurence,
+                        GREATEST(FROM_UNIXTIME(oc.firstoccurence), STR_TO_DATE(?, '%Y-%m-%d')) AS first_occurence,
+                        LEAST(FROM_UNIXTIME(oc.lastoccurence), STR_TO_DATE(?, '%Y-%m-%d') + INTERVAL 1 DAY - INTERVAL 1 SECOND) AS last_occurence,
                         CASE WHEN 
-                            TIMESTAMPDIFF(HOUR, FROM_UNIXTIME(oc.firstoccurence), FROM_UNIXTIME(oc.lastoccurence)) / 24 <= 0.5 
+                            TIMESTAMPDIFF(HOUR, GREATEST(FROM_UNIXTIME(oc.firstoccurence), STR_TO_DATE(?, '%Y-%m-%d')), LEAST(FROM_UNIXTIME(oc.lastoccurence), STR_TO_DATE(?, '%Y-%m-%d') + INTERVAL 1 DAY - INTERVAL 1 SECOND)) / 24 <= 0.5 
                             THEN 0.5 
                             ELSE 
-                            ROUND(TIMESTAMPDIFF(HOUR, FROM_UNIXTIME(oc.firstoccurence), FROM_UNIXTIME(oc.lastoccurence)) / 24 * 2) / 2
+                            ROUND(TIMESTAMPDIFF(HOUR, GREATEST(FROM_UNIXTIME(oc.firstoccurence), STR_TO_DATE(?, '%Y-%m-%d')), LEAST(FROM_UNIXTIME(oc.lastoccurence), STR_TO_DATE(?, '%Y-%m-%d') + INTERVAL 1 DAY - INTERVAL 1 SECOND)) / 24 * 2) / 2
                         END AS past_times
                     FROM
                         `*PREFIX*calendarobjects_props` ocp
                     LEFT JOIN
                         `*PREFIX*calendarobjects` oc ON ocp.objectid = oc.id
                     LEFT JOIN
-                        `*PREFIX*calendars` ocal ON ocp.calendarid = ocal.id
+                        `*PREFIX*calendars` ocal ON ocal.id = ocp.calendarid
                     WHERE
                         name = 'SUMMARY'
                         AND ocp.value REGEXP '\\\\b[Dd]\\\\d{5}\\\\b'
-                        AND FROM_UNIXTIME(oc.firstoccurence) BETWEEN ? AND ?
+                        AND FROM_UNIXTIME(oc.firstoccurence) < STR_TO_DATE(?, '%Y-%m-%d') + INTERVAL 1 DAY
+                        AND FROM_UNIXTIME(oc.lastoccurence) > STR_TO_DATE(?, '%Y-%m-%d')
                         AND oc.deleted_at IS NULL
                 ) sr
+                WHERE first_occurence <= last_occurence
                 GROUP BY 
                     value, uid, first_occurence, last_occurence";
-        return $this->execSQLNoJsonReturn($sql, array($dtStart, $dtEnd));
+        $dtStartDt = new \DateTime($dtStart);
+        $dtEndDt = new \DateTime($dtEnd);
+        $params = [
+            $dtStartDt->format('Y-m-d'), $dtEndDt->format('Y-m-d'),
+            $dtStartDt->format('Y-m-d'), $dtEndDt->format('Y-m-d'),
+            $dtStartDt->format('Y-m-d'), $dtEndDt->format('Y-m-d'),
+            $dtStartDt->format('Y-m-d'), $dtEndDt->format('Y-m-d'),
+        ];
+        return $this->execSQLNoJsonReturn($sql, $params);
     }
 
 

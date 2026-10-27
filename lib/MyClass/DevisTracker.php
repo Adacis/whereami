@@ -19,8 +19,6 @@ class DevisTracker
     private array $events = [];
     private array $summary = [];
     private array $summaryByUser = [];
-    private array $summaryLbp = [];
-    private string $lbpDevis = '';
 
     /**
      * @param IManager $calendarManager
@@ -30,7 +28,6 @@ class DevisTracker
      * @param \DateTime $endDate
      * @param array $usersQuadri
      * @param array $listwords
-     * @param string $lbpDevis
      */
     public function __construct(
         IManager $calendarManager,
@@ -39,15 +36,13 @@ class DevisTracker
         \DateTime $startDate,
         \DateTime $endDate,
         array $usersQuadri = [],
-        array $listwords = [],
-        string $lbpDevis = ''
+        array $listwords = []
     ) {
         $this->calendarManager = $calendarManager;
         $this->db = $db;
         $this->logger = $logger;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
-        $this->lbpDevis = $lbpDevis;
         $this->run($usersQuadri, $listwords);
     }
 
@@ -64,11 +59,6 @@ class DevisTracker
     public function getSummaryByUser(): array
     {
         return $this->summaryByUser;
-    }
-
-    public function getSummaryLbp(): array
-    {
-        return $this->summaryLbp;
     }
 
     private function run(array $usersQuadri, array $listwords): void
@@ -130,9 +120,6 @@ class DevisTracker
         }
         ksort($this->events);
         $this->computeSummary();
-        if ($this->lbpDevis !== '') {
-            $this->computeLbpSummary($this->lbpDevis);
-        }
     }
 
     /**
@@ -451,40 +438,5 @@ class DevisTracker
             $this->summaryByUser[$label]['users'][$quadri] = 0.0;
         }
         $this->summaryByUser[$label]['users'][$quadri] += $hours;
-    }
-
-    private function computeLbpSummary(string $numberDevisLbp): void
-    {
-        $regex = '/(pr[0-9]{3,4})|(dasp[0-9]{3})|(d-asp-202[0-9]-[0-9]{2,3})/i';
-        foreach ($this->events as $day => $quadris) {
-            foreach ($quadris as $quadri => $report) {
-                if ($report['isWeekend']) {
-                    continue;
-                }
-                foreach ($report['events'] as $event) {
-                    if ($event['isIgnoreEvent'] || !$event['isDevis']) {
-                        continue;
-                    }
-                    if (strcasecmp($event['devis'], $numberDevisLbp) !== 0) {
-                        continue;
-                    }
-                    $projects = [];
-                    if (preg_match_all($regex, $event['summary'], $matches)) {
-                        $projects = array_unique($matches[0]);
-                    }
-                    foreach ($projects as $project) {
-                        $this->addSummaryLbp(strtoupper($project), $event['hours'] / max(1, count($projects)));
-                    }
-                }
-            }
-        }
-    }
-
-    private function addSummaryLbp(string $project, float $hours): void
-    {
-        if (!isset($this->summaryLbp[$project])) {
-            $this->summaryLbp[$project] = 0.0;
-        }
-        $this->summaryLbp[$project] += $hours;
     }
 }

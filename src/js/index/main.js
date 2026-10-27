@@ -70,10 +70,6 @@ function setDateContracts() {
 
 function setDateDevisTracker() {
   setButtonsMonths(true)
-  const lbpControls = document.getElementById('lbpControls')
-  if (lbpControls) lbpControls.hidden = false
-  const lbpDevis = document.getElementById('lbpDevis')
-  if (lbpDevis) lbpDevis.addEventListener('change', () => showDevisTracker())
   const now = new Date()
   const month = document.getElementById('summaryMonth')
   const year = document.getElementById('summaryYear')
@@ -150,7 +146,7 @@ function showDevisTracker(diff = 0) {
   document.getElementById('finalPath').innerText = "Devis Tracker"
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(getLoader())
-  getDevisTracker(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, document.getElementById('lbpDevis').value)
+  getDevisTracker(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   setHash(DEVIS_TRACKER)
 }
 

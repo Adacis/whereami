@@ -64395,12 +64395,7 @@ function newTableContracts(response) {
  *       "users": { "QUADRI": { "hours": number, "days": number }, ... }
  *     },
  *     ...
- *   },
- *   "summaryLbp": {
- *     "PROJECT": { "hours": number, "days": number },
- *     ...
- *   },
- *   "lbpDevis": string
+ *   }
  * }
  */
 function newTableDevisTracker(response) {
@@ -64422,16 +64417,27 @@ function newTableDevisTracker(response) {
     userLabel.textContent = 'Collaborateur'
     const events = res.events || {}
     const eventLabels = new Set()
+    const summaries = new Set()
     const quadris = new Set()
     Object.values(events).forEach(day => Object.values(day).forEach(report => {
         report.events.forEach(event => {
             const label = event.isDevis ? event.devis : (event.isHoliday ? event.holiday : '—')
             eventLabels.add(label)
+            if (!event.isDevis && !event.isHoliday && event.summary) {
+                const short = event.summary.length > 40 ? event.summary.substring(0, 37) + '…' : event.summary
+                summaries.add(short)
+            }
         })
         Object.keys(day).forEach(q => quadris.add(q))
     }))
     eventSelect.add(new Option(ALL, ''))
     Array.from(eventLabels).sort().forEach(label => eventSelect.add(new Option(label, label)))
+    if (summaries.size > 0) {
+        const optgroup = document.createElement('optgroup')
+        optgroup.label = 'Autres (mot-clé)'
+        Array.from(summaries).sort().forEach(s => optgroup.add(new Option(s, s)))
+        eventSelect.append(optgroup)
+    }
     userSelect.add(new Option(ALL, ''))
     Array.from(quadris).sort().forEach(q => userSelect.add(new Option(q, q)))
     toolbar.append(eventLabel, eventSelect, userLabel, userSelect)
@@ -64527,8 +64533,13 @@ function newTableDevisTracker(response) {
                 let firstEvent = true
                 report.events.forEach(event => {
                     const label = event.isDevis ? event.devis : (event.isHoliday ? event.holiday : '—')
-                    if (eventFilter && label !== eventFilter) {
-                        return
+                    if (eventFilter) {
+                        if (event.isDevis || event.isHoliday) {
+                            if (label !== eventFilter) return
+                        } else {
+                            const short = event.summary.length > 40 ? event.summary.substring(0, 37) + '…' : event.summary
+                            if (short !== eventFilter) return
+                        }
                     }
                     const row = detailBody.insertRow()
                     row.append(firstEvent ? dayCellEl : newCell('td', ''), firstEvent ? quadriCell : newCell('td', ''), labelCell(event), newCell('td', fmtHours(event.hours)), newCell('td', event.summary))
@@ -64569,10 +64580,6 @@ function newTableDevisTracker(response) {
         })
         const byUserFoot = mkFoot(['Total', '', fmtHours(byUserTotal), fmtDays(byUserTotal / (res.hoursMaxDay || 8))])
         summarySection.append(renderSummaryTable('∑ des événements par utilisateur', ['Événement', 'Collaborateur', 'Heures', 'Jours'], mkRows(byUserRows), byUserFoot))
-        if (res.lbpDevis && Object.keys(res.summaryLbp || {}).length > 0) {
-            const lbp = summaryRows(res.summaryLbp)
-            summarySection.append(renderSummaryTable('∑ projets LBP ' + res.lbpDevis, ['Projet', 'Heures', 'Jours'], mkRows(lbp.rows), lbp.foot))
-        }
         app.append(toolbar, detailTable, summarySection)
     }
     eventSelect.addEventListener('change', render)
@@ -65249,11 +65256,10 @@ function getContracts(dtStart, dtEnd) {
   oReq.send(JSON.stringify(data));
 }
 
-function getDevisTracker(dtStart, dtEnd, lbp = '') {
+function getDevisTracker(dtStart, dtEnd) {
   const data = {
     dtStart,
-    dtEnd,
-    lbp
+    dtEnd
   }
 
   const oReq = new XMLHttpRequest()
@@ -65975,10 +65981,6 @@ function setDateContracts() {
 
 function setDateDevisTracker() {
   setButtonsMonths(true)
-  const lbpControls = document.getElementById('lbpControls')
-  if (lbpControls) lbpControls.hidden = false
-  const lbpDevis = document.getElementById('lbpDevis')
-  if (lbpDevis) lbpDevis.addEventListener('change', () => showDevisTracker())
   const now = new Date()
   const month = document.getElementById('summaryMonth')
   const year = document.getElementById('summaryYear')
@@ -66055,7 +66057,7 @@ function showDevisTracker(diff = 0) {
   document.getElementById('finalPath').innerText = "Devis Tracker"
   document.getElementById('myapp').innerHTML = ''
   document.getElementById('myapp').appendChild(getLoader())
-  getDevisTracker(document.getElementById('dtStart').value, document.getElementById('dtEnd').value, document.getElementById('lbpDevis').value)
+  getDevisTracker(document.getElementById('dtStart').value, document.getElementById('dtEnd').value)
   setHash(DEVIS_TRACKER)
 }
 

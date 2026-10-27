@@ -3,7 +3,6 @@
 <div id="datesHeader" class="wai-toolbar">
 <div id="rangeControls"><label for="dtStart">Du</label><input id="dtStart" type="date"><label for="dtEnd">au</label><input id="dtEnd" type="date"><button class="setDates">Appliquer</button></div>
 <div id="monthControls" hidden><button id="removeOneMonth" aria-label="Mois précédent">‹</button><label for="summaryMonth">Mois</label><select id="summaryMonth"></select><label for="summaryYear">Année</label><input id="summaryYear" type="number" min="1900" max="9999"><button id="addOneMonth" aria-label="Mois suivant">›</button></div>
-<div id="lbpControls" hidden><label for="lbpDevis">Devis LBP</label><input id="lbpDevis" type="text" placeholder="D25023"></div>
 </div>
 <div id="myapp"></div>
 </div>

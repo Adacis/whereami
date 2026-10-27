@@ -167,11 +167,10 @@ export function getContracts(dtStart, dtEnd) {
   oReq.send(JSON.stringify(data));
 }
 
-export function getDevisTracker(dtStart, dtEnd, lbp = '') {
+export function getDevisTracker(dtStart, dtEnd) {
   const data = {
     dtStart,
-    dtEnd,
-    lbp
+    dtEnd
   }
 
   const oReq = new XMLHttpRequest()

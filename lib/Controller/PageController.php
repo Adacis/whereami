@@ -147,11 +147,11 @@ class PageController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function getDevisTracker(String $dtStart, String $dtEnd, String $lbp = '')
+    public function getDevisTracker(String $dtStart, String $dtEnd)
     {
         $from = new DateTime($dtStart . ' T00:00:00');
         $to = new DateTime($dtEnd . ' T23:59:59');
-        $tracker = new DevisTracker($this->calendarManager, $this->myDb, $this->logger, $from, $to, [], [], $lbp);
+        $tracker = new DevisTracker($this->calendarManager, $this->myDb, $this->logger, $from, $to);
         $events = [];
         foreach ($tracker->getEvents() as $day => $quadris) {
             $events[$day] = [];
@@ -181,17 +181,11 @@ class PageController extends Controller
                 'users' => $users
             ];
         }
-        $summaryLbp = [];
-        foreach ($tracker->getSummaryLbp() as $project => $hours) {
-            $summaryLbp[$project] = ['hours' => $round($hours), 'days' => round($hours / DevisTracker::HOURS_MAX_DAY, 2)];
-        }
         return new DataResponse([
             'hoursMaxDay' => DevisTracker::HOURS_MAX_DAY,
             'events' => $events,
             'summary' => $summary,
-            'summaryByUser' => $summaryByUser,
-            'summaryLbp' => $summaryLbp,
-            'lbpDevis' => $lbp
+            'summaryByUser' => $summaryByUser
         ], 200, ['Content-Type' => 'application/json']);
     }
 
